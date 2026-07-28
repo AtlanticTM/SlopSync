@@ -3219,6 +3219,59 @@ positive application-level acknowledgment that a transfer completed"
   mere existence. `CATALOG_READY` (`0x19`) is unchanged and keeps its
   catalog-namespace-only job.
 
+## RFC-051 — Critical stall parks the session instead of evicting it
+
+- **Status:** **Landed (v1.0), 2026-07-28** (operator stamp). `Hub::parkAndDetach`
+  factors the shared park body — `markStale()` + pending-knock/nonce/blob
+  reset + transport close-and-null + congestion bookkeeping clear — out of
+  `detachTransport()`; `trackCriticalSend()`'s stall-timeout branch now calls
+  it instead of `evictSlot()`. SPEC §10.4 step 4, §6.6 (fourth staleness
+  trigger), and §6.9 (six doors → five) amended in the same commit;
+  `registry.yaml`'s `SESSION_EVICTED` and `never_shed_stall_eviction_ms`
+  comments updated to match (no key renumbered, no wire-emitted string
+  changed — comments only, `gen_registry_header.py --check` re-run clean).
+- **Origin:** live kill-test verification of [RFC-042](#rfc-042--session-staleness-separate-the-session-ends-from-motion-stops) on SlopDrive-32 fw
+  2.1.8x, three separate kill tests across both shipped transports
+  (2026-07-28): every one evicted via `SESSION_EVICTED` instead of parking.
+- **Problem:** a vanished client's link reports itself CONGESTED (§10.3)
+  before the transport layer can confirm it is GONE — TCP/WS half-open
+  detection and reconnect-timeout logic both lag well behind the point a
+  send starts failing. §10.4 step 4's never-shed stall clock
+  (`never_shed_stall_eviction_ms`, 2 s) is exactly as fast or faster, so it
+  always fired first and ran the full §6.9 teardown (`evictSlot`,
+  `SESSION_EVICTED`) on a session that [RFC-042](#rfc-042--session-staleness-separate-the-session-ends-from-motion-stops)'s own transport-loss
+  trigger would otherwise have PARKED and let a reconnect resume — the same
+  client, the same slot, no re-HELLO. The two mechanisms were answering the
+  identical question ("is this link dead?") with two different endings.
+- **Proposed change:** the critical-stall path closes and detaches the
+  transport and PARKS the session — exactly [RFC-042](#rfc-042--session-staleness-separate-the-session-ends-from-motion-stops)'s existing
+  transport-loss behavior — instead of running `evictSlot`. One private
+  helper (`parkAndDetach`) is the single implementation both
+  `detachTransport()` and the critical-stall path call, so the two converge
+  on one behavior for as long as the library exists rather than by
+  convention. Congestion bookkeeping (`congestionLevel`, `criticalStalling`)
+  is cleared on park (TRAPS T13: a parked session has no link to be
+  congested on). The hub's own self-protection is UNCHANGED: the wedged
+  LINK still closes on the identical 2 s clock; only the session's fate
+  (destroyed vs. resumable) changes. `SESSION_EVICTED` narrows to admin
+  evict (`session_admin_ops::evict`) only — duplicate-LIVE-instance eviction
+  already used its own `DUPLICATE_INSTANCE` code and is unaffected.
+  `evictSlot()` itself is retained (kept for admin evict's conceptual home
+  even though admin evict and duplicate-instance each currently inline the
+  equivalent GOODBYE+teardown shape rather than calling it) but is no longer
+  reachable from the congestion path.
+- **Compatibility:** behavioral tightening, no wire-format change. A
+  conforming client already tolerates both an `evictSlot`-driven
+  `SESSION_EVICTED` GOODBYE (which may simply never arrive, per §10.4's own
+  best-effort framing) and an [RFC-042](#rfc-042--session-staleness-separate-the-session-ends-from-motion-stops) silent park — this RFC only changes
+  which of those two a client should now expect from a stalled link, and a
+  client written against [RFC-042](#rfc-042--session-staleness-separate-the-session-ends-from-motion-stops) already handles the parked case correctly
+  (a stale reconnect is indistinguishable from any other §6.6 resumption).
+  New test: `test_slopsync_staleness` gains a critical-stall-parks-then-
+  reattaches-with-grants-intact vector (STALE state, transport null,
+  congestion bookkeeping cleared, then a fresh HELLO with the same
+  `instance_id` reattaches through the existing §6.3 migration path).
+
 *Add new entries below. Keep the shape: Status / Origin / Problem / Proposed
 change / Compatibility — and if it was found by a probe or a live failure,
 say exactly which, future-us will want the receipts.*

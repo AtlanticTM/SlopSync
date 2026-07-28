@@ -448,7 +448,7 @@ enum class NackCode : uint16_t {
     NOT_CONTROLLER = 0x0102,  // control op without controller role
     PAIRING_REQUIRED = 0x0103,  // controller requested, no token, pairing window closed
     PAIRING_DENIED = 0x0104,  // bad pin_proof or pairing window closed
-    SESSION_EVICTED = 0x0105,  // slow-consumer or admin kick (GOODBYE code)
+    SESSION_EVICTED = 0x0105,  // admin kick (GOODBYE code). RFC-051 narrowed this from slow-consumer stalls, which now PARK the session instead of evicting it (see never_shed_stall_eviction_ms) — distinct from DUPLICATE_INSTANCE, which already had its own code for the other eviction door.
     DUPLICATE_INSTANCE = 0x0106,  // instance_id already in live session; old session evicted instead: see §6.8
     NORMAL_CLOSURE = 0x0107,  // clean voluntary teardown (GOODBYE code, either direction): not an error
     DEADMAN_TIMEOUT = 0x0108,  // hub-initiated session teardown: silence exceeded the deadman window (§11.3, GOODBYE code)
@@ -456,7 +456,7 @@ enum class NackCode : uint16_t {
     READY_TIMEOUT = 0x010A,  // session never sent CATALOG_READY within catalog_ready_timeout_ms (RFC-015, GOODBYE code). Needed because liveness reaping NEVER fires on a client that PINGs happily but never finishes adopting the catalog: it would hold a slot forever with both planes gated shut.
     NOT_READY = 0x010B,  // frame refused because the session has not sent CATALOG_READY yet (RFC-015). READY gates BOTH planes: pre-READY INTENTs are NACK'd, not queued, because a client acting before it has adopted the retained safety latch breaks §11.5(2).
     IDLE_REAPED = 0x010C,  // RFC-039.4: hub-initiated teardown of a NON-OWNING session that fell silent past idle_reap_multiplier x ping_interval_idle_ms (RFC-024, GOODBYE code). Distinct from DEADMAN_TIMEOUT on purpose: reaping a dark viewer is housekeeping with zero motion consequence, and before this code existed it was reported with the motion-safety code: a reaped dashboard read as a deadman event in every log and client. RFC-042: silence no longer reaches this code directly; it marks a session STALE instead (session_event_kinds.4), so the reference hub no longer emits DEADMAN_TIMEOUT or IDLE_REAPED for silence; both stay registered for a hub/policy combination that still wants to terminate outright.
-    SLOT_RECLAIMED = 0x010D,  // RFC-042: a HELLO that would otherwise NACK BUSY instead evicted a STALE session to make room (lowest access tier first, tie-break longest continuously stale): best-effort GOODBYE code, since the reclaimed session was stale for a reason and may never receive it. Distinguishable from SESSION_EVICTED (admin/slow-consumer) and from DEADMAN_TIMEOUT/IDLE_REAPED (which no longer fire for silence at all).
+    SLOT_RECLAIMED = 0x010D,  // RFC-042: a HELLO that would otherwise NACK BUSY instead evicted a STALE session to make room (lowest access tier first, tie-break longest continuously stale): best-effort GOODBYE code, since the reclaimed session was stale for a reason and may never receive it. Distinguishable from SESSION_EVICTED (admin kick only, since RFC-051) and from DEADMAN_TIMEOUT/IDLE_REAPED (which no longer fire for silence at all).
     UNKNOWN_CHANNEL = 0x0200,  // channel id not in catalog
     ACCESS_DENIED = 0x0201,  // channel access level above session role
     CLASS_MISMATCH = 0x0202,  // e.g. SUBSCRIBE to an INTENT channel

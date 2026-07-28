@@ -929,6 +929,15 @@ private:
     // session_event_kinds 4/5 (session_stale/session_resumed): best-effort,
     // one session_id in the body, same shape as emitTakeoverEvent's kind.
     void emitSessionEvent(uint8_t kind, uint32_t session_id, uint32_t nowMs);
+    // RFC-051 ("park, not kill"): the shared park-and-detach body —
+    // markStale() + pending-knock/nonce/blob reset + transport close-and-null
+    // + congestion bookkeeping clear — used by BOTH detachTransport()
+    // (transport-loss trigger) and the §10.4 step 4 critical-stall path, so
+    // the two converge on one behavior forever. The markStale/reset half is
+    // skipped when the slot is already STALE (see the definition's comment:
+    // re-staling would un-age staleSinceMs), but the transport close-and-null
+    // and the congestion-state clear always run.
+    void parkAndDetach(Slot& slot, uint32_t nowMs);
     // RFC-042 item 5: the lowest-tier, longest-stale eligible session to
     // reclaim under slot pressure, or nullptr if none is STALE.
     Slot* findEvictableStale(const Slot* exclude);

@@ -133,46 +133,59 @@ inline void Hub::detachTransport(ITransport& t) {
         if (slot.transport == &t) {
             // RFC-042's third staleness trigger: "transport reports closed/
             // errored out of band" — the case that matters most for a genuine
-            // WiFi blip, and unlike silence it is DETECTED, not timed out.
-            // Ownership is released (RFC-045: no stop latch, exactly like the
-            // silence triggers) but the slot — session_id, grants, intent ring
-            // — is RETAINED, not freed: a reconnecting client reattaches via
-            // handleHello()'s §6.3 migration path instead of a full
-            // HELLO/WELCOME/catalog cycle. Skip the already-STALE case (a
-            // formal detach arriving for a slot idle-reaped/deadmanned
-            // earlier) so a late transport-layer cleanup doesn't reset
-            // staleSinceMs and unfairly un-age it for RFC-042 item 5's
-            // eviction tie-break. No nowMs is threaded to detach (the
-            // transport layer, not update(), drives it), so read the injected
-            // clock — same as latchEstop().
-            if (slot.session.occupied() && slot.session.state != HubSessionState::STALE) {
-                markStale(slot, _clock.nowMs(), /*reason=*/4 /*session-loss-release*/);
-                // The transport is CONFIRMED gone here — unlike the silence
-                // triggers (where it might still be attached), RFC-042's
-                // "kept while stale" table scopes pending-knock/AUTH/blob
-                // state to "if the transport itself is still attached". Reset
-                // it, exactly like handleReattach()'s path-B reset: it was
-                // mid-flight against a socket that no longer exists.
-                bool droppedAny = false;
-                _pairing.pending().dropBySession(slot.session.session_id, [&](const PendingKnock& k) {
-                    droppedAny = true;
-                    emitPairingEvent(pairing_events::expired, std::span<const std::byte>(k.instance_id),
-                                     k.name.view(), k.mode, AccessLevel::watch, {}, _clock.nowMs());
-                });
-                if (droppedAny) publishPendingPairingState(_clock.nowMs());
-                slot.hasClientNonce = false;
-                slot.clientNonce.fill(std::byte{0});
-                slot.sigRequested = false;
-                slot.signPending = false;
-                slot.signDelivered = false;
-                slot.authFailures = 0;
-                slot.blob = typename Slot::PendingBlob{};
-            }
-            t.close();
-            slot.transport = nullptr;
+            // WiFi blip, and unlike silence it is DETECTED, not timed out. No
+            // nowMs is threaded to detach (the transport layer, not update(),
+            // drives it), so read the injected clock — same as latchEstop().
+            parkAndDetach(slot, _clock.nowMs());
             return;
         }
     }
+}
+
+// RFC-051 ("park, not kill"): shared by detachTransport() (above) and the
+// §10.4 step 4 critical-stall path (trackCriticalSend(), below). Ownership is
+// released (RFC-045: no stop latch, exactly like the silence triggers) but the
+// slot — session_id, grants, intent ring — is RETAINED, not freed: a
+// reconnecting client reattaches via handleHello()'s §6.3 migration path
+// instead of a full HELLO/WELCOME/catalog cycle.
+inline void Hub::parkAndDetach(Slot& slot, uint32_t nowMs) {
+    // Skip the already-STALE case (a formal detach arriving for a slot
+    // idle-reaped/deadmanned earlier, or a second critical-stall timeout on a
+    // session this same function already parked) so re-running markStale()
+    // doesn't reset staleSinceMs and unfairly un-age it for RFC-042 item 5's
+    // eviction tie-break.
+    if (slot.session.occupied() && slot.session.state != HubSessionState::STALE) {
+        markStale(slot, nowMs, /*reason=*/4 /*session-loss-release*/);
+        // The transport is CONFIRMED gone (or, for the critical-stall caller,
+        // about to be closed below) — unlike the silence triggers (where it
+        // might still be attached), RFC-042's "kept while stale" table scopes
+        // pending-knock/AUTH/blob state to "if the transport itself is still
+        // attached". Reset it, exactly like handleReattach()'s path-B reset:
+        // it was mid-flight against a link that no longer exists.
+        bool droppedAny = false;
+        _pairing.pending().dropBySession(slot.session.session_id, [&](const PendingKnock& k) {
+            droppedAny = true;
+            emitPairingEvent(pairing_events::expired, std::span<const std::byte>(k.instance_id), k.name.view(),
+                             k.mode, AccessLevel::watch, {}, nowMs);
+        });
+        if (droppedAny) publishPendingPairingState(nowMs);
+        slot.hasClientNonce = false;
+        slot.clientNonce.fill(std::byte{0});
+        slot.sigRequested = false;
+        slot.signPending = false;
+        slot.signDelivered = false;
+        slot.authFailures = 0;
+        slot.blob = typename Slot::PendingBlob{};
+    }
+    if (slot.transport != nullptr) {
+        slot.transport->close();
+        slot.transport = nullptr;
+    }
+    // TRAPS T13: a parked session has no link to be congested on — leaving
+    // these set would arm (or instantly re-trip) the critical-stall timer for
+    // a failure that can no longer happen.
+    slot.congestionLevel = 0;
+    slot.criticalStalling = false;
 }
 
 inline Hub::Slot* Hub::attachedSlotFor(ITransport& t) {
@@ -239,7 +252,16 @@ inline void Hub::update(uint32_t nowUs) {
 // ESTOP magic checked BEFORE header decode (§5.5), then normal header dispatch.
 
 inline void Hub::pumpSlot(Slot& slot, uint32_t nowMs) {
-    while (auto fb = slot.transport->read()) {
+    // RFC-051: dispatchFrame() below can now PARK this very slot mid-loop —
+    // a never-shed critical-stall noticed while handling the frame being
+    // dispatched (trackCriticalSend() -> parkAndDetach() -> transport
+    // closed and nulled). Re-check on every iteration, not just on loop
+    // entry, or the next read() dereferences a null transport (the same
+    // hazard update()'s own per-slot walk already guards against above, for
+    // the same reason: a transport can go away between a check and its use).
+    while (slot.transport != nullptr) {
+        auto fb = slot.transport->read();
+        if (!fb) break;
         std::span<const std::byte> bytes = fb->bytes();
 
         if (bytes.size() == kEstopFrameBytes && bytes[0] == kEstopMagicByte && bytes[1] == kEstopMagicByte &&
@@ -3216,10 +3238,25 @@ inline void Hub::trackCriticalSend(Slot& slot, bool sendOk, uint32_t nowMs) {
         return;
     }
     if (timeReached(nowMs, slot.criticalStallSinceMs + limits::never_shed_stall_eviction_ms)) {
-        evictSlot(slot, NackCode::SESSION_EVICTED, nowMs);
+        // RFC-051 ("park, not kill"): a vanished client's link looks
+        // CONGESTED before it looks GONE, so this clock used to outrace
+        // detachTransport()'s transport-loss park — evictSlot() would destroy
+        // the session while the transport layer was still mid-detection.
+        // parkAndDetach() converges both paths on the identical parked end
+        // state; the hub's self-protection (the wedged LINK closes on this
+        // same 2 s clock) is unchanged. evictSlot()/SESSION_EVICTED narrows to
+        // admin evict and duplicate-LIVE-instance eviction — genuine ends,
+        // not a stand-in for "link went bad."
+        parkAndDetach(slot, nowMs);
     }
 }
 
+// Reserved for admin evict (session_admin_ops::evict) and duplicate-LIVE-
+// instance eviction — never for slow-consumer stalls (see trackCriticalSend(),
+// which called this function until RFC-051 and now calls parkAndDetach()
+// instead). Both admin evict and duplicate-instance handling currently inline
+// this same GOODBYE+teardownSession shape rather than calling it; it stays
+// under this name and doc so a future unification has one obvious target.
 inline void Hub::evictSlot(Slot& slot, NackCode code, uint32_t nowMs) {
     if (slot.session.occupied()) {
         GoodbyeMsg gb;

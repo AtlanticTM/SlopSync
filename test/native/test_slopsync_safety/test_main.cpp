@@ -694,7 +694,7 @@ TEST_CASE("S-08: congestion shedding decimates background before normal/critical
         CHECK(motionDelta == 2);  // normal: Decimate4x, 1 of every 4
     }
 
-    SUBCASE("slow-consumer eviction: level 2 + a never-shed queue stalled > 2s evicts the session") {
+    SUBCASE("slow-consumer stall (RFC-051): level 2 + a never-shed queue stalled > 2s PARKS the session, never evicts it") {
         hub.setCongestionLevel(slot, 2);
 
         // Fill the hub->client ring (capacity 16) with ECHOs by feeding raw
@@ -706,14 +706,99 @@ TEST_CASE("S-08: congestion shedding decimates background before normal/critical
             sendRawIntent(link.endpointB(), 0x0084, nextId++, 10.0f);
             hub.update(clock.nowUs());
         }
-        CHECK(hub.sessionCount() == 1);  // stalled, but < 2s elapsed: not evicted yet
+        CHECK(hub.sessionCount() == 1);  // stalled, but < 2s elapsed: not parked yet
 
         clock.advanceUs(2100u * 1000u);  // > never_shed_stall_eviction_ms (2000)
         sendRawIntent(link.endpointB(), 0x0084, nextId++, 10.0f);
         hub.update(clock.nowUs());
 
-        CHECK(hub.sessionCount() == 0);  // GOODBYE SESSION_EVICTED, slot freed
+        // RFC-051: parked, not torn down — the slot, session_id and grants
+        // survive (§6.9 no longer runs for this trigger; it converges with
+        // RFC-042's transport-loss park instead, §6.6).
+        CHECK(hub.sessionCount() == 1);
+        const HubSession* parked = hub.sessionBySlot(slot);
+        REQUIRE(parked != nullptr);
+        CHECK(parked->state == HubSessionState::STALE);
+        CHECK(parked->session_id == client.sessionId());
     }
+}
+
+// ---- RFC-051 --------------------------------------------------------------
+// The critical-stall park's OTHER half: a parked session is not just STALE in
+// place, it is actually resumable — same session_id, same grants, no
+// renegotiation — exactly like any other RFC-042 staleness trigger. This is
+// the "fresh HELLO reattaches" leg the bare-minimum verification posture
+// (machine-repo LEDGER) calls for, distinct from S-08's own park assertion
+// above (which stops at "not evicted").
+TEST_CASE("RFC-051: a critical-stall park reattaches on a fresh HELLO with grants intact") {
+    Catalog32 catalog;
+    safetyCatalog(catalog);
+    ManualClock clock;
+    XorShift32 hubRng(2602);
+    SafetyHubDelegate hubDelegate;
+    Hub hub(catalog, clock, hubRng, hubDelegate);
+    hubDelegate.hub = &hub;
+
+    InProcessLink link(clock, hubRng);
+    REQUIRE(hub.attachTransport(link.endpointA()));
+    XorShift32 rng(2702);
+    TestClientDelegate delegate;
+    Client client(makeIdentity(10, true), link.endpointB(), clock, rng, delegate);
+    client.addSubscriptionWish(0x0082, 10.0f, Priority::normal);  // the grant that must survive
+
+    REQUIRE(client.connect());
+    pump(hub, clock, {&client}, 6);
+    REQUIRE(client.state() == ClientSessionState::LIVE);
+    const uint32_t originalSessionId = client.sessionId();
+    const AccessLevel originalRole = client.roles();
+
+    size_t slot = findSlotForSession(hub, originalSessionId);
+    REQUIRE(slot != size_t(-1));
+    hub.setCongestionLevel(slot, 2);
+
+    // Same stall recipe as S-08: flood the never-shed ring without draining
+    // the client, then cross never_shed_stall_eviction_ms.
+    uint16_t nextId = 2000;
+    for (int i = 0; i < 25; ++i) {
+        sendRawIntent(link.endpointB(), 0x0084, nextId++, 10.0f);
+        hub.update(clock.nowUs());
+    }
+    clock.advanceUs(2100u * 1000u);
+    sendRawIntent(link.endpointB(), 0x0084, nextId++, 10.0f);
+    hub.update(clock.nowUs());
+
+    const HubSession* parked = hub.sessionBySlot(slot);
+    REQUIRE(parked != nullptr);
+    REQUIRE(parked->state == HubSessionState::STALE);
+    REQUIRE(parked->session_id == originalSessionId);
+
+    // Fresh HELLO, same instance_id, a BRAND NEW transport — path B (§6.3)
+    // reattach, not path A revival, because the parked transport is gone.
+    // Deliberately NO subscription wish on the reattaching identity: a
+    // renegotiated grant would prove nothing about retention.
+    InProcessLink link2(clock, hubRng);
+    REQUIRE(hub.attachTransport(link2.endpointA()));
+    XorShift32 rng2(2703);
+    TestClientDelegate delegate2;
+    Client client2(makeIdentity(10, true), link2.endpointB(), clock, rng2, delegate2);
+    REQUIRE(client2.connect());
+    pump(hub, clock, {&client2}, 6);
+
+    REQUIRE(client2.state() == ClientSessionState::LIVE);
+    CHECK(client2.sessionId() == originalSessionId);
+    CHECK(client2.roles() == originalRole);
+
+    // Grants intact: 0x0082 pushes to client2 despite its empty wish list —
+    // it can only be seeing the RETAINED grant, re-armed for first-push
+    // (§9.1) by the reattach, never a fresh negotiation it never asked for.
+    auto motionPayload = makeMotionStatusPayload(1);
+    hub.publishState(0x0082, std::span<const std::byte>(motionPayload));
+    pump(hub, clock, {&client2}, 2, 600000);
+    CHECK(delegate2.stateCountByChannel[0x0082] > 0);
+
+    // And the parked identity is truly gone, not double-booked: the old slot
+    // now holds this same LIVE session, not a second occupant.
+    CHECK(hub.sessionCount() == 1);
 }
 
 // ---- S-11 -------------------------------------------------------------------
