@@ -2765,7 +2765,7 @@
 <h2 id="appendix-h">Appendix H — Design rationale and rejected alternatives <em>(informative)</em><a class="headerlink" href="#appendix-h" title="Link to this section">#</a></h2>
 <p><strong>Stacks evaluated and not adopted.</strong></p>
 <ul>
-<li><strong>On-device MQTT broker:</strong> available brokers ignore retained messages and wills and offer QoS 0 only — the device-shadow primitive would be rebuilt application-side anyway; transports are TCP-shaped; licensing was hostile. The glue equalled this document's hard parts with none of its fit.</li>
+<li><strong>On-device MQTT broker:</strong> available brokers ignore retained messages and wills and offer QoS 0 only — the device-shadow primitive would be rebuilt application-side anyway; transports are TCP-shaped; licensing was hostile. The glue equaled this document's hard parts with none of its fit.</li>
 <li><strong>zenoh-pico:</strong> runs on the target but peer-unicast nodes do not route (no hub role on-device); no datagram-radio or browser-server transport; custom-transport API unresolved upstream.</li>
 <li><strong>MQTT-SN:</strong> the gateway side has no MCU implementation, and reference gateways are host programs that themselves need an upstream broker.</li>
 <li><strong>Micro XRCE-DDS:</strong> the Agent (the hub role) is host-only. Its transport abstraction was adopted (<a href="../transports/#s13-1">§13.1</a>); the stack was not.</li>

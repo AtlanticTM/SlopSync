@@ -6148,7 +6148,7 @@ because <abbr title="A channel class, and the only way a client changes anything
 <p><strong>Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.</strong></p>
 <p>Any endpoint may initiate an <abbr title="Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.">ESTOP</abbr>, at any role, in any <abbr title="The stateful association between one client and the hub.">session</abbr>
 state, including with no <abbr title="The stateful association between one client and the hub.">session</abbr> at all.</p>
-<p><strong>The <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr> is the acknowledgement.</strong> There is no <abbr title="Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.">ESTOP</abbr>-ACK frame.
+<p><strong>The <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr> is the acknowledgment.</strong> There is no <abbr title="Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.">ESTOP</abbr>-ACK frame.
 The initiator repeats the frame until it observes the safety state
 with the <abbr title="Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.">ESTOP</abbr> bit <abbr title="A safety condition that stays true in state until something explicitly clears it.">latched</abbr>, or it exhausts retries and surfaces a
 loud local failure.</p>
@@ -6429,7 +6429,7 @@ one sitting.</p>
 <p>It is not a mock. A bug found against the <abbr title="A desktop binary that behaves like a machine, embedding the real hub, motion engine and catalog behind a real transport.">simulator</abbr> is a bug in the
 same code the device runs.</p>
 <p>Its actuator is the honest exception: an ideal follower with no step
-quantisation, current limit, encoder lag or compliance. Trust it for
+quantization, current limit, encoder lag or compliance. Trust it for
 protocol, planning and shaping. Confirm tracking numbers on hardware.</p>
 <p class="ss-termmeta">See also: <a href="#probe">Probe</a>, <a href="#slopscope"><abbr title="The motion-pipeline oscilloscope, which graphs asked against planned against achieved.">SlopScope</abbr></a>, <a href="#in-process-binding">In-process binding</a> · Source: Roadmap</p>
 <h2 id="specification-and-process">Specification and process<a class="headerlink" href="#specification-and-process" title="Link to this section">#</a></h2>

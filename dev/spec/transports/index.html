@@ -3144,7 +3144,7 @@ always an equally valid entry point.</em></p>
 </ul>
 <h3 id="s14-2">14.2 ACK aggregation and the ESTOP fast path<a class="headerlink" href="#s14-2" title="Link to this section">#</a></h3>
 <ul>
-<li><strong>Reliability is hop-by-hop.</strong> The relay acknowledges what it receives from its segment and takes responsibility for upstream delivery, and vice versa. There are no end-to-end transport acknowledgements across a relay.
+<li><strong>Reliability is hop-by-hop.</strong> The relay acknowledges what it receives from its segment and takes responsibility for upstream delivery, and vice versa. There are no end-to-end transport acknowledgments across a relay.
   <strong>HONESTY CLAUSE (H10), stated plainly:</strong> the hub knowing a frame reached the relay does <strong>not</strong> mean the client got it. This is safe because no protocol correctness depends on transport delivery — STATE re-pushes, STREAM tolerates loss, and the only end-to-end confirmations that exist are protocol-level: <strong>INTENT ⇒ ECHO</strong> and <strong>ESTOP ⇒ observed latch</strong>.</li>
 <li><strong>ESTOP fast path:</strong> on matching the four-<code>0xE5</code> magic with a raw scanner — no deframing, no queueing — a relay MUST transmit the frame onward on <strong>all</strong> attached segments ahead of every queued frame, then resume normal operation. CRC validation MAY be deferred to endpoints when the relay's budget is tight: forwarding a corrupt candidate costs 12 bytes; dropping a real one costs much more.</li>
 </ul>
