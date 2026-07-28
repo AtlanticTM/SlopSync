@@ -44,19 +44,25 @@ Usage:
     python slopsync_probe.py [--ip 192.168.1.229] [--port 82]
                               [--timeout 5.0] [--no-motion] [--listen-only]
                               [--stream SECS] [--segments SECS]
+    python slopsync_probe.py --ble [ADDR]     # SPEC §13.4, in place of --ip/--port
 
 Requires the `websocket-client` package:
     pip install websocket-client
+--ble additionally requires `bleak` (only imported when --ble is used):
+    pip install bleak
 """
 import argparse
+import asyncio
 import hashlib
 import hmac
 import json
 import math
 import os
+import queue
 import random
 import struct
 import sys
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -69,6 +75,154 @@ except ImportError:
         "Install it with:\n\n    pip install websocket-client\n\n"
     )
     sys.exit(1)
+
+
+# =============================================================================
+# BLE GATT transport (SPEC.md §13.4) -- an alternative to the WebSocket
+# connection above, selected by --ble. `bleak` is optional: only imported
+# once --ble is actually used, so a WS-only invocation never needs it
+# installed.
+#
+# FRAMING (read from src/comms/SlopSyncBleTransport.{h,cpp} in the firmware
+# repo, which is normative for what actually goes out over the air): one GATT
+# write to the c2h characteristic == one SlopSync frame, one NOTIFY on the h2c
+# characteristic == one SlopSync frame. No length prefix, no COBS, no WS-style
+# opcodes -- the ATT value IS the frame's bytes. There is no ATT-level
+# fragmentation in either direction (SlopSyncBleTransport::pushRx's own
+# comment: "a client sending a frame that does not fit its own negotiated MTU
+# is a client bug this transport does not try to repair"), so BleTransport.send
+# below refuses an oversized frame outright rather than splitting it.
+#
+# UUIDs are `ble_identity` in spec/registry/registry.yaml, restated here
+# because the registry codegen has no CBOR-key schema for a GATT UUID string
+# (the same fallback SlopSyncBleTransport.h documents for its own copy).
+# =============================================================================
+
+BLE_SERVICE_UUID = "534C4F50-5359-4E43-8000-000000000001"
+BLE_WRITE_CHAR_UUID = "534C4F50-5359-4E43-8000-000000000002"    # c2h -- client writes here
+BLE_NOTIFY_CHAR_UUID = "534C4F50-5359-4E43-8000-000000000003"   # h2c -- hub notifies here
+
+
+def _import_bleak():
+    try:
+        import bleak
+    except ImportError:
+        sys.stderr.write(
+            "slopsync_probe.py --ble requires the 'bleak' package.\n"
+            "Install it with:\n\n    pip install bleak\n\n"
+        )
+        sys.exit(1)
+    return bleak
+
+
+class BleFrameTooLarge(Exception):
+    """A frame exceeded the negotiated ATT payload. SPEC §13.1/§13.4: BLE GATT
+    does no fragmentation -- this is the hard error the spec calls for, not
+    something to split."""
+
+
+class BleTransport:
+    """Duck-types the subset of `websocket.WebSocket` that send_frame/
+    recv_frame/ws.close() use: .send(data, opcode=...), .settimeout(secs),
+    .recv_data() -> (opcode, bytes), .close(). Everything upstream of this
+    class (send_frame, recv_frame, every step in _run_session) stays
+    transport-blind exactly as SPEC §13.1 asks of the firmware side.
+
+    bleak is asyncio-only; the probe's call sites are synchronous. Bridged
+    with one background thread running its own event loop -- every bleak call
+    is dispatched onto it with asyncio.run_coroutine_threadsafe(...).result(),
+    so the calling thread still sees a plain blocking method."""
+
+    # recv_frame's poll loop calls settimeout() down to 0.5s (its own idle-poll
+    # granularity, unrelated to how long a single GATT write may take) -- a
+    # write must NOT inherit that value, or a write outlasting the CURRENT
+    # poll slice raises spuriously. Fixed and separate from self._timeout.
+    _WRITE_TIMEOUT_S = 5.0
+
+    def __init__(self, address, connect_timeout):
+        bleak = _import_bleak()
+        self._bleak = bleak
+        self._rxq = queue.Queue()
+        self._timeout = connect_timeout
+        self._closed = False
+        self._loop = asyncio.new_event_loop()
+        self._thread = threading.Thread(target=self._loop.run_forever, daemon=True)
+        self._thread.start()
+        self._client = self._run(self._connect(address, connect_timeout),
+                                  connect_timeout + 5.0)
+        # §13.4: payload MTU is ATT_MTU - 3. mtu_size is the WinRT/bleak
+        # backend's live negotiated value for this connection, not a request.
+        self.mtu = self._client.mtu_size
+        self.max_payload = max(self.mtu - 3, 0)
+
+    def _run(self, coro, timeout):
+        return asyncio.run_coroutine_threadsafe(coro, self._loop).result(timeout)
+
+    async def _connect(self, address, timeout):
+        client = self._bleak.BleakClient(address, disconnected_callback=self._on_disconnect,
+                                          timeout=timeout)
+        await client.connect()
+        await client.start_notify(BLE_NOTIFY_CHAR_UUID, self._on_notify)
+        return client
+
+    def _on_notify(self, _char, data):
+        self._rxq.put(bytes(data))
+
+    def _on_disconnect(self, _client):
+        self._rxq.put(None)   # sentinel: recv_data() reports this as OPCODE_CLOSE
+
+    def send(self, data, opcode=None):
+        # opcode is accepted only for call-site parity with websocket.WebSocket.send;
+        # BLE GATT has no WS-style opcode, one write is always one frame.
+        if self.max_payload and len(data) > self.max_payload:
+            raise BleFrameTooLarge(
+                "frame is %d bytes, negotiated BLE payload is %d (ATT_MTU %d - 3); "
+                "SPEC §13.1/§13.4: no fragmentation, this is a hard error, not "
+                "something this transport splits" % (len(data), self.max_payload, self.mtu))
+        self._run(self._client.write_gatt_char(BLE_WRITE_CHAR_UUID, data, response=True),
+                  self._WRITE_TIMEOUT_S)
+
+    def settimeout(self, seconds):
+        self._timeout = seconds
+
+    def recv_data(self):
+        try:
+            item = self._rxq.get(timeout=self._timeout)
+        except queue.Empty:
+            raise websocket.WebSocketTimeoutException()
+        if item is None:
+            return websocket.ABNF.OPCODE_CLOSE, b""
+        return websocket.ABNF.OPCODE_BINARY, item
+
+    def close(self):
+        if self._closed:
+            return
+        self._closed = True
+        try:
+            self._run(self._client.disconnect(), 5.0)
+        except Exception:
+            pass
+        self._loop.call_soon_threadsafe(self._loop.stop)
+        self._thread.join(timeout=5.0)
+        self._loop.close()
+
+
+def resolve_ble_address(spec, scan_timeout=8.0):
+    """spec is args.ble: '' (--ble with no value, argparse `const`) means scan
+    for the first hub advertising BLE_SERVICE_UUID and use its address; any
+    non-empty string is an address already and is returned unchanged."""
+    if spec:
+        return spec
+    bleak = _import_bleak()
+    print("  Scanning %.0fs for BLE service %s ..." % (scan_timeout, BLE_SERVICE_UUID))
+
+    async def _scan():
+        def _match(_device, adv):
+            return BLE_SERVICE_UUID.lower() in {u.lower() for u in adv.service_uuids}
+        return await bleak.BleakScanner.find_device_by_filter(_match, timeout=scan_timeout)
+
+    device = asyncio.run(_scan())
+    return device.address if device is not None else None
 
 
 # =============================================================================
@@ -1310,18 +1464,36 @@ def _await_sync_counters(ws, args):
 
 
 def run(args):
-    url = "ws://%s:%d/" % (args.ip, args.port)
-
     # ---- Step 1: connect --------------------------------------------------
     scene("Step 1: Connect")
-    print("  Connecting to %s (subprotocol %r) ..." % (url, WS_SUBPROTOCOL))
-    try:
-        ws = websocket.create_connection(url, subprotocols=[WS_SUBPROTOCOL], timeout=args.timeout)
-    except Exception as e:  # noqa: BLE001 -- surfacing any connect failure is the point
-        bad("connect", "WebSocket connect to %s failed: %s" % (url, e))
-        print_summary()
-        return 1
-    ok("connect", "WS connected to %s" % url)
+    if args.ble is not None:
+        address = resolve_ble_address(args.ble)
+        if address is None:
+            bad("connect", "no BLE device advertising service %s found within the "
+                "scan window" % BLE_SERVICE_UUID)
+            print_summary()
+            return 1
+        print("  Connecting over BLE to %s (service %s) ..." % (address, BLE_SERVICE_UUID))
+        try:
+            ws = BleTransport(address, connect_timeout=args.timeout)
+        except Exception as e:  # noqa: BLE001 -- surfacing any connect failure is the point
+            bad("connect", "BLE connect to %s failed: %s" % (address, e))
+            print_summary()
+            return 1
+        ok("connect", "BLE connected to %s (negotiated ATT_MTU %d, payload %d)"
+           % (address, ws.mtu, ws.max_payload))
+        info("credential mint (/uitoken) still rides HTTP over --ip (%s) -- a separate "
+             "side-channel from the BLE frame transport, not carried over GATT" % args.ip)
+    else:
+        url = "ws://%s:%d/" % (args.ip, args.port)
+        print("  Connecting to %s (subprotocol %r) ..." % (url, WS_SUBPROTOCOL))
+        try:
+            ws = websocket.create_connection(url, subprotocols=[WS_SUBPROTOCOL], timeout=args.timeout)
+        except Exception as e:  # noqa: BLE001 -- surfacing any connect failure is the point
+            bad("connect", "WebSocket connect to %s failed: %s" % (url, e))
+            print_summary()
+            return 1
+        ok("connect", "WS connected to %s" % url)
     _last_send_ts[0] = time.time()
 
     try:
@@ -2921,6 +3093,14 @@ def _pair_read_ledger(admin_ws, args):
 
 def run_pairing(args):
     scene("Step P0: pairing/trust scenario (M4b)")
+    if args.ble is not None:
+        bad("connect", "--pair is WS-only: the scenario holds several concurrent, "
+            "independent client identities (admin + joiner + ghost) against one hub, "
+            "but a BLE central has exactly one ACL link to a given peripheral address "
+            "-- there is no BLE realization of 'several clients' from one host. "
+            "Use --ip/--port for --pair.")
+        print_summary()
+        return 1
     state_path = args.pair_state
     admin_id = None
     admin_token = None
@@ -3072,8 +3252,18 @@ def main():
         description="Live SlopSync protocol verifier: connects to the firmware hub's "
                     "binary WebSocket and runs a scripted HELLO/SUBSCRIBE/STATE/INTENT/"
                     "GOODBYE session, printing a PASS/FAIL transcript.")
-    parser.add_argument("--ip", default="192.168.1.229", help="hub IP (default: %(default)s)")
+    parser.add_argument("--ip", default="192.168.1.229", help="hub IP (default: %(default)s) -- "
+                              "also the address the HTTP /uitoken mint side-channel uses even "
+                              "under --ble, since that mint has no GATT equivalent")
     parser.add_argument("--port", type=int, default=82, help="hub WS port (default: %(default)s)")
+    parser.add_argument("--ble", nargs="?", const="", default=None, metavar="ADDR",
+                         help="use BLE GATT (SPEC.md §13.4) instead of WebSocket for the SlopSync "
+                              "session transport: connect to ADDR directly, or with no ADDR scan "
+                              "for the first hub advertising service %s. Mutually exclusive with "
+                              "an explicit --ip/--port (those select the WS transport this "
+                              "replaces). --pair always needs several concurrent client "
+                              "identities and has no BLE realization -- it errors under --ble "
+                              "rather than misbehaving." % BLE_SERVICE_UUID)
     parser.add_argument("--timeout", type=float, default=5.0,
                          help="per-step reply timeout in seconds (default: %(default)s)")
     parser.add_argument("--no-motion", action="store_true",
@@ -3114,6 +3304,12 @@ def main():
                               "SECOND --pair run against the same live hub reconnects as admin "
                               "instead of needing another bootstrap window")
     args = parser.parse_args()
+
+    if args.ble is not None and any(a in ("--ip", "--port") or a.startswith(("--ip=", "--port="))
+                                     for a in sys.argv[1:]):
+        parser.error("--ble is mutually exclusive with an explicit --ip/--port (those pick the "
+                     "WS transport --ble replaces; --ip's default still feeds the HTTP "
+                     "/uitoken side-channel if you need a different hub there)")
 
     try:
         if args.pair:
