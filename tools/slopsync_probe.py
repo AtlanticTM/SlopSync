@@ -232,7 +232,7 @@ CH_MOTION_ANOMALY = 0x4100   # EVENT, watch — SlopMotion anomalies, device-aut
 ANOMALY_KINDS = {
     0: "none", 1: "plan_failed", 2: "settle", 3: "endvel_clamped",
     4: "deadline_stretched", 5: "waveform_fallback", 6: "waveform_scaled",
-    7: "waveform_centred",
+    7: "waveform_centered",
     8: "handoff_bounded",   # M4d / RFC-008 -- the hub-side handoff sanity guard
     9: "waveform_smoothed", # slopmotion 0.8.0 -- the budgeted policies' own kind
 }
