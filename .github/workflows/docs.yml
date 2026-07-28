@@ -212,5 +212,8 @@ jobs:
           version="${{ github.event.inputs.version }}"
           if [ -z "$version" ]; then version="dev"; fi
           echo "publishing '$version' with alias 'latest'"
-          python -m mike deploy --push --update-aliases "$version" latest
-          python -m mike set-default --push latest
+          # mike is a console script, not a runnable module: it has no
+          # __main__.py, so `python -m mike` always fails. (mkdocs above
+          # does support `python -m` — the two are not alike here.)
+          mike deploy --push --update-aliases "$version" latest
+          mike set-default --push latest
