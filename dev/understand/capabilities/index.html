@@ -1,0 +1,3318 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="What a SlopSync hub must provide, what is optional, and why a board with no screen, no LED and no buttons still supports the whole protocol, pairing included.">
+      
+      
+        <meta name="author" content="The SlopSync contributors">
+      
+      
+        <link rel="canonical" href="https://AtlanticTM.github.io/SlopSync/dev/understand/capabilities/">
+      
+      
+        <link rel="prev" href="../anatomy/">
+      
+      
+        <link rel="next" href="../what-it-replaces/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Capabilities and what they mean for custom hardware - SlopSync</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/datasheet.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="color-scheme" content="light dark">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#capabilities-and-what-they-mean-for-custom-hardware" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SlopSync" class="md-header__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SlopSync
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Capabilities and what they mean for custom hardware
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Understand
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Build with it
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../spec/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Specification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SlopSync" class="md-nav__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    SlopSync
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Understand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anatomy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anatomy of a frame
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-a-feature-exists-if-its-channels-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. A feature exists if its channels exist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-hub-floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The hub floor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The hub floor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-genuinely-optional-and-what-each-one-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is genuinely optional, and what each one costs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-client-floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The client floor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pairing-with-no-screen-no-led-and-no-buttons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pairing with no screen, no LED and no buttons
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-a-worked-example-a-two-button-remote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. A worked example: a two-button remote
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-what-the-floor-deliberately-leaves-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. What the floor deliberately leaves out
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-to-go-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where to go next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../what-it-replaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it replaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem and compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security model and the audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../for-everyone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For everyone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../build/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build with it
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build with it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/javascript/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JavaScript
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub implementer guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/local-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../spec/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/wire-format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time and sequencing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/qos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS and congestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports and relays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/legacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conformance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worked session traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog schema (CDDL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/appendices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices A-G
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/rationale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale and history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/errata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/registry/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frame types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/cbor-keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/catalog-vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event kinds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/pairing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairing modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NACK codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/limits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel catalog
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-grid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel grid
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../community/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/rfc-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC process
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-a-feature-exists-if-its-channels-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. A feature exists if its channels exist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-the-hub-floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The hub floor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. The hub floor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-is-genuinely-optional-and-what-each-one-costs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is genuinely optional, and what each one costs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-client-floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The client floor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pairing-with-no-screen-no-led-and-no-buttons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pairing with no screen, no LED and no buttons
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-a-worked-example-a-two-button-remote" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. A worked example: a two-button remote
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-what-the-floor-deliberately-leaves-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. What the floor deliberately leaves out
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-to-go-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where to go next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+    
+      <p class="ss-pagemeta">
+        
+  
+    <span class="ss-badge ss-badge--ste" title="ASD-STE100-influenced register: one idea per sentence, active voice, present tense. Industry terminology is preserved, never simplified away.">STE register</span>
+  
+
+        
+        
+      </p>
+    
+  
+  
+                  
+
+
+
+<h1 id="capabilities-and-what-they-mean-for-custom-hardware">Capabilities and what they mean for custom hardware<a class="headerlink" href="#capabilities-and-what-they-mean-for-custom-hardware" title="Link to this section">#</a></h1>
+<p>"Can my board do this?" is the first question a builder asks. This page
+answers it with a checklist rather than a promise.</p>
+<p>The floor is low on purpose. A <abbr title="The single authoritative endpoint of one machine.">hub</abbr> with no screen, no LED and no buttons
+supports the full protocol, including <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr>. The rest of this page says what
+that costs.</p>
+<h2 id="1-a-feature-exists-if-its-channels-exist">1. A feature exists if its <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr> exist<a class="headerlink" href="#1-a-feature-exists-if-its-channels-exist" title="Link to this section">#</a></h2>
+<p>SlopSync has no feature list. It has a
+<a href="../../reference/dictionary/#catalog"><abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr></a>, and
+<a href="../../reference/dictionary/#capability-discovery"><abbr title="Learning what a machine can do by reading its catalog, rather than from a separate feature list.">capability discovery</abbr></a> is
+reading it.</p>
+<p>A machine with a current sensor declares a power <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>. A machine without
+one does not, and that absence <strong>is</strong> the answer to "does it measure
+current?". A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> finds out by looking, never by asking.</p>
+<p class="ss-point"><strong>The point.</strong> A second list is a second truth, and a second truth drifts from the first one. Your firmware already declares what it has, once, in the place <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr> already read. Adding a capability is adding its <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr>.</p>
+<p>The same rule covers ceilings and units. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that needs your speed limit
+does not hardcode a number for your board. It finds the field carrying the
+<a href="../../reference/dictionary/#field-role"><abbr title="A text tag on a catalog field that says what the value semantically is.">field role</abbr></a> it wants, and reads the
+limit your <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> declares.</p>
+<blockquote>
+<p>DEMO-CANDIDATE: a live <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> browse — point it at a real <abbr title="The single authoritative endpoint of one machine.">hub</abbr> (or the
+<abbr title="A desktop binary that behaves like a machine, embedding the real hub, motion engine and catalog behind a real transport.">simulator</abbr>) and watch <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr>, units and limits populate from nothing but
+the connection, no driver installed.</p>
+</blockquote>
+<h2 id="2-the-hub-floor">2. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> floor<a class="headerlink" href="#2-the-hub-floor" title="Link to this section">#</a></h2>
+<p class="ss-cap">What every conforming <abbr title="The single authoritative endpoint of one machine.">hub</abbr> owes, and what it may skip. The spine is mandatory; the dashed branches are not.</p>
+<pre class="mermaid"><code>flowchart TD
+    H["▶ START&lt;br/&gt;Your firmware&lt;br/&gt;answers HELLO"]:::party
+    H --&gt; C[("Catalog&lt;br/&gt;every channel you have,&lt;br/&gt;hashed into an etag")]:::truth
+    C --&gt; S["Retained STATE,&lt;br/&gt;pushed the moment&lt;br/&gt;a channel is granted"]:::truth
+    S --&gt; I["INTENT applied,&lt;br/&gt;then ECHOed with the&lt;br/&gt;value you actually used"]:::truth
+    I --&gt; A["Access checked at&lt;br/&gt;subscribe time and&lt;br/&gt;at intent time"]:::truth
+    A --&gt; SAFE["Safety, complete:&lt;br/&gt;ESTOP latch · deadman ·&lt;br/&gt;source ownership"]:::safety
+    SAFE --&gt; P["One pairing mode&lt;br/&gt;your hardware can perform"]:::truth
+    P --&gt; OK["A conforming hub"]:::party
+
+    H -.-&gt; X1["Network probe"]:::plumb
+    H -.-&gt; X2["STORE channels:&lt;br/&gt;presets, ledgers"]:::plumb
+    H -.-&gt; X3["More transports:&lt;br/&gt;ESP-NOW · BLE · serial"]:::plumb
+    H -.-&gt; X4["Signed identity,&lt;br/&gt;log channel, procedures"]:::plumb
+
+    classDef truth fill:#3183cc2e,stroke:#3183cc
+    classDef safety fill:#d8434f2e,stroke:#d8434f,stroke-width:2px
+    classDef party fill:none,stroke:#8a8f98
+    classDef plumb fill:none,stroke:#8a8f98,stroke-dasharray:3 3</code></pre>
+<p class="ss-point"><strong>The point.</strong> Every mandatory item is something your firmware already does internally. The protocol asks you to expose it honestly. It does not ask you to invent new machinery.</p>
+<h3 id="the-checklist">The checklist<a class="headerlink" href="#the-checklist" title="Link to this section">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>A conforming <abbr title="The single authoritative endpoint of one machine.">hub</abbr></th>
+<th>Why it is mandatory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Answers the handshake, then serves its <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> and <a href="../../reference/dictionary/#etag"><abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr></a></td>
+<td>Without it a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> cannot know what you are</td>
+</tr>
+<tr>
+<td>Declares every <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> it has, with type, unit, limits and access level</td>
+<td>This is the whole self-description. Nothing else advertises a feature</td>
+</tr>
+<tr>
+<td>Keeps the <a href="../../reference/dictionary/#retained-value"><abbr title="The latest value of a STATE channel, which the hub keeps and pushes immediately on grant.">retained value</abbr></a> of every <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> and pushes it on <abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grant</abbr></td>
+<td>This is the device-<abbr title="The client-side replica of subscribed state, maintained exclusively from hub frames.">shadow</abbr> primitive. "Page load adopts device state" compiles to this</td>
+</tr>
+<tr>
+<td>Sends full snapshots, never deltas, and fits each one in a single frame</td>
+<td>One lost frame has to stay harmless</td>
+</tr>
+<tr>
+<td>Applies an <a href="../../reference/dictionary/#intent"><abbr title="A channel class, and the only way a client changes anything.">intent</abbr></a>, then <a href="../../reference/dictionary/#echo">echoes</a> the post-<a href="../../reference/dictionary/#clamp"><abbr title="Replacing a requested value with the nearest value the machine's limits allow.">clamp</abbr></a> value</td>
+<td>Echoing the request instead of the result is the ground-truth defect</td>
+</tr>
+<tr>
+<td>Enforces access when a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> subscribes and when it sends</td>
+<td>The <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> is the same for everyone. The gate is at use</td>
+</tr>
+<tr>
+<td>Implements safety completely: the stop levels, the <abbr title="Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.">ESTOP</abbr> <a href="../../reference/dictionary/#latch"><abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr></a>, the <a href="../../reference/dictionary/#deadman"><abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr></a>, <a href="../../reference/dictionary/#source-ownership"><abbr title="The rule that each arbiter source has at most one owning session at a time.">source ownership</abbr></a></td>
+<td>There is no unmonitored path to motion</td>
+</tr>
+<tr>
+<td>Accepts <code>stop</code> and <code>estop</code> from any <abbr title="The stateful association between one client and the hub.">session</abbr>, including a <code>watch</code> one</td>
+<td>The person in the room may always stop the machine</td>
+</tr>
+<tr>
+<td>Serves at least four concurrent <abbr title="The stateful association between one client and the hub.">sessions</abbr></td>
+<td>Below that, a phone plus a web page plus a bridge already fails</td>
+</tr>
+<tr>
+<td>Offers at least one <a href="../../reference/dictionary/#pairing"><abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr></a> mode</td>
+<td>Otherwise <code>control</code> means nothing</td>
+</tr>
+<tr>
+<td>Meets <a href="../../reference/dictionary/#parser-totality"><abbr title="The requirement that every parser maps any byte string to accept or reject, with no crash in between.">parser totality</abbr></a></td>
+<td>Your <abbr title="The single authoritative endpoint of one machine.">hub</abbr> parses bytes sent by strangers</td>
+</tr>
+</tbody>
+</table>
+<p>Every size, timeout and floor quoted here lives in the generated
+<a href="../../reference/registry/limits/">limits table</a>. The named
+<a href="../../reference/dictionary/#conformance-profile">conformance profiles</a> live in
+<a href="../../spec/">the specification</a>.</p>
+<h3 id="what-is-genuinely-optional-and-what-each-one-costs">What is genuinely optional, and what each one costs<a class="headerlink" href="#what-is-genuinely-optional-and-what-each-one-costs" title="Link to this section">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Optional</th>
+<th>What it costs you</th>
+<th>What you give up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The network probe</td>
+<td>A timed burst, and a small reply to parse</td>
+<td>Grants start conservative and adapt at runtime instead</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#store"><abbr title="A channel class declaring a set of numbered slots holding opaque documents.">STORE</abbr></a> <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr></td>
+<td>Somewhere to keep documents. The transfer verb is one you already have</td>
+<td>No presets, and no enumerable paired-device list</td>
+</tr>
+<tr>
+<td>Procedures</td>
+<td>Progress state for one long operation</td>
+<td>A long operation looks like a frozen <abbr title="A channel class, and the only way a client changes anything.">intent</abbr></td>
+</tr>
+<tr>
+<td>The log <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr></td>
+<td>A bounded ring and a drop counter</td>
+<td>Clients that are not browsers cannot see your logs</td>
+</tr>
+<tr>
+<td>More transports</td>
+<td>One binding each: open, close, write, read</td>
+<td>Only the transports you did implement</td>
+</tr>
+<tr>
+<td>Signed <abbr title="The single authoritative endpoint of one machine.">hub</abbr> identity</td>
+<td>A keypair, and one signature per <abbr title="The stateful association between one client and the hub.">session</abbr></td>
+<td>A clone machine cannot be told apart from yours</td>
+</tr>
+<tr>
+<td>The <a href="../../reference/dictionary/#served-page-token"><abbr title="A single-use token the hub mints for its own served web page, so that page reaches control without a pairing ceremony.">served-page token</abbr></a></td>
+<td>An HTTP endpoint, and only if you serve a web page</td>
+<td>Your own page pairs like any other <abbr title="Any endpoint that establishes a session with the hub.">client</abbr></td>
+</tr>
+<tr>
+<td>The <abbr title="A forwarding node between the hub and clients on a transport the hub cannot reach directly.">relay</abbr> role</td>
+<td>Two queues per direction, plus an <abbr title="Emergency stop, an immediate driver-level stop that latches and prohibits motion until explicitly cleared.">ESTOP</abbr> fast path</td>
+<td>No bridging to a transport the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> cannot reach</td>
+</tr>
+<tr>
+<td>Encrypted transport</td>
+<td>Certificate handling, and the memory it wants</td>
+<td>Nothing the v1 threat model already claims</td>
+</tr>
+</tbody>
+</table>
+<p>Skipping an optional feature is not a degraded mode. A <abbr title="The single authoritative endpoint of one machine.">hub</abbr> that does not
+declare a <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> simply does not have it, and <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr> learn that the same way
+they learn everything else.</p>
+<h2 id="3-the-client-floor">3. The <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> floor<a class="headerlink" href="#3-the-client-floor" title="Link to this section">#</a></h2>
+<p>The <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> floor is smaller than the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> floor on purpose. Clients are where
+the tiny hardware lives.</p>
+<div class="ss-facts">
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Parser</strong></td>
+<td>One. There is no second wire grammar to implement.</td>
+</tr>
+<tr>
+<td><strong>Cryptography</strong></td>
+<td>None required. A raw token is a legal way to present credentials.</td>
+</tr>
+<tr>
+<td><strong>Stored identity</strong></td>
+<td>24 bytes: an 8-byte <a href="../../reference/dictionary/#instance-id"><abbr title="Eight bytes a client generates once and persists, saying who it durably is.">instance id</abbr></a> and a 16-byte <a href="../../reference/dictionary/#token">token</a>.</td>
+</tr>
+<tr>
+<td><strong>Frame budget</strong></td>
+<td>Every mandatory message fits the 242-byte floor, which is the smallest transport's payload.</td>
+</tr>
+<tr>
+<td><strong>Clock</strong></td>
+<td>None. All timestamps are <abbr title="The single authoritative endpoint of one machine.">hub</abbr> time, and a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> converts with an offset it learns.</td>
+</tr>
+<tr>
+<td><strong>Heap</strong></td>
+<td>None in steady state. The reference library allocates nothing once it is running.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A <a href="../../reference/dictionary/#constrained-client">constrained <abbr title="Any endpoint that establishes a session with the hub.">client</abbr></a> goes
+further and ships no <abbr title="A compact binary encoding of maps, arrays and numbers, used here in a deterministic profile.">CBOR</abbr> parser at all. It compiles in the <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> it was
+built against. It ships canned message templates and patches values into them
+at runtime. The deterministic encoding is what makes that safe: those bytes
+are exactly what a real encoder would have produced.</p>
+<p>That profile carries one obligation, and it is the interesting one. The <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>
+sends its compiled-in <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> in the handshake. If the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> differs, the
+<abbr title="Any endpoint that establishes a session with the hub.">client</abbr> must take a declared behavior. It may run degraded, with every control
+function it cannot re-verify suppressed. It may refuse, and show an "update
+me" indication. Silent full operation on a mismatched <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> is non-conformant.</p>
+<p class="ss-point"><strong>The point.</strong> The append-only layout rule means a mismatched <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> rarely breaks <em>parsing</em> — the known prefix of every layout still reads. So the <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> check decides <strong>policy</strong>, not parseability. An old remote keeps showing what it understands, and stops offering what it can no longer verify.</p>
+<h2 id="4-pairing-with-no-screen-no-led-and-no-buttons">4. <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">Pairing</abbr> with no screen, no LED and no buttons<a class="headerlink" href="#4-pairing-with-no-screen-no-led-and-no-buttons" title="Link to this section">#</a></h2>
+<p><abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">Pairing</abbr> is usually where low-capability hardware gets excluded. A ceremony
+needing a keypad on the joiner and a display on the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> rules out most devices
+in this ecosystem.</p>
+<p>SlopSync has one ceremony and three association modes. All three end in the
+same <abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grant</abbr>. The role is an attribute of the <abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grant</abbr>, never of the ceremony, and
+a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> has zero or one PIN rather than one secret per tier.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>The joiner needs</th>
+<th>The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../reference/dictionary/#knock-and-approve">Knock-and-approve</a></td>
+<td>One button</td>
+<td>Nothing. Any <code>configure</code> <abbr title="The stateful association between one client and the hub.">session</abbr> approves</td>
+</tr>
+<tr>
+<td>PIN proof</td>
+<td>A keypad, and an HMAC</td>
+<td>A surface that can show four digits</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#push-to-pair">Push-to-pair</a></td>
+<td>One button</td>
+<td>Nothing. Physical presence is the proof</td>
+</tr>
+</tbody>
+</table>
+<p>Read the first and third rows again. <strong>A <abbr title="The single authoritative endpoint of one machine.">hub</abbr> with no display, no LED and no
+button still pairs devices.</strong> The trusted surface is any <code>configure</code> <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>,
+and the presence proof is the power cord.</p>
+<p>On a bare board it goes like this:</p>
+<ol>
+<li>A factory-fresh <abbr title="The single authoritative endpoint of one machine.">hub</abbr> holds no <code>configure</code> token, so it boots claimable.</li>
+<li>The first <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that knocks is granted <code>configure</code>. Whoever unboxed the
+   machine and powered it possesses it.</li>
+<li>To re-open <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> later, power-cycle three times. Each of those boots
+   lasts under about ten seconds. The next boot opens a short window that
+   <abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grants</abbr> once.</li>
+<li>That <code>configure</code> <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> now approves everyone else. It renders the pending
+   list, because the pending list is ordinary protocol state.</li>
+</ol>
+<p>The window is visible in band, which matters when there is no lamp to look at.
+Any <code>watch</code> <abbr title="The stateful association between one client and the hub.">session</abbr> sees that <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> is open, in state and in events, while
+being trusted with nothing.</p>
+<p>A <abbr title="The single authoritative endpoint of one machine.">hub</abbr> with a real button may bind it as the <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> control. A <abbr title="The single authoritative endpoint of one machine.">hub</abbr> with
+addressable lighting should show a <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> state. Both are usability upgrades.
+Neither is required, and neither is what makes the ceremony work.</p>
+<p class="ss-point"><strong>The point.</strong> Factory reset must be a deliberately harder gesture than opening <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr>. If wiping the token store were the same gesture, the safest recovery path would also be the cheapest attack.</p>
+<h2 id="5-a-worked-example-a-two-button-remote">5. A worked example: a two-button remote<a class="headerlink" href="#5-a-worked-example-a-two-button-remote" title="Link to this section">#</a></h2>
+<p>Take a battery remote with two buttons, a small radio and no display. Walk it
+from nothing to conforming.</p>
+<p><strong>It is a constrained <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>.</strong> It compiles in the <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> of the machine it
+ships beside, plus that <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr>'s <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr>. It carries canned templates for the
+three messages it sends.</p>
+<p><strong>It stores 24 bytes.</strong> Its <abbr title="Eight bytes a client generates once and persists, saying who it durably is.">instance id</abbr>, generated once, and its token after
+<abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr>.</p>
+<p><strong>It pairs by knocking.</strong> One press of both buttons sends a bare <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr>
+request. The owner approves it from a phone or a web page. Or the remote is
+the very first <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>, and the machine is factory-fresh.</p>
+<p><strong>It subscribes to two <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr></strong> and renders them: a position stream and the
+safety word. It shows itself as unready until its first snapshots arrive,
+because showing stale data as fresh is the failure this whole design prevents.</p>
+<p><strong>It sends one <abbr title="A channel class, and the only way a client changes anything.">intent</abbr> per press</strong>, absolute and never relative. It renders
+what the echo reports, not what it asked for.</p>
+<p><strong>It stops the machine</strong> with a role-exempt safety operation, and repeats
+until it observes the <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr>. It needs no permission for that. The
+repeat-until-<abbr title="A safety condition that stays true in state until something explicitly clears it.">latched</abbr> rule is what makes a lossy radio acceptable here.</p>
+<p>That is a conforming controller <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>. Nothing on that list needs a
+filesystem, a heap, a clock or a cryptographic library.</p>
+<h2 id="6-what-the-floor-deliberately-leaves-out">6. What the floor deliberately leaves out<a class="headerlink" href="#6-what-the-floor-deliberately-leaves-out" title="Link to this section">#</a></h2>
+<ul>
+<li><strong>No required cryptography.</strong> It is recommended and never mandatory,
+  because mandating it exiles the smallest hardware.</li>
+<li><strong>No wall clock.</strong> The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> is the timebase, so a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> without a real-time
+  clock loses nothing.</li>
+<li><strong>No allocator in steady state.</strong> Sizes are known up front, which is what
+  makes a fixed-capacity implementation possible.</li>
+<li><strong>No required transport.</strong> A binding is four operations plus an honest
+  declaration of what it can do.</li>
+<li><strong>No mandated interface.</strong> The <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> says what a value <strong>is</strong>. It never
+  says how a value should look.</li>
+</ul>
+<h2 id="where-to-go-next">Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this section">#</a></h2>
+<ul>
+<li><a href="../how-it-works/">How it works</a> — the mental model behind this checklist.</li>
+<li><a href="../anatomy/">Anatomy of a frame</a> — what your binding actually moves.</li>
+<li><a href="../../build/local-testing/">Local testing</a> — prove your <abbr title="The single authoritative endpoint of one machine.">hub</abbr> against the
+  probe and the <abbr title="A desktop binary that behaves like a machine, embedding the real hub, motion engine and catalog behind a real transport.">simulator</abbr> before you trust it.</li>
+<li><a href="../../reference/registry/limits/">Limits and defaults</a> — every number quoted
+  here, generated from the <abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr>.</li>
+</ul>
+<!-- GENERATED FILE. DO NOT EDIT. Source: docs-site/dictionary.yaml via docs-site/tools/gen_docs_tables.py -->
+<!-- Appended to every page by pymdownx.snippets.auto_append, so a
+     defined term shows its Dictionary definition on hover. -->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../anatomy/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Anatomy of a frame">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Anatomy of a frame
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../what-it-replaces/" class="md-footer__link md-footer__link--next" aria-label="Next: What it replaces">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                What it replaces
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      SlopSync is provided to the community as a tool. It favors no firmware, no vendor and no product.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/javascripts/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

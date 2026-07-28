@@ -1,0 +1,3308 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The SlopSync mental model in seven diagrams: the catalog as a datasheet, the channel classes, connecting, ground truth, where data lives, safety, and a settings screen that builds itself.">
+      
+      
+        <meta name="author" content="The SlopSync contributors">
+      
+      
+        <link rel="canonical" href="https://AtlanticTM.github.io/SlopSync/dev/understand/how-it-works/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../anatomy/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>How it works - SlopSync</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/datasheet.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="color-scheme" content="light dark">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-it-works" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SlopSync" class="md-header__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SlopSync
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How it works
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Understand
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Build with it
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../spec/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Specification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SlopSync" class="md-nav__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    SlopSync
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Understand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-read-these-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read these diagrams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-machine-hands-you-its-datasheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The machine hands you its datasheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-five-channel-classes-chosen-by-one-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Five channel classes, chosen by one question
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-connecting-two-paths-one-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Connecting: two paths, one gate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ground-truth-420-goes-in-400-comes-out-everywhere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ground truth: 420 goes in, 400 comes out everywhere
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-where-the-data-lives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Where the data lives
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-safety-the-latch-is-the-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Safety: the latch is the truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-a-settings-screen-that-builds-itself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. A settings screen that builds itself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-to-go-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where to go next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anatomy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anatomy of a frame
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../what-it-replaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it replaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem and compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security model and the audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../for-everyone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For everyone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../build/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build with it
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build with it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/javascript/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JavaScript
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub implementer guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/local-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../spec/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/wire-format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time and sequencing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/qos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS and congestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports and relays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/legacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conformance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worked session traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog schema (CDDL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/appendices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices A-G
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/rationale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale and history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spec/errata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/registry/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frame types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/cbor-keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/catalog-vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event kinds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/pairing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairing modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NACK codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/limits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel catalog
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-grid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel grid
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../community/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/rfc-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC process
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-read-these-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read these diagrams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-the-machine-hands-you-its-datasheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The machine hands you its datasheet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-five-channel-classes-chosen-by-one-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Five channel classes, chosen by one question
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-connecting-two-paths-one-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Connecting: two paths, one gate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ground-truth-420-goes-in-400-comes-out-everywhere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ground truth: 420 goes in, 400 comes out everywhere
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-where-the-data-lives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Where the data lives
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-safety-the-latch-is-the-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Safety: the latch is the truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-a-settings-screen-that-builds-itself" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. A settings screen that builds itself
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-to-go-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where to go next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+    
+      <p class="ss-pagemeta">
+        
+  
+    <span class="ss-badge ss-badge--ste" title="ASD-STE100-influenced register: one idea per sentence, active voice, present tense. Industry terminology is preserved, never simplified away.">STE register</span>
+  
+
+        
+        
+      </p>
+    
+  
+  
+                  
+
+
+
+<h1 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Link to this section">#</a></h1>
+<p>A SlopSync machine describes itself. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> reads that description and builds
+its interface from it. Everything on this page follows from those two
+sentences.</p>
+<p>This page is mostly pictures. Read them in order. You need no prior knowledge
+of this protocol, of <abbr title="A compact binary encoding of maps, arrays and numbers, used here in a deterministic profile.">CBOR</abbr>, or of motion control.</p>
+<h2 id="how-to-read-these-diagrams">How to read these diagrams<a class="headerlink" href="#how-to-read-these-diagrams" title="Link to this section">#</a></h2>
+<p>Every diagram on this site uses one visual language. Learn it once here.</p>
+<div class="ss-keys">
+<span class="ss-key ss-key--reality"><b>reality</b>Measured truth. What the machine actually did, applied, or is reporting now.</span>
+<span class="ss-key ss-key--intent"><b>intent</b>A wish. What somebody asked for, before the machine confirms anything.</span>
+<span class="ss-key ss-key--safety"><b>safety</b>Stops and latches. This color never carries a second meaning.</span>
+<span class="ss-key"><b>rectangle</b>A party or a step: a hub, a client, a decision.</span>
+<span class="ss-key"><b>cylinder</b>Something that persists somewhere.</span>
+<span class="ss-key"><b>rounded</b>One frame, in flight on the wire.</span>
+<span class="ss-key"><b>▶ START</b>Where a flowchart begins. Every flowchart on this site marks it.</span>
+</div>
+
+<p>The two colors are not decoration. They are the two colors the SlopDrive-32
+machine paints on its own screen: blue for what the machine measured or
+applied, purple for what a person asked for. They mean the same thing in a
+diagram, in a table and on the machine. Amber and red are safety, in the
+documentation and on the machine alike, and neither may restyle them.</p>
+<p>The distinction those two colors carry is the whole product. Hold on to it and
+the rest of this page is straightforward.</p>
+<h2 id="1-the-machine-hands-you-its-datasheet">1. The machine hands you its datasheet<a class="headerlink" href="#1-the-machine-hands-you-its-datasheet" title="Link to this section">#</a></h2>
+<p class="ss-cap">A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that knows nothing connects, reads the machine's self-description, and from that alone knows everything it may read, everything it may send, and everything it may not touch.</p>
+<pre class="mermaid"><code>flowchart LR
+    C["▶ START&lt;br/&gt;A new client&lt;br/&gt;knows nothing&lt;br/&gt;about this machine"]:::party
+    H["The hub&lt;br/&gt;one machine,&lt;br/&gt;one authority"]:::hub
+    CAT[("Catalog&lt;br/&gt;the machine's own datasheet")]:::store
+    R["Values it may read&lt;br/&gt;name · type · unit · limits"]:::truth
+    W["Commands it may send&lt;br/&gt;name · fields · limits"]:::wish
+    A["Doors it may not open&lt;br/&gt;an access level per channel"]:::party
+    UI["A screen built from&lt;br/&gt;the machine, not from&lt;br/&gt;a driver"]:::party
+
+    C --&gt;|"1 · connects and asks"| H
+    H --&gt;|"2 · answers with its&lt;br/&gt;self-description"| CAT
+    CAT --&gt; R
+    CAT --&gt; W
+    CAT --&gt; A
+    R --&gt; UI
+    W --&gt; UI
+    A --&gt; UI
+
+    classDef hub fill:#3183cc2e,stroke:#3183cc,stroke-width:2px
+    classDef truth fill:#3183cc2e,stroke:#3183cc
+    classDef store fill:#3183cc2e,stroke:#3183cc
+    classDef wish fill:#8158d82e,stroke:#8158d8
+    classDef party fill:none,stroke:#8a8f98</code></pre>
+<p class="ss-point"><strong>The point.</strong> There is no device driver. The <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> is not compiled against this machine, and the machine is not compiled against this <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>. A control added in firmware appears on every <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> at its next connection, with the label, the unit and the limits supplied by the machine.</p>
+<p>A <a href="../../reference/dictionary/#catalog"><abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr></a> entry describes one
+<strong><abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr></strong>. Each entry carries an id, a name, a class, a direction, an access
+level, a maximum rate, and a field-by-field description of its payload. The
+whole <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> is hashed into an <a href="../../reference/dictionary/#etag"><abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr></a>, which
+names exactly which <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> exposes. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that already holds that
+<abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> has nothing to download.</p>
+<h2 id="2-five-channel-classes-chosen-by-one-question">2. Five <abbr title="One of STATE, STREAM, INTENT, EVENT or STORE.">channel classes</abbr>, chosen by one question<a class="headerlink" href="#2-five-channel-classes-chosen-by-one-question" title="Link to this section">#</a></h2>
+<p>Ask what breaks if a single frame never arrives. The answer picks the class.</p>
+<p class="ss-cap">The loss question, and the five answers that are the five <abbr title="One of STATE, STREAM, INTENT, EVENT or STORE.">channel classes</abbr>.</p>
+<pre class="mermaid"><code>flowchart TD
+    Q{"▶ START&lt;br/&gt;One frame is lost.&lt;br/&gt;What breaks?"}:::party
+
+    Q --&gt;|"Nothing. The next one&lt;br/&gt;replaces it whole"| S["STATE&lt;br/&gt;full snapshots of a group of values"]:::truth
+    Q --&gt;|"Almost nothing. It was one&lt;br/&gt;timestamped sample of many"| ST["STREAM&lt;br/&gt;bundles of samples, at rate"]:::truth
+    Q --&gt;|"The change never happens,&lt;br/&gt;and the sender must find out"| I["INTENT&lt;br/&gt;the only way anything changes"]:::wish
+    Q --&gt;|"A moment is missed"| E["EVENT&lt;br/&gt;edges, not levels"]:::truth
+    Q --&gt;|"Nothing. The document&lt;br/&gt;is fetched again"| B["STORE&lt;br/&gt;numbered slots holding documents"]:::store
+
+    E -.-&gt;|"so anything that matters&lt;br/&gt;also has a STATE twin"| S
+
+    classDef truth fill:#3183cc2e,stroke:#3183cc
+    classDef wish fill:#8158d82e,stroke:#8158d8
+    classDef store fill:none,stroke:#8a8f98
+    classDef party fill:none,stroke:#8a8f98</code></pre>
+<p class="ss-point"><strong>The point.</strong> Loss tolerance is designed in per class, not bolted on afterwards. Only <abbr title="A channel class, and the only way a client changes anything.">intents</abbr> demand an end-to-end confirmation, and only <abbr title="A channel class, and the only way a client changes anything.">intents</abbr> get one.</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Carries</th>
+<th>If a frame is lost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../reference/dictionary/#state"><abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr></a></td>
+<td>A full snapshot of a group of values</td>
+<td>Harmless. The next snapshot supersedes it. There are no deltas, ever.</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#stream"><abbr title="A channel class carrying timestamped sample bundles, in either direction.">STREAM</abbr></a></td>
+<td>Timestamped <a href="../../reference/dictionary/#bundle"><abbr title="One STREAM frame carrying a base timestamp and up to 32 samples.">bundles</abbr></a> of samples</td>
+<td>Recoverable. Samples carry time, so a consumer interpolates across the hole.</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#intent"><abbr title="A channel class, and the only way a client changes anything.">INTENT</abbr></a></td>
+<td>One absolute command</td>
+<td>The change does not happen. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> answers every <abbr title="A channel class, and the only way a client changes anything.">intent</abbr> with an <a href="../../reference/dictionary/#echo"><abbr title="The hub's mandatory, truthful reply to an intent, carrying the values actually in effect after clamping.">ECHO</abbr></a> or an error, so the sender finds out.</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#event"><abbr title="A channel class carrying discrete occurrences, edges, not levels.">EVENT</abbr></a></td>
+<td>One occurrence, at one moment</td>
+<td>A moment is missed. Events are never replayed, so no safety behavior may depend on one.</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#store"><abbr title="A channel class declaring a set of numbered slots holding opaque documents.">STORE</abbr></a></td>
+<td>Numbered slots holding opaque documents</td>
+<td>Harmless. The <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> asks for the document again.</td>
+</tr>
+</tbody>
+</table>
+<p>Two rules follow from that table, and both are load-bearing.</p>
+<p><strong>Every <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> frame is a full snapshot.</strong> A delta would make one lost frame
+corrupt everything after it. Full snapshots are also what make
+<a href="../../reference/dictionary/#conflation"><abbr title="Keeping at most one queued unsent frame per channel and subscriber, so a newer snapshot replaces an older one.">conflation</abbr></a> safe: when a link is slow
+the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> replaces the queued snapshot with the newer one, so a subscriber sees
+the freshest truth its link can carry and never a backlog.</p>
+<p><strong>Every event that matters has a <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> twin.</strong> The event says <em>this just
+happened</em>. The state says <em>this is still true</em>. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that arrives after the
+event adopts the state and needs no history.</p>
+<h2 id="3-connecting-two-paths-one-gate">3. Connecting: two paths, one gate<a class="headerlink" href="#3-connecting-two-paths-one-gate" title="Link to this section">#</a></h2>
+<p class="ss-cap">A cold <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> fetches the <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr>; a returning <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> whose cached <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr> matches skips straight through. Both reach the same gate.</p>
+<pre class="mermaid"><code>%%{init: {"themeVariables": {"actorLineColor": "#8a8f98"}} }%%
+sequenceDiagram
+    autonumber
+    participant C as Client
+    participant H as Hub
+
+    C-&gt;&gt;H: HELLO — who I am, what I want,&lt;br/&gt;and which catalog I already hold
+    H-&gt;&gt;C: WELCOME — session, roles, grants,&lt;br/&gt;the hub's catalog etag
+
+    alt Cached etag matches the hub's
+        Note over C,H: Holding the etag proves the client holds the catalog.&lt;br/&gt;Nothing is transferred.
+    else No etag, or a different one
+        C-&gt;&gt;H: BLOB_REQ — send me the catalog
+        H--&gt;&gt;C: BLOB_CHUNK, repeated
+        Note over C,H: The client hashes what it assembled.&lt;br/&gt;The etag verifies the transfer by itself.
+        C-&gt;&gt;H: CATALOG_READY — I now operate against this etag
+    end
+
+    H-&gt;&gt;C: retained STATE, for every granted channel
+    Note over C,H: LIVE. Only now may the client act on user input.</code></pre>
+<p class="ss-point"><strong>The point.</strong> The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> sends no state at all until the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> has confirmed which <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> it decodes against. This is the <a href="../../reference/dictionary/#ready-gate"><abbr title="The rule that a session's frames are refused until it confirms which catalog it has adopted.">ready gate</abbr></a>. Without it a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> would receive packed bytes it cannot interpret, and the only way to read them anyway would be a hardcoded copy of this machine's layouts — the exact coupling a <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> exists to remove.</p>
+<p>Two other things happen in that handshake, and both matter later.</p>
+<p><strong>Grants are truth; requests are wishes.</strong> A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> asks to receive a <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>
+at some rate. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> answers with the rate it will actually deliver, and that
+answer is a <a href="../../reference/dictionary/#grant"><abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grant</abbr></a>. An interface showing a
+rate it was never granted is lying about itself.</p>
+<p><strong>A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> stays visibly unready until it is LIVE.</strong> The specification requires
+the difference to be visible. Stale data displayed as fresh is the failure this
+whole design exists to prevent.</p>
+<h2 id="4-ground-truth-420-goes-in-400-comes-out-everywhere">4. <abbr title="The doctrine that a client never displays machine state that differs from the device's, in either direction.">Ground truth</abbr>: 420 goes in, 400 comes out everywhere<a class="headerlink" href="#4-ground-truth-420-goes-in-400-comes-out-everywhere" title="Link to this section">#</a></h2>
+<p class="ss-cap">A remote asks for a value above the machine's ceiling. Watch which number every screen ends up showing.</p>
+<pre class="mermaid"><code>%%{init: {"themeVariables": {"actorLineColor": "#8a8f98"}} }%%
+sequenceDiagram
+    autonumber
+    participant R as Remote
+    participant H as Hub
+    participant B as Browser
+
+    R-&gt;&gt;H: INTENT — set speed to 420
+    Note right of H: The ceiling is 400.&lt;br/&gt;The hub applies 400.
+    H-&gt;&gt;R: ECHO — applied 400
+    H-&gt;&gt;R: STATE — speed 400
+    H-&gt;&gt;B: STATE — speed 400
+    Note over R,B: Every screen shows 400.&lt;br/&gt;Nobody shows 420, including the remote that asked.</code></pre>
+<p class="ss-point"><strong>The point.</strong> The echo reports what the machine applied, never what the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> requested. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>'s <a href="../../reference/dictionary/#shadow"><abbr title="The client-side replica of subscribed state, maintained exclusively from hub frames.">shadow</abbr></a> updates from the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s answer, never from its own request. This is why optimistic interface state is prohibited rather than discouraged: on a machine that moves, a screen that lies about state is a safety defect.</p>
+<p>A control therefore does not jump to 420 while it waits. It shows the request
+as <strong>pending</strong> and adopts the applied value when the echo arrives. Limits are
+ceilings, never targets, and a <a href="../../reference/dictionary/#clamp"><abbr title="Replacing a requested value with the nearest value the machine's limits allow.">clamp</abbr></a> is not
+an error: 400 is simply the answer.</p>
+<blockquote>
+<p>DEMO-CANDIDATE: a live slider that lets a reader ask a real simulated <abbr title="The single authoritative endpoint of one machine.">hub</abbr>
+for a value past its ceiling, and watch pending, echo and <abbr title="Replacing a requested value with the nearest value the machine's limits allow.">clamp</abbr> happen in
+real time.</p>
+</blockquote>
+<p>Two more rules let this survive a bad network.</p>
+<p><strong>Intents are absolute, never relative.</strong> "Set speed to 405" survives a
+reconnect, because a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> can compare it against the snapshot it adopts. "Add
+20" cannot be reconciled against anything.</p>
+<p><strong>A duplicate <abbr title="A channel class, and the only way a client changes anything.">intent</abbr> is harmless.</strong> Each <abbr title="A channel class, and the only way a client changes anything.">intent</abbr> carries an id. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> keeps a
+small ring of recent ids and re-sends the stored echo for a repeat, instead of
+applying it twice.</p>
+<h2 id="5-where-the-data-lives">5. Where the data lives<a class="headerlink" href="#5-where-the-data-lives" title="Link to this section">#</a></h2>
+<p class="ss-cap">The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> owns the only copy that counts. What a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> holds is a <abbr title="The client-side replica of subscribed state, maintained exclusively from hub frames.">shadow</abbr> of it, and a <abbr title="The client-side replica of subscribed state, maintained exclusively from hub frames.">shadow</abbr> never survives a reconnect.</p>
+<pre class="mermaid"><code>flowchart TD
+    H[("▶ START&lt;br/&gt;Hub&lt;br/&gt;the retained value of&lt;br/&gt;every STATE channel")]:::truth
+
+    H --&gt;|"on subscribe: the retained&lt;br/&gt;value, immediately"| S1[("Shadow&lt;br/&gt;in the browser")]:::truth
+    H --&gt;|"and to every other subscriber"| S2[("Shadow&lt;br/&gt;in the remote")]:::truth
+
+    S1 --&gt; V1["Screens read&lt;br/&gt;the shadow"]:::party
+    S2 --&gt; V2["Screens read&lt;br/&gt;the shadow"]:::party
+
+    V1 -.-&gt;|"a wish, never a write"| I(["INTENT"]):::wish
+    I -.-&gt; H
+
+    S1 ==&gt;|"link drops"| X["The shadow is&lt;br/&gt;discarded whole"]:::party
+    X ==&gt;|"reconnect: adopt,&lt;br/&gt;never merge"| H
+
+    classDef truth fill:#3183cc2e,stroke:#3183cc
+    classDef wish fill:#8158d82e,stroke:#8158d8
+    classDef party fill:none,stroke:#8a8f98</code></pre>
+<p class="ss-point"><strong>The point.</strong> No <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> state survives a reconnect on its own authority. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> keeps the <a href="../../reference/dictionary/#retained-value"><abbr title="The latest value of a STATE channel, which the hub keeps and pushes immediately on grant.">retained value</abbr></a> of every <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> and pushes it the moment a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> is granted the <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>, so re-adoption is the ordinary connect path rather than a special recovery path.</p>
+<p>A reconnecting <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> re-sends nothing blindly. It compares what it still wants
+against the snapshot it just adopted, and issues an <abbr title="A channel class, and the only way a client changes anything.">intent</abbr> only if the two
+still differ.</p>
+<p><strong>Reconnecting is not re-taking control.</strong> Subscriptions come back freely. If
+the disconnection stopped motion, the returning <abbr title="The stateful association between one client and the hub.">session</abbr> must ask for control
+again with a fresh <abbr title="A channel class, and the only way a client changes anything.">intent</abbr>. Motion never restarts because a socket reopened.</p>
+<h2 id="6-safety-the-latch-is-the-truth">6. Safety: the <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr> is the truth<a class="headerlink" href="#6-safety-the-latch-is-the-truth" title="Link to this section">#</a></h2>
+<p class="ss-cap">An emergency stop from any endpoint, and why the <abbr title="A safety condition that stays true in state until something explicitly clears it.">latched</abbr> state — not the event — is what every <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> obeys.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["▶ START&lt;br/&gt;Any endpoint.&lt;br/&gt;Any role. Even with no session."]:::safety
+    A --&gt;|"ESTOP frame"| Q["Every queue on the path&lt;br/&gt;admits it at the front"]:::plumb
+    Q --&gt; H["The hub stops motion FIRST,&lt;br/&gt;then does protocol bookkeeping"]:::safety
+    H --&gt; L[("safety STATE — the latch.&lt;br/&gt;Stays true until it is cleared.")]:::safety
+    H --&gt; E(["EVENT — the edge.&lt;br/&gt;A toast. A log line."]):::party
+    L --&gt;|"retained: pushed to every client,&lt;br/&gt;including one that arrives later"| N["Every screen agrees&lt;br/&gt;the machine is stopped"]:::party
+    E -.-&gt;|"never replayed"| N
+    N -.-&gt;|"repeat until the latch&lt;br/&gt;is observed"| A
+
+    classDef safety fill:#d8434f2e,stroke:#d8434f,stroke-width:2px
+    classDef party fill:none,stroke:#8a8f98
+    classDef plumb fill:none,stroke:#8a8f98,stroke-dasharray:3 3</code></pre>
+<p class="ss-point"><strong>The point.</strong> There is no acknowledgement frame for an emergency stop. The initiator repeats the frame until it observes the <a href="../../reference/dictionary/#latch"><abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr></a> in state. An observable <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr> is the only acknowledgement worth anything, because it is the same <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr> every other <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> is reading.</p>
+<p>Safety outranks authorization by design. Anyone may stop the machine; not
+everyone may start it. Clearing the <abbr title="A safety condition that stays true in state until something explicitly clears it.">latch</abbr> needs the <code>control</code> tier, needs the
+cause to be resolved, and re-arms motion rather than resuming it.</p>
+<p>A machine also notices when nobody is watching it.
+<a href="../../reference/dictionary/#deadman"><abbr title="The silence window bound to an active source, after which the source's loss policy fires.">Deadman</abbr></a> binds to the source currently
+driving motion. If that source goes silent for its window, the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> releases
+its ownership — bookkeeping, not a command. Nothing broadcasts a forced stop:
+a vanished streaming <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> was already the reason no fresh commands were
+arriving, so motion settles by physics rather than by a safety action. A
+pattern running on the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> keeps running by default, because a locked phone
+screen was never what drove it; whether a given source keeps going or stops
+when its owner disappears is that source's own declared policy, not a
+universal <abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr> reflex.</p>
+<h2 id="7-a-settings-screen-that-builds-itself">7. A settings screen that builds itself<a class="headerlink" href="#7-a-settings-screen-that-builds-itself" title="Link to this section">#</a></h2>
+<p>This is the payoff of everything above. A machine describes not only its values
+but what they mean, so a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> renders a complete settings surface it was
+never written for.</p>
+<p class="ss-cap">One annotated <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> field becomes one control, and the loop from edit back to displayed value never shortcuts through the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>'s own guess.</p>
+<pre class="mermaid"><code>flowchart TD
+    CAT[("▶ START&lt;br/&gt;Catalog field&lt;br/&gt;unit · min · max · default · options&lt;br/&gt;role · category · setting_key")]:::store
+    CAT --&gt; Q{"Does it carry&lt;br/&gt;a setting_key?"}:::party
+    Q --&gt;|"no — it is a reading"| RO["Read-only display,&lt;br/&gt;with its unit"]:::truth
+    Q --&gt;|"yes — it is a setting"| WID["A control, chosen from&lt;br/&gt;the type and the constraints"]:::truth
+    WID --&gt; U["Somebody edits it"]:::wish
+    U --&gt; I(["INTENT on the paired channel"]):::wish
+    I --&gt; EC(["ECHO — the applied value"]):::truth
+    EC --&gt;|"the control adopts&lt;br/&gt;what was applied"| WID
+    EC --&gt; ST(["STATE — to everyone else"]):::truth
+    ST --&gt; OTH["Every other client shows&lt;br/&gt;the same value"]:::truth
+
+    classDef store fill:none,stroke:#8a8f98
+    classDef party fill:none,stroke:#8a8f98
+    classDef truth fill:#3183cc2e,stroke:#3183cc
+    classDef wish fill:#8158d82e,stroke:#8158d8</code></pre>
+<p class="ss-point"><strong>The point.</strong> A field with a <a href="../../reference/dictionary/#setting_key"><abbr title="The catalog annotation naming which key of the paired INTENT channel writes this displayed field.">setting_key</abbr></a> is a setting, and the key names the command that writes it. A field without one is a reading. That single annotation replaces the hand-written table every <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> used to keep, <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> each display to its control — the table that goes stale the day the firmware changes.</p>
+<p>The <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> says what a value <strong>is</strong>. It never says how a value should
+<strong>look</strong>. There is no widget field, deliberately. A phone renders a range as a
+slider, a small remote as a click wheel, a desktop plugin as a numeric box:
+same bytes, three honest interfaces.</p>
+<table>
+<thead>
+<tr>
+<th>The annotation</th>
+<th>What a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> does with it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../../reference/dictionary/#setting_key"><code>setting_key</code></a></td>
+<td>Writable, and here is the command key that writes it. Absent means read-only.</td>
+</tr>
+<tr>
+<td><code>min</code>, <code>max</code>, <code>step</code>, <code>unit</code>, <code>default</code></td>
+<td>Choose and bound the control. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> still validates; these are for display.</td>
+</tr>
+<tr>
+<td><code>options</code></td>
+<td>Name the choices of a single-select, instead of showing raw numbers.</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#field-role"><code>role</code></a></td>
+<td>Say what the value <em>is</em> semantically, so a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that recognizes it <strong>may</strong> upgrade to a purpose-built control. Fallback is mandatory; upgrades are optional.</td>
+</tr>
+<tr>
+<td><a href="../../reference/dictionary/#setting-category"><code>category</code></a></td>
+<td>Which tab it belongs in, from a registered list, so placement stays consistent across different machines.</td>
+</tr>
+<tr>
+<td><code>flags</code></td>
+<td><code>advanced</code> hides it behind an affordance, never removes it. <code>secret</code> means the value never appears in state at all — only whether it is set.</td>
+</tr>
+</tbody>
+</table>
+<p>A setting the machine cannot accept right now is grayed, never hidden. The
+machine says so in its own state, and every <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> grays from that one truth.</p>
+<p>The registered vocabularies — every category, role, flag and field type — are
+in the <a href="../../reference/registry/catalog-vocabulary/"><abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> vocabulary reference</a>,
+generated from the <abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr>.</p>
+<h2 id="where-to-go-next">Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this section">#</a></h2>
+<ul>
+<li><a href="../anatomy/">Anatomy of a frame</a> — the eight bytes every frame starts with,
+  and why there are two payload encodings.</li>
+<li><a href="../capabilities/">Capabilities and custom hardware</a> — what your device must
+  provide to be a <abbr title="The single authoritative endpoint of one machine.">hub</abbr>.</li>
+<li><a href="../../reference/dictionary/">The Dictionary</a> — every term on this page, with
+  exactly one definition each.</li>
+</ul>
+<!-- GENERATED FILE. DO NOT EDIT. Source: docs-site/dictionary.yaml via docs-site/tools/gen_docs_tables.py -->
+<!-- Appended to every page by pymdownx.snippets.auto_append, so a
+     defined term shows its Dictionary definition on hover. -->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Understand SlopSync">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Understand SlopSync
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../anatomy/" class="md-footer__link md-footer__link--next" aria-label="Next: Anatomy of a frame">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Anatomy of a frame
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      SlopSync is provided to the community as a tool. It favors no firmware, no vendor and no product.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/javascripts/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

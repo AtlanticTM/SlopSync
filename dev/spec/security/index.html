@@ -1,0 +1,3203 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SlopSync clause 12: threat model, access tiers, pairing ceremonies, token presentation, hub authenticity, the trust ledger, and the administration surface.">
+      
+      
+        <meta name="author" content="The SlopSync contributors">
+      
+      
+        <link rel="canonical" href="https://AtlanticTM.github.io/SlopSync/dev/spec/security/">
+      
+      
+        <link rel="prev" href="../safety/">
+      
+      
+        <link rel="next" href="../transports/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Security and trust - SlopSync</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/datasheet.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="color-scheme" content="light dark">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#s12" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SlopSync" class="md-header__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SlopSync
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Security and trust
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../understand/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Understand
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Build with it
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Specification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SlopSync" class="md-nav__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    SlopSync
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../understand/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Understand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/anatomy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anatomy of a frame
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/what-it-replaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it replaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem and compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security model and the audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/for-everyone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For everyone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../build/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build with it
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build with it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/javascript/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JavaScript
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub implementer guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/local-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wire-format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time and sequencing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS and congestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#s12-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Threat model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Access tiers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 Pairing: one ceremony, three association modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4 Token presentation modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5 Hub authenticity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6 The trust ledger and the change tripwire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.7 The administration surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.8 The served-page token sideband (optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.9 Per-transport mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.10 Future work (informative)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports and relays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../legacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conformance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worked session traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog schema (CDDL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices A-G
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rationale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale and history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/registry/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frame types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/cbor-keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/catalog-vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event kinds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/pairing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairing modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NACK codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/limits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel catalog
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-grid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel grid
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../community/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/rfc-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC process
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#s12-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.1 Threat model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.2 Access tiers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.3 Pairing: one ceremony, three association modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.4 Token presentation modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.5 Hub authenticity
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.6 The trust ledger and the change tripwire
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.7 The administration surface
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.8 The served-page token sideband (optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.9 Per-transport mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s12-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12.10 Future work (informative)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+    
+      <p class="ss-pagemeta">
+        
+  
+    <span class="ss-badge ss-badge--ieee" title="Normative register: numbered clauses, RFC 2119 MUST/SHALL/MAY, exact cross-references.">IEEE register</span>
+  
+
+        
+          <span class="ss-badge ss-badge--generated" title="Generated from registry.yaml by docs-site/tools/gen_docs_tables.py. Hand edits are overwritten, and a stale copy fails CI.">generated</span>
+        
+        
+      </p>
+    
+  
+  
+                  
+
+
+
+<!-- ==========================================================
+     GENERATED FILE — DO NOT EDIT.
+     Source of truth: spec/SPEC.md
+     Generator:       docs-site/tools/gen_spec_pages.py
+     Regenerate:      python docs-site/tools/gen_spec_pages.py
+     CI gate:         python docs-site/tools/gen_spec_pages.py --check
+     Normative text is copied verbatim. Hand edits are overwritten
+     and fail the docs build. Edit the specification instead.
+     ========================================================== -->
+
+<h1 id="s12">12. Security and Trust <em>(normative except §12.10)</em><a class="headerlink" href="#s12" title="Link to this section">#</a></h1>
+<h2 id="s12-1">12.1 Threat model<a class="headerlink" href="#s12-1" title="Link to this section">#</a></h2>
+<p>On this product category, <strong>unauthorized control is a physical-safety issue</strong>, and privacy of presence and telemetry is a real secondary concern. Additionally, a protocol that becomes ubiquitous across many machines becomes a worthwhile malicious target in <strong>both</strong> directions: a hub parses HELLO, INTENT and bundles from untrusted clients, and a <strong>client</strong> parses WELCOME, catalog and STATE from a possibly-untrusted hub.</p>
+<p><strong>In scope:</strong> an untrusted device on the same LAN or radio range attempting control; a well-meaning but wrong client (a stale app) issuing bad intents; accidental cross-machine control (two hubs in range); a malicious peer in either role attempting to crash the other through malformed bytes (<a href="../wire-format/#s5-8">§5.8</a>); mass-automatable browser-borne attacks against a machine-hosted UI (<a href="#s12-8">§12.8</a>).</p>
+<p><strong>Out of scope for v1:</strong></p>
+<ul>
+<li><strong>HONESTY CLAUSE (H5):</strong> an active LAN MITM with packet-injection tooling. This explicitly includes clone-page attacks that proxy a PIN to the real hub.</li>
+<li><strong>HONESTY CLAUSE (H4):</strong> a passive LAN observer capturing cleartext. v1 transports are cleartext; the plugs this document does provide (proof presentation, <a href="#s12-4">§12.4</a>; hub signature designed to work without secrecy, <a href="#s12-5">§12.5</a>) narrow the consequences but do not move the boundary.</li>
+<li>Physical access to the machine.</li>
+<li><strong>HONESTY CLAUSE (H12):</strong> denial of service. A LAN attacker can jam the radio regardless of anything specified here.</li>
+<li>Individually-targeted attacks by a native process already resident on the LAN (<a href="#s12-8">§12.8</a>).</li>
+</ul>
+<p>The ruling that shapes every choice below: <strong>optimize against automatable mass vectors; accept the ceiling on individually-targeted LAN-resident attackers.</strong></p>
+<p><strong>Deployment commandment (normative):</strong> the SlopSync port MUST NOT be exposed to the wider internet. LAN-first is a security property of this design, not an accident of it.</p>
+<h2 id="s12-2">12.2 Access tiers<a class="headerlink" href="#s12-2" title="Link to this section">#</a></h2>
+<p>Three tiers, wire values <code>0/1/2</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Name</th>
+<th>Grants</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>watch</strong></td>
+<td>connect, browse the catalog, subscribe to <code>watch</code>-access channels. Open by default: watching requires no ceremony</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>control</strong></td>
+<td>everything watch does, plus intents on <code>control</code> channels and <strong>STREAM publishing</strong> — a motion producer is a controller</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>configure</strong></td>
+<td>everything control does, plus configuration and the administration surface (<a href="#s12-7">§12.7</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>Composition rules that hold across the whole document:</p>
+<ul>
+<li><strong>Safety <code>stop</code> and <code>estop</code> are role-EXEMPT</strong> (<a href="../safety/#s11-2">§11.2</a>): any session including <code>watch</code> may send them. Watch-tier stop spam is a <strong>named, bounded, accepted</strong> risk — exempt ops are still <a href="../channels/#s9-3">§9.3</a> rate-limited, and the person standing in the room being able to stop the machine outranks the nuisance.</li>
+<li><strong>OTA rights are NEVER derivable from any tier.</strong> Firmware update lives on its own credential plane; a <code>configure</code>-tier compromise cannot flash firmware.</li>
+<li><strong>Serial and in-process transports are implicitly <code>configure</code></strong> — possession of the cable or the process is the credential (<a href="#s12-9">§12.9</a>).</li>
+<li>Hubs MAY offer a lock-down setting in which even <code>watch</code> requires a token, for shared-space deployments.</li>
+</ul>
+<p>A tier shortfall is answered with NACK <code>NOT_CONTROLLER</code> where <code>control</code> was required and <code>ACCESS_DENIED</code> otherwise.</p>
+<h2 id="s12-3">12.3 Pairing: one ceremony, three association modes<a class="headerlink" href="#s12-3" title="Link to this section">#</a></h2>
+<p>Everything above <code>watch</code> requires a <strong>token</strong> bound to the client's <code>instance_id</code>. There is <strong>zero or one PIN</strong> on a hub, never per-tier secrets, and <strong>role is an attribute of the GRANT, never of the ceremony</strong> — all three modes end in PAIR_GRANT <code>{token, role}</code>.</p>
+<p>A hub advertises the modes it currently offers as a bitmask in WELCOME <code>trust.pairing_modes</code> (8), <strong>re-evaluated per session</strong>, so a transient window is advertised only while it is genuinely open. The field is omitted when no mode is on offer.</p>
+<p><strong>(a) Knock-and-approve — PRIMARY and capability-agnostic.</strong>
+A bare PAIR_REQ carrying no proof joins a <strong>bounded pending list</strong> (<code>pairing_pending_max</code>, 4 — bounded because it is the one unauthenticated queue a stranger can fill). The list is exposed as ordinary protocol state: a <code>pending-pairing</code> STATE channel with an EVENT twin. Any <strong><code>configure</code> session</strong> — a phone, a CLI, another machine, a web UI — approves <code>{instance_id, role}</code> or denies it, via the administration channel (<a href="#s12-7">§12.7</a>). Unanswered knocks expire after <code>pairing_window_default_s</code> (120).
+The joiner needs <strong>one button and no display</strong>. The trusted surface is <em>a tier, not an app</em>: nothing anywhere may special-case "the web UI approves". This mode is RECOMMENDED partly because its approval surface shows the knocker's identity on hardware the attacker does not control.
+The hub does not answer the knocker with any frame; the answer is the grant, when and if it comes.</p>
+<p><strong>(b) Numeric proof — self-service, for keyboard-bearing joiners when no <code>configure</code> session exists.</strong>
+The operator puts the hub in pairing mode, which opens a <code>pairing_window_default_s</code> window and displays a <code>pairing_pin_digits</code> (4) PIN on a trusted surface. The joiner sends PAIR_REQ carrying <code>pin_proof</code> (28) = HMAC-SHA256(key = the PIN as ASCII, message = the 8-byte <code>nonce</code> from its WELCOME), truncated to 16 bytes. A correct proof within the window yields PAIR_GRANT; a wrong proof or a closed window yields NACK <code>PAIRING_DENIED</code>, and <code>auth_attempts_max</code> (3, RFC-049g — the same registry constant <a href="#s12-4">§12.4</a>'s AUTH frame uses, deliberately not a second invented number) consecutive failures close the window. Proof comparison MUST be constant-time (<a href="../wire-format/#s5-8">§5.8-7</a>).
+The PIN itself never crosses the wire and the nonce binds the proof to this session, so it cannot be replayed across sessions.
+<strong>HONESTY CLAUSE (H3):</strong> four digits is 10⁴ offline HMACs. A passive observer of the exchange can brute-force the PIN. This robustly prevents casual and drive-by pairing — the v1 bar — and it is <strong>not</strong> a cryptographic access control. A PAKE (SPAKE2-class) is the reserved v2 upgrade; it is not in v1 because browser crypto APIs have no PAKE and mandating one would exile the browser client.</p>
+<p><strong>(c) Push-to-pair — bootstrap and potato fallback.</strong>
+A <strong>physical-presence proof</strong> opens a short <strong>single-grant</strong> window: the first knock is granted without approval, and the window then closes. The specification requires the <em>proof</em>, not a GPIO — <strong>the minimum hardware is none, because the power cord is the button:</strong></p>
+<ul>
+<li><em>Factory-fresh</em> (zero <code>configure</code> tokens exist): no gesture is needed. The hub boots claimable and the first knock gets <strong><code>configure</code></strong>. Whoever unboxed and powered it possesses it.</li>
+<li><em>Re-opening later:</em> the <strong>power-cycle gesture</strong> — <code>pairing_gesture_boot_count</code> (3, RFC-049g) consecutive boots each with uptime below <code>pairing_gesture_max_uptime_ms</code> (10000) arms the window on the next boot. A boot counter in non-volatile storage is the whole mechanism, and it cannot collide with a live session, because any power loss has already stopped motion and forced a re-home.</li>
+<li>A hub with a real button MAY bind it as the pairing control: a UX upgrade, never a requirement. A hub with indicator hardware SHOULD show a pairing state on it; window state is in any case observable in-band by any <code>watch</code> session.</li>
+<li><strong>Factory reset (wiping the token store) MUST be a deliberately harder gesture</strong> than opening pairing — a longer sequence, or the physically-attached console, which is implicitly <code>configure</code> anyway.</li>
+</ul>
+<p><strong>Grant rule: if zero <code>configure</code> tokens exist, the window grants <code>configure</code> — physical possession is root.</strong> Thereafter it grants the hub's configured default (<code>control</code>), and knock-and-approve does the rest.</p>
+<pre class="mermaid"><code>flowchart TD
+    Req([PAIR_REQ arrives]):::start
+    Req --&gt; Mode{which mode\ndoes it carry?}
+    Mode --&gt;|"bare, no proof"| Knock["(a) knock-and-approve:\njoins the pending list"]
+    Mode --&gt;|"pin_proof present"| Pin["(b) numeric proof:\nHMAC(PIN, nonce)"]
+    Mode --&gt;|"physical-presence window open"| Push["(c) push-to-pair:\nfirst knock in the window"]
+
+    Knock --&gt;|"a configure session\napproves"| Grant["PAIR_GRANT {token, role}"]
+    Knock --&gt;|"expires after\npairing_window_default_s"| Expire[No grant]
+    Pin --&gt;|"correct proof,\nwithin the window"| Grant
+    Pin --&gt;|"wrong, or window closed"| Deny["NACK PAIRING_DENIED"]
+    Push --&gt;|"factory-fresh\n(zero configure tokens)"| Grant
+    Push --&gt;|"re-opened by the\npower-cycle gesture"| Grant
+
+    classDef start fill:#2b6cb0,stroke:#1a365d,color:#fff,stroke-width:2px</code></pre>
+<p><em>Only one ceremony exists; the three boxes at the top are association
+</em><em>modes</em><em> into it, not three protocols. Every path converges on the same
+PAIR_GRANT shape — role is an attribute of the grant, never of the mode that
+produced it.</em></p>
+<p><strong>Token use.</strong> The token is presented in every HELLO (key 5, or as a proof — <a href="#s12-4">§12.4</a>); the hub validates it against its store (<code>instance_id ↔ token ↔ role</code>) and sets <code>roles</code> in WELCOME. Tokens survive hub reboots and firmware updates.</p>
+<p><strong><code>configure</code> is obtainable by ceremony.</strong> The v1-draft sentence "admin is granted only via the hub's own UI" is <strong>struck</strong>. It was circular (it made the web UI the root of trust because it was the web UI) and it left no bootstrap story for a headless machine. The consequence is deliberate and must be understood: the administration surface, including session eviction and pairing approval, is <strong>reachable through pairing</strong>. A <code>configure</code> session may grant up to its own tier, <code>configure</code> included — conventional administrator behavior; the audit trail is the paired-device roster (<a href="#s12-6">§12.6</a>), not a hard ceiling that would make the first administrator unable to make a second.</p>
+<h2 id="s12-4">12.4 Token presentation modes<a class="headerlink" href="#s12-4" title="Link to this section">#</a></h2>
+<p><strong>HONESTY CLAUSE (H4):</strong> v1 transports are cleartext, so a raw bearer token in HELLO is sniffable by a passive LAN observer. <a href="#s12-1">§12.1</a> excludes that attacker, but the plug is near-free, so both modes exist and the hub accepts both.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Mechanism</th>
+<th>Cost</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>bearer</strong> (0)</td>
+<td>the raw 16-byte token in HELLO</td>
+<td>one memcpy, zero crypto, one round trip</td>
+<td><strong>LEGAL, DEFAULT, and the floor.</strong> A coin-cell client does exactly this</td>
+</tr>
+<tr>
+<td><strong>proof</strong> (1)</td>
+<td><code>HMAC-SHA256(key = token, message = the WELCOME nonce)</code> truncated to 16 bytes, presented in an <strong>AUTH</strong> frame (<code>0x1C</code>) after WELCOME</td>
+<td>one extra round trip per connect</td>
+<td><strong>RECOMMENDED</strong> for anything that already has SHA-256 — browsers, C#, every modern MCU; i.e. everyone but coin cells</td>
+</tr>
+</tbody>
+</table>
+<p>In proof mode the token itself never crosses the wire: a sniffer captures a one-time proof, not the credential. The session sits at <code>watch</code> between WELCOME and a successful AUTH, which is the correct posture for a client that has not yet proved anything; the hub re-issues <code>roles</code> (23) on success and NACKs <code>UNAUTHORIZED</code> on failure. A session may present at most <code>auth_attempts_max</code> (3) failed proofs before the hub stops answering and closes it — mirroring the PIN window's three-strike rule rather than inventing a second number. The proof is 16 bytes, so this limit is not what makes guessing infeasible; it is what stops an unauthenticated peer spending the hub's HMAC budget in a loop.</p>
+<p><strong>AUTH exists because the session grammar has no other way to raise a role mid-session.</strong> A second HELLO would self-evict the client via <a href="../session/#s6-3">§6.3</a>'s duplicate-instance rule. AUTH is deliberately <strong>not</strong> gated on readiness (<a href="../session/#s6-4">§6.4</a>) — a client must be able to authenticate before it has finished adopting a catalog.</p>
+<p>The roster records which mode a device uses, so security posture is visible: posture an operator cannot see is posture an operator cannot fix.</p>
+<p><em>Rejected, recorded so it is not re-proposed:</em> "reuse the previous session's nonce to skip the round trip" is replay-unsafe. The rotation point is undefined, honest retransmits are indistinguishable from replays on lossy bindings, and <a href="../session/#s6-3">§6.3</a> makes a successful replay <strong>evict the real client</strong>. Proof mode costs one extra round trip. That is the honest price.</p>
+<h2 id="s12-5">12.5 Hub authenticity<a class="headerlink" href="#s12-5" title="Link to this section">#</a></h2>
+<p>A token store trusts a <em>device identity</em> forever regardless of the code behind it, and nothing in a cleartext protocol distinguishes the real hub from an evil twin replaying its identity strings. The primitive that fixes this:</p>
+<ul>
+<li>A hub MAY generate a <strong>P-256 keypair at first boot</strong> and persist it. The public key's fingerprint is the machine's durable identity. P-256 is chosen because browser crypto can verify it — the browser participates.</li>
+<li><strong>PAIR_GRANT delivers the public key</strong> (<code>trust.hub_pubkey</code> (4), SEC1-compressed, 33 bytes). Trust is anchored <strong>at the pairing ceremony</strong>, the moment physical presence or operator approval was established: trust-on-first-use at a verified moment, not at an arbitrary one.</li>
+<li><strong>Signature material (exactly these 16 bytes, in this order):</strong> <code>client_nonce</code> (8 bytes, verbatim from HELLO <code>trust.client_nonce</code>) ‖ <code>session_id</code> (u32, <strong>little-endian</strong>) ‖ <code>boot_id</code> (u32, <strong>little-endian</strong>). The signature is deterministic ECDSA-P256 (RFC 6979), carried in <code>trust.welcome_sig</code> (5).
+  The <strong>client nonce is load-bearing</strong>: without client entropy the signature would be replayable from a single captured handshake and an evil twin would pass verification. A hub MUST NOT sign a session that supplied no <code>client_nonce</code>.</li>
+<li><strong>Signing is on request.</strong> A client asks with <code>trust.sig_request</code> (3). Absent or false means no signature and no cost, which is what keeps constrained handshakes instant.</li>
+<li><strong>Two delivery points, one meaning.</strong> A hub that can sign without stalling puts <code>welcome_sig</code> <strong>inline in WELCOME</strong>. A hub that cannot sends <strong>HUB_SIG</strong> (<code>0x1D</code>, h2c) once its low-priority worker has produced the signature; the payload is the <code>trust</code> sub-map carrying <code>welcome_sig</code> and nothing else, so the decode surface is one already-covered sub-map. The signed material and the client handling are identical either way; a client accepts whichever arrives first and ignores a second.
+  <em>Why deferral exists (informative):</em> software ECDSA on a controller without an ECC accelerator is roughly 30–80 ms in one uninterruptible call. A hub signing inline would stall its own tick for many periods — starving state pacing, deadman detection, and any motion drain sharing that task — <strong>for every connecting client</strong>.</li>
+<li><strong>A clone machine copies every identity string and fails the signature.</strong> A client that verifies and gets a mismatch MUST surface "not your machine" and MUST withhold intents.</li>
+<li><strong>HONESTY CLAUSE (H9).</strong> A hub with no keypair sends no signature, and <strong>silence is a conformant answer</strong>. Only a client that has <strong>pinned</strong> a key — which it can only have received from that machine's own PAIR_GRANT — is entitled to read silence as failure, and only after <code>hub_sig_timeout_ms</code> (3 s; generous on purpose, because the hub is allowed to be busy). A client with no pinned key never applies the timeout: it has nothing to verify against. Clients paired by physical ceremony MAY skip verification entirely. And note what the signature proves: <strong>which machine</strong>, not that the machine is uncompromised.</li>
+</ul>
+<h2 id="s12-6">12.6 The trust ledger and the change tripwire<a class="headerlink" href="#s12-6" title="Link to this section">#</a></h2>
+<p>The hub's record of who is paired is a <strong>blob store</strong> (<a href="../catalog/#s8-7">§8.7</a>) whose <code>kind</code> is <code>"trust.ledger"</code>, declared by a spec-core STORE entry with a companion roster STATE channel. It is a store rather than a packed roster because a ledger entry does not fit a 242-byte snapshot at useful capacity. Its <code>access</code> is <code>configure</code>: <strong>the paired-device list is not open reading.</strong></p>
+<p>Each item is a CBOR map from the registered <code>trust_ledger_keys</code> grammar (<a href="../catalog/#s8-7">§8.7</a>'s one carve-out): <code>instance_id</code>, <code>kind</code>, <code>name</code>, <code>version</code>, <code>first_seen</code>, <code>last_seen</code>, <code>role</code>, <code>state</code>, <code>presentation_mode</code>, <code>pairing_mode</code>. The whole encoded ledger is bounded by <code>trust_ledger_max_bytes</code> (1900) and <code>paired_devices_max</code> (8) items.</p>
+<ul>
+<li><strong>Revocation is an absence, not a state.</strong> A revoked device has no entry. Something on the authorization list that is not authorized is a footgun.</li>
+<li><strong><code>first_seen</code> / <code>last_seen</code> are wall-clock seconds or zero.</strong> Per <a href="../time/#s7-2">§7.2</a> the protocol's only clock is boot-relative and wrapping; a hub can fill these only if the application has a real time source, and <strong>SHOULD</strong> when one is available (RFC-049d) — an operator's "when did this device pair" question deserves a real answer wherever the hub can give one. <strong>Zero is the honest default where no clock exists and will be common.</strong> The protocol never invents a timestamp, and neither field is audit-grade even when populated (H7): a <code>configure</code> client rendering the trust ledger SHOULD show a populated timestamp distinctly from zero, rather than rendering zero as an epoch date that reads as a real event.</li>
+<li><strong><code>pairing_mode</code> records which ceremony granted the role</strong>, so a <code>configure</code> grant issued through a push-to-pair window is visible as exactly that. That audit trail is what this design uses <em>instead of</em> a hard tier ceiling.</li>
+</ul>
+<p><strong>The client-change tripwire.</strong> HELLO may carry <code>trust.client_ver</code> (1), a version string bounded by <code>client_ver_max_bytes</code> (24). When the observed version differs from the version recorded at the last approval, the ledger entry's <code>state</code> drops from <code>trusted</code> to <strong><code>recognized_pending</code></strong>: the session is admitted at <strong><code>watch</code></strong>, its granted tier is <strong>suspended (not revoked)</strong>, and a re-approval is surfaced to <code>configure</code> sessions through the pending-pairing surface. Re-approval and knock approval are deliberately the <strong>same op</strong> — both are the decision "this identity may do this" — so they cannot drift apart. Default policy: <code>watch</code> auto-re-keeps; <code>control</code> and <code>configure</code> require re-approval; hub-configurable.</p>
+<ul>
+<li><strong>HONESTY CLAUSE (H6):</strong> the version is <strong>self-reported</strong>. This is a <strong>tripwire, not attestation</strong>: it catches an honest update and nothing else. A deliberately malicious update lies about its version and keeps its token. The real bounds on a hostile client are tier scoping, instant revocation, roster visibility, and the role-exempt safety ops. <strong>A UI MUST NOT imply this is attestation.</strong></li>
+<li><strong>HONESTY CLAUSE (H7):</strong> a device that reports <strong>no</strong> version can never trip the wire. This is a real gap, stated rather than hidden.</li>
+</ul>
+<p><strong>The symmetric signal.</strong> A change in the hub's own <code>fw_version</code> (<a href="../session/#s6-3">§6.3</a>) SHOULD be surfaced by clients ("this machine updated to X.Y.Z"), and clients MAY gate <code>configure</code>-tier actions on user acknowledgement afterwards. Hub code changes only through the OTA plane, which is outside SlopSync trust by <a href="#s12-2">§12.2</a> — so a <code>configure</code>-tier compromise cannot flash firmware. A hostile hub's ceiling against a conforming client is <strong>well-formed lies</strong>, which is exactly the bound <a href="../wire-format/#s5-8">§5.8-5</a> sets and the reason it is symmetric.</p>
+<h2 id="s12-7">12.7 The administration surface<a class="headerlink" href="#s12-7" title="Link to this section">#</a></h2>
+<p>Eviction, pairing approval, re-approval and revocation are <strong>one channel, not three</strong>: they are all "an authorized operator changing who may do what", so they share one access floor (<code>configure</code>), one rate limiter, one idempotency ring, and one place a generic renderer looks. Ops: <code>evict</code>, <code>pair_approve</code>, <code>pair_deny</code>, <code>revoke</code> (registry <code>session_admin_ops</code>).</p>
+<ul>
+<li><strong><code>evict</code></strong> GOODBYEs the named session with <code>SESSION_EVICTED</code> and runs the <strong>full <a href="../session/#s6-9">§6.9</a> teardown</strong> (a genuine ending — <code>evict</code> is never a staleness transition, even against a session that happens to be <code>STALE</code> already) — the evicted session's source ownership is released exactly as if it had crashed (<a href="../safety/#s11-3">§11.3</a>: unconditional release, no forced stop for a command-driven source, the <code>source.background_run</code> setting for an autonomous one), because "no unmonitored path to motion" does not get an exception for administrative actions. Evicting one's own session is legal and is just a rude GOODBYE to oneself.</li>
+<li><strong><code>pair_deny</code></strong> on a <code>recognized_pending</code> device is a <strong>revoke</strong> in effect: deny means no, and leaving a suspended entry in the ledger after an operator said no would be a lie the roster tells forever.</li>
+<li><strong><code>revoke</code></strong> takes effect at the next HELLO. An already-live session keeps the tier it was admitted with until it reconnects; use <code>evict</code> to end it now. This is stated because "revoke" reading as "and also kick" is a reasonable assumption and a wrong one.</li>
+</ul>
+<p>There is also a <strong>session roster</strong> STATE channel: a generation, a count, and fixed-size slots <code>{session_id, role, flags, name}</code> with <code>name</code> as <code>str16</code>. Roster names are truncated to 16 bytes; the full name rides the session-events channel while the session lives. The roster exists partly <em>because</em> join events are never replayed (<a href="../channels/#s9-4">§9.4</a>) — without it, a late joiner could never learn the names of sessions that joined before it did.</p>
+<p>Note a representation detail that surprises implementers: packed layouts have no 64-bit integer type, so an 8-byte <code>instance_id</code> in a packed slot is carried as <strong>two <code>u32</code> fields</strong> (low half, high half), not one field. Where a document says "instance_id u64" in a packed context, this is what it means.</p>
+<h2 id="s12-8">12.8 The served-page token sideband <em>(optional)</em><a class="headerlink" href="#s12-8" title="Link to this section">#</a></h2>
+<p>A machine that serves its own web UI over HTTP may treat that page as trusted by default, through a <strong>browser-enforced one-time token</strong> rather than a forgeable header:</p>
+<ul>
+<li>The served page performs a <strong>same-origin</strong> request to a token endpoint. The hub mints a single-use token (short TTL, rate-limited, <strong>minted on request — never templated into a static asset</strong>), and the page presents it in HELLO for the <strong><code>control</code></strong> tier. <strong>Never <code>configure</code>.</strong></li>
+<li><strong>The boundary is the browser's same-origin policy.</strong> The endpoint sets no cross-origin headers, so any cross-origin page — a clone UI, a malvertising LAN scan, the mass-automatable vector — can <em>send</em> the request but cannot <em>read</em> the answer. Manufactured tokens fail the single-use server mint. A token stolen in the gap makes the real page's HELLO fail <strong>loudly</strong> (a visible race, never a silent compromise). Where an <code>Origin</code> header is present it MAY be used as a second independent filter — it is free.</li>
+<li><strong>This is a sideband, not a second plane, and NOT a connection prerequisite.</strong> With the endpoint absent, disabled, or failed, the page is an <strong>ordinary client</strong>: <code>watch</code> by default and <code>control</code>/<code>configure</code> through any <a href="#s12-3">§12.3</a> association mode, with its token persisted against its <code>instance_id</code> like anyone else's. Since <code>configure</code> <strong>always</strong> pairs, a web UI exercises the normal ceremony regardless. The sideband removes ceremony for one tier on the machine's <strong>own</strong> page; it grants no capability that pairing cannot, and <strong>clients MUST implement the pairing path irrespective of it.</strong> A hub with no web UI never implements it and loses nothing; no non-web client ever needs it to connect.</li>
+<li><strong>HONESTY CLAUSE (H8):</strong> a <strong>native</strong> process already on the LAN can request the endpoint directly. That attacker class already defeats the cleartext ceiling (H4), so nothing is newly lost — but nothing is protected from it either. The mechanism fully closes the browser-borne class and is capped at <code>control</code>, toggleable off for shared spaces.</li>
+<li><strong>HONESTY CLAUSE (H5) restated here because this is where users assume otherwise:</strong> a clone page that proxies a PIN to the real hub is active MITM and is out of scope. Knock-and-approve (<a href="#s12-3">§12.3a</a>) is the recommended ceremony partly because its approval surface shows the knocker's identity on hardware the attacker does not control.</li>
+</ul>
+<h2 id="s12-9">12.9 Per-transport mapping<a class="headerlink" href="#s12-9" title="Link to this section">#</a></h2>
+<ul>
+<li><strong>WebSocket:</strong> plain <code>ws://</code> on LAN by default. Hubs MAY offer <code>wss://</code> with a self-signed certificate; browser trust UX for self-signed LAN certificates is hostile, which is why TLS is optional rather than baseline.</li>
+<li><strong>BLE:</strong> transports SHOULD use LE Secure Connections pairing/bonding where the client stack allows; the token layer applies identically above it.</li>
+<li><strong>ESP-NOW:</strong> the pairing ceremony doubles as key distribution — PAIR_GRANT MAY carry segment keys enabling the radio's native encryption, and relays store them as clients store tokens. Unencrypted operation remains permitted for <code>watch</code>-class traffic.</li>
+<li><strong>Serial / in-process:</strong> physically-attached transports are implicitly <code>configure</code>-capable, because possession of the cable or the process <strong>is</strong> the credential. Hubs MAY still require pairing on serial.</li>
+</ul>
+<h2 id="s12-10">12.10 Future work <em>(informative)</em><a class="headerlink" href="#s12-10" title="Link to this section">#</a></h2>
+<p>Hooks already present for v2+: <code>token</code> is a <code>bstr</code> with room for signed or expiring tokens; PAIR_* and the <code>trust</code> sub-map are extensible CBOR with room for a PAKE replacing the HMAC-PIN and for per-session channel encryption keys; the NACK auth range has space. Nothing anticipated for v2 security should require a wire-grammar break. The named residual holes, chosen with eyes open, are H3, H4, H5 and H8.</p>
+<!-- GENERATED FILE. DO NOT EDIT. Source: docs-site/dictionary.yaml via docs-site/tools/gen_docs_tables.py -->
+<!-- Appended to every page by pymdownx.snippets.auto_append, so a
+     defined term shows its Dictionary definition on hover. -->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../safety/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Safety">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Safety
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../transports/" class="md-footer__link md-footer__link--next" aria-label="Next: Transports and relays">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Transports and relays
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      SlopSync is provided to the community as a tool. It favors no firmware, no vendor and no product.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/javascripts/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3102 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SlopSync clause 5: the 8-byte frame header, the deterministic CBOR profile, packed data-plane layouts, the ESTOP frame, fragmentation, and parser totality.">
+      
+      
+        <meta name="author" content="The SlopSync contributors">
+      
+      
+        <link rel="canonical" href="https://AtlanticTM.github.io/SlopSync/dev/spec/wire-format/">
+      
+      
+        <link rel="prev" href="../foundations/">
+      
+      
+        <link rel="next" href="../session/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Wire format - SlopSync</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/datasheet.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="color-scheme" content="light dark">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#s5" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SlopSync" class="md-header__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SlopSync
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wire format
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../understand/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Understand
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Build with it
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Specification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../community/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SlopSync" class="md-nav__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    SlopSync
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../understand/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Understand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/anatomy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anatomy of a frame
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/what-it-replaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it replaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem and compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security model and the audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../understand/for-everyone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For everyone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../build/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build with it
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build with it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/javascript/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JavaScript
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/clients/python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub implementer guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../build/local-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#s5-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Frame header
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Frame type registry
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Control-plane encoding: the CBOR profile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Data-plane encoding: packed layouts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 The ESTOP frame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Fragmentation and reassembly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7 Registries and governance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.8 Parser totality and defensive decoding (normative)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time and sequencing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS and congestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports and relays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../legacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conformance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worked session traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog schema (CDDL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../appendices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices A-G
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rationale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale and history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/registry/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frame types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/cbor-keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/catalog-vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event kinds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/pairing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairing modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NACK codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/limits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/registry/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel catalog
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/channel-grid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel grid
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../community/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/rfc-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC process
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#s5-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Frame header
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Frame type registry
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Control-plane encoding: the CBOR profile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Data-plane encoding: packed layouts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 The ESTOP frame
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Fragmentation and reassembly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7 Registries and governance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s5-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.8 Parser totality and defensive decoding (normative)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+    
+      <p class="ss-pagemeta">
+        
+  
+    <span class="ss-badge ss-badge--ieee" title="Normative register: numbered clauses, RFC 2119 MUST/SHALL/MAY, exact cross-references.">IEEE register</span>
+  
+
+        
+          <span class="ss-badge ss-badge--generated" title="Generated from registry.yaml by docs-site/tools/gen_docs_tables.py. Hand edits are overwritten, and a stale copy fails CI.">generated</span>
+        
+        
+      </p>
+    
+  
+  
+                  
+
+
+
+<!-- ==========================================================
+     GENERATED FILE — DO NOT EDIT.
+     Source of truth: spec/SPEC.md
+     Generator:       docs-site/tools/gen_spec_pages.py
+     Regenerate:      python docs-site/tools/gen_spec_pages.py
+     CI gate:         python docs-site/tools/gen_spec_pages.py --check
+     Normative text is copied verbatim. Hand edits are overwritten
+     and fail the docs build. Edit the specification instead.
+     ========================================================== -->
+
+<h1 id="s5">5. Wire Format <em>(normative)</em><a class="headerlink" href="#s5" title="Link to this section">#</a></h1>
+<h2 id="s5-1">5.1 Frame header<a class="headerlink" href="#s5-1" title="Link to this section">#</a></h2>
+<p>Every SlopSync frame begins with the same 8 bytes:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>offset  size  field     notes
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>0       1     type      frame type (registry `frame_types`)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>1       1     flags     bit0 FRAG_START, bit1 FRAG_MORE; others zero on send, ignored on receive
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>2       2     channel   u16 channel id; 0x0000 for session-scoped frames
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>4       2     seq       u16 sequence number (§7.3); 0 where the class is unsequenced
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>6       2     len       u16 payload length in bytes (excluding this header)
+</span></code></pre></div>
+<p>One SlopSync frame maps to exactly one transport datagram/message where the binding allows (<a href="../transports/#s13">§13</a>); <code>len</code> makes frames self-delimiting on byte-pipe bindings.</p>
+<p><strong><code>max_frame</code> is header-inclusive</strong>: it bounds <code>8 + len</code>. Per-binding defaults are in the registry (<code>max_frame_ws</code>, <code>max_frame_espnow</code>, <code>max_frame_ble</code>, <code>max_frame_serial</code>; <a href="../appendices/#appendix-g">Appendix G</a>). A hub advertises its own value in WELCOME <code>limits.max_frame</code> and MAY advertise less than its binding permits; it MUST NOT advertise more. A frame exceeding the negotiated maximum is answered with NACK <code>FRAME_TOO_LARGE</code> (if a session exists) and discarded.</p>
+<p><strong>What <code>header.channel</code> carries, per frame type</strong> <em>(normative routing — previously discoverable only by reading the reference implementation)</em>:</p>
+<table>
+<thead>
+<tr>
+<th>Frame types</th>
+<th><code>header.channel</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HELLO, WELCOME, SUBSCRIBE, UNSUBSCRIBE, PUBLISH, GRANT, NACK, GOODBYE, PING, PONG, CLOCK, PROBE, PROBE_REPORT, PAIR_REQ, PAIR_GRANT, AUTH, HUB_SIG, CATALOG_READY, BLOB_REQ, ACKMASK, BEACON</td>
+<td><code>0x0000</code> (session-scoped). Any addressing rides the payload — NACK's <code>channel_id</code> (15), BLOB_REQ's <code>blob</code> (38) sub-map</td>
+</tr>
+<tr>
+<td>STATE, STREAM, INTENT, ECHO, EVENT</td>
+<td>the <strong>target channel id</strong></td>
+</tr>
+<tr>
+<td>BLOB_CHUNK</td>
+<td>the id of the channel whose blob it carries (the <code>catalog</code> channel for namespace 0)</td>
+</tr>
+<tr>
+<td>ESTOP</td>
+<td>not applicable — the <a href="#s5-5">§5.5</a> fixed 12-byte layout has no conventional header</td>
+</tr>
+</tbody>
+</table>
+<p>INTENT and ECHO <em>also</em> carry <code>channel_id</code> (15) inside the CBOR payload; the header copy is redundant-but-authoritative routing — the two name the same channel, and the header is what routes.</p>
+<h2 id="s5-2">5.2 Frame type registry<a class="headerlink" href="#s5-2" title="Link to this section">#</a></h2>
+<p>The full table lives in <code>registry.yaml</code> (<code>frame_types</code>) and is reproduced in <a href="../appendices/#appendix-a">Appendix A</a>. Core points:</p>
+<ul>
+<li><strong>Control-plane</strong> frames carry CBOR payloads (<a href="#s5-3">§5.3</a>): HELLO, WELCOME, SUBSCRIBE, UNSUBSCRIBE, PUBLISH, GRANT, INTENT, ECHO, EVENT, NACK, GOODBYE, PROBE_REPORT, PAIR_REQ, PAIR_GRANT, BLOB_REQ, AUTH, HUB_SIG.</li>
+<li><strong>Data-plane</strong> frames carry packed payloads (<a href="#s5-4">§5.4</a>): STATE, STREAM.</li>
+<li><strong>Raw</strong> frames have fixed layouts defined in their own sections: PING, PONG, CLOCK, PROBE, ACKMASK, BEACON, CATALOG_READY, BLOB_CHUNK, ESTOP.</li>
+</ul>
+<h2 id="s5-3">5.3 Control-plane encoding: the CBOR profile<a class="headerlink" href="#s5-3" title="Link to this section">#</a></h2>
+<p>Control payloads are CBOR maps with <strong>integer keys</strong> from the global key registry (<code>cbor_keys</code>, <a href="../appendices/#appendix-b">Appendix B</a>), restricted to a deterministic subset of RFC 8949:</p>
+<ul>
+<li>definite-length everything (no indefinite strings/arrays/maps);</li>
+<li>integers in shortest form; map keys sorted ascending by encoded bytes;</li>
+<li>floats as binary32 only (never binary16/64); values that are semantically integers encoded as integers, not floats;</li>
+<li>no tags, no bignums, no simple values other than <code>false</code>/<code>true</code>/<code>null</code>;</li>
+<li><strong>maximum nesting depth 4 per decoded document.</strong> One structure legally exceeds this as a whole: the catalog, whose entries nest to 5 counting the outer array. <a href="../catalog/#s8-4">§8.4</a> therefore defines the catalog as an outer array header followed by independently-decodable <em>entry documents</em>, each within the depth-4 cap.</li>
+<li>an <strong>absent</strong> optional key is simply not emitted. There is no "null means absent" encoding; a key that is present with value <code>null</code> is a distinct (and, unless a section says otherwise, invalid) thing.</li>
+</ul>
+<p><strong>Scoped sub-map key conservation (normative).</strong> Per-feature keys do NOT each take a global key. A feature takes <strong>one</strong> global key holding a sub-map whose interior keys come from that feature's own small space, registered separately. The registered scoped spaces at v1.0 are <code>limits</code> (22) → <code>welcome_limits_keys</code>, <code>probe_result</code> (26) → <code>probe_result_keys</code>, <code>identity</code> (37) → <code>identity_keys</code>, <code>blob</code> (38) → <code>blob_keys</code>, <code>trust</code> (39) → <code>trust_keys</code>, and <code>body</code> (40) → <strong>the channel's own catalog <code>schema</code></strong>, exactly as INTENT's <code>value</code> (20) does. A sub-map's key space is local: key 1 in <code>blob</code> and key 1 in <code>trust</code> are unrelated, and neither is <code>proto_ver</code>. A new feature that wants five keys gets one global key plus a sub-key section.</p>
+<p><strong>Signedness (normative).</strong> For a value described by a catalog field, <strong>the catalog's declared type is authoritative over the CBOR major type</strong>. A field declared <code>int</code> whose value happens to be non-negative round-trips legally as CBOR unsigned; a decoder MUST accept either major type and interpret per the catalog. Encoders MUST NOT be required to force a negative-looking encoding to signal signedness.</p>
+<p><em>Rationale (informative):</em> exactly one valid encoding exists for any message, which makes golden vectors byte-exact and lets constrained clients ship <strong>pre-encoded templates</strong> — a canned HELLO with value bytes patched in at runtime is guaranteed to be the same bytes a full encoder would produce. A decoder MAY reject profile violations with NACK <code>PROFILE_VIOLATION</code>; it MUST NOT crash on them (<a href="#s5-8">§5.8</a>).</p>
+<h2 id="s5-4">5.4 Data-plane encoding: packed layouts<a class="headerlink" href="#s5-4" title="Link to this section">#</a></h2>
+<p>STATE and STREAM payloads are <strong>packed little-endian structs</strong>. There is no encoder: the layout <em>is</em> the catalog entry's <code>layout</code> array (<a href="../catalog/#s8-1">§8.1</a>) — an ordered list of fields using <code>packed_field_types</code> from the registry. Scaled integers are the norm (wire = physical × <code>scale</code>); <code>f32</code> is permitted where dynamic range demands it; <code>str16</code>/<code>str32</code>/<code>str64</code> are fixed-width, zero-padded UTF-8 (a reader stops at the first NUL or the declared width, whichever comes first).</p>
+<p><strong>STREAM sample layouts MUST NOT contain string fields.</strong> The motion hot path never pays for text.</p>
+<p><strong>Append-only evolution rule:</strong> a layout, once released, may only grow at the tail. Readers MUST parse the prefix they know and ignore trailing bytes; writers MUST NOT reorder, resize, or remove released fields. Consequence: a constrained client compiled against catalog etag <em>E</em> still reads every field it knows from a hub whose catalog moved to <em>E′</em> by appending — the etag check (<a href="../catalog/#s8-5">§8.5</a>) then decides <em>policy</em> (warn/degrade), not parseability. Removing or changing a field requires allocating a <strong>new channel id</strong> and retiring the old one, which keeps its id forever (<a href="../foundations/#s4-4">§4.4</a>).</p>
+<p><strong>Explicit field width (forward decodability).</strong> A layout field MAY carry <code>size</code> (catalog key 18) — the field's packed width in <strong>bytes</strong>, stated explicitly. Decoders MUST prefer the declared size over the type-derived width; an unknown TYPE with a declared SIZE is then a <strong>skippable hole</strong> rather than a decode wall. Without it, the first registry-added packed type strands every existing client at the first field that uses it: later offsets become unknowable and the entire layout tail goes dark — both shipped generic clients independently carried the identical defensive truncation, which is why this key exists. For known types the declared width MUST equal the type-derived width; conformance checks the agreement, and a mismatch is a catalog-authoring error, never a runtime override.</p>
+<p><strong>STREAM bundle payload layout</strong> (applies to every STREAM channel; the catalog defines only the per-sample struct):</p>
+<div class="highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>offset  size      field
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>0       4         t_base     u32 hub-time µs of sample[0] (§7.2)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>4       1         n          sample count, 1..32
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>5       1         reserved   zero on send, ignored on receive
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>6       2×n       t_off[n]   u16 µs offset of sample[i] from t_base
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>6+2n    S×n       samples    n packed sample structs of catalog-declared size S
+</span></code></pre></div>
+<p>A bundle MUST satisfy all of:</p>
+<ol>
+<li><code>n</code> in <code>1..bundle_max_samples</code> (32);</li>
+<li><code>t_off[0] == 0</code>, and <code>t_off</code> <strong>strictly increasing</strong> thereafter;</li>
+<li>span <code>t_off[n-1] ≤ bundle_max_span_ms</code> (20 ms);</li>
+<li>payload length exactly <code>6 + 2n + S·n</code>;</li>
+<li>total frame ≤ the binding's <code>max_frame</code>.</li>
+</ol>
+<p>A bundle violating any of these is <strong>malformed</strong> and MUST be rejected <strong>whole</strong> — never parsed part-way (<a href="#s5-8">§5.8</a>). Senders SHOULD fill toward whichever cap binds first; the caps exist to bound latency, buffers, and fragmentation respectively — a bundle never fragments.</p>
+<p><strong>Timestamp meaning depends on <code>stream_kind</code></strong> (<a href="../channels/#s9-2">§9.2</a>):</p>
+<ul>
+<li><code>samples</code> (0, the default): <code>t_base + t_off[i]</code> is the instant sample <em>i</em> <strong>describes</strong>. It is observational.</li>
+<li><code>segments</code> (1): <code>t_base + t_off[i]</code> is the intended <strong>execution start</strong> of sample <em>i</em>, resolved through the <a href="../time/#s7-2">§7.2</a> nearest-window rule. It is a schedule. A hub MUST clamp scheduling to at most <code>max_future_schedule_ms</code> (250 ms) ahead of its own current time; a sample scheduled further out is clamped, not rejected. Clients SHOULD schedule no further ahead than half that budget.</li>
+</ul>
+<h2 id="s5-5">5.5 The ESTOP frame<a class="headerlink" href="#s5-5" title="Link to this section">#</a></h2>
+<p>The ESTOP frame is 12 bytes total and deliberately violates the normal header discipline so that it can be recognized <strong>without deframing</strong>:</p>
+<div class="highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>E5 E5 E5 E5  |  cause:u8  origin:u8  seq:u16  |  crc32:u32
+</span></code></pre></div>
+<ul>
+<li><code>type</code> = <code>0xE5</code> and the three payload-leading <code>0xE5</code> bytes form the 4-byte magic <code>E5 E5 E5 E5</code> at frame start. A byte-serial scanner (serial ISR, relay hot path) matching four consecutive <code>0xE5</code> bytes MUST treat the following 8 bytes as a candidate ESTOP and validate the CRC-32 (IEEE, over the first 8 bytes) before acting. False-trigger probability with CRC: 2⁻³².</li>
+<li><code>cause</code> is a <code>safety_causes</code> value (<a href="../safety/#s11-1">§11.1</a>) — <strong>one taxonomy, two wire homes</strong>: this byte and the latched <code>cause</code> field of the <code>safety</code> STATE channel. <code>origin</code> is the access tier of the initiator. <code>seq</code> increments per <strong>initiation event</strong>: every repeat of one initiation carries the same <code>seq</code> (<a href="../safety/#s11-2">§11.2</a>).</li>
+<li>End-to-end semantics — repeat-until-latched, clearing, and relay obligations — are in <a href="../safety/#s11-2">§11.2</a>. This section defines only the bytes.</li>
+<li><code>0xE5</code> does not collide with the CBOR profile (no simple values beyond <code>false</code>/<code>true</code>/<code>null</code> are legal, <a href="#s5-3">§5.3</a>) and COBS handling on serial is specified in <a href="../transports/#s13-5">§13.5</a>.</li>
+</ul>
+<h2 id="s5-6">5.6 Fragmentation and reassembly<a class="headerlink" href="#s5-6" title="Link to this section">#</a></h2>
+<p>Fragmentation exists <strong>only</strong> for control-plane frames that cannot fit the binding MTU (in practice: large ECHOs and blob requests on constrained bindings). Data-plane frames MUST NOT fragment: STATE payloads fit <code>min_transport_payload</code> (242 B) by catalog design (<a href="../channels/#s9-1">§9.1</a>), and STREAM bundles size themselves to the MTU (<a href="#s5-4">§5.4</a>). Blob transfer is chunked at the application layer (<a href="../catalog/#s8-7">§8.7</a>), not fragmented; store imports larger than <code>max_frame</code> ride blob chunks, <strong>never</strong> fragmented INTENTs.</p>
+<p>Fragments carry the same <code>type</code>/<code>channel</code>/<code>seq</code> with flags: first = <code>FRAG_START|FRAG_MORE</code>, middle = <code>FRAG_MORE</code>, last = neither (the reassembler knows it is mid-stream), single = <code>FRAG_START</code>. Fragment payloads carry a 2-byte prefix <code>frag_index:u16</code>. Reassembly is keyed per (session, type, seq); timeout <code>frag_reassembly_timeout_ms</code> (5 s) then discard and NACK <code>REASSEMBLY_TIMEOUT</code>; at most <code>frag_max_concurrent_per_session</code> (2) concurrent reassemblies, excess discards the oldest. Bindings whose MTU exceeds every control message never emit fragments; receivers MUST still implement reassembly, because relays may downgrade the path MTU.</p>
+<p>A reassembler MUST refuse an over-capacity transfer <strong>and its numbers</strong>: declared counts and lengths from a refused transfer MUST NOT be retained or subsequently used (<a href="#s5-8">§5.8</a>).</p>
+<h2 id="s5-7">5.7 Registries and governance<a class="headerlink" href="#s5-7" title="Link to this section">#</a></h2>
+<p><code>registry/registry.yaml</code> is the single source of truth for frame types, flags, CBOR keys and every scoped sub-key space, channel-id ranges, core channels, channel classes, stream kinds, access levels, priority classes, NACK/GOODBYE codes, packed field types, setting categories and flags, field roles, event kinds, safety ops and causes, admin ops, pairing modes, presentation modes, trust states, blob namespaces, log levels, procedure phases, and every numeric limit.</p>
+<p>Appendices <a href="../appendices/#appendix-a">A</a>, <a href="../appendices/#appendix-b">B</a> and <a href="../appendices/#appendix-g">G</a> are <strong>generated views</strong> of it. Spec text citing a number that disagrees with the registry is a spec bug; the registry wins. Allocation is by PR; the experimental ranges are the sandbox; nothing is renumbered post-tag (<a href="../foundations/#s4-4">§4.4</a>).</p>
+<p>Implementations MUST NOT hand-maintain a second copy of any registry table. Where a language needs constants, they are generated from the registry.</p>
+<p><strong>Scope of "the registry wins".</strong> The registry is authoritative for <strong>values</strong>: numbers, names, ranges, enumerations, limits, and the semantics recorded in their notes. It is <em>not</em> authoritative for the <strong>location of prose</strong>: the <code>ref:</code> fields on registry entries are convenience pointers into this document and MAY lag a section renumber. Where a <code>ref:</code> points at a section whose content has moved, the section headings of this document are the authority for <em>where a rule is written</em>, and the registry remains the authority for <em>what the number is</em>. A stale <code>ref:</code> is an editorial defect, never a wire conflict. <strong>Known instance at v1.0:</strong> the v1.0 rewrite inserted <a href="../session/#s6-4">§6.4</a> (readiness) and split <a href="../security/#s12-2">§12.2</a>, shifting several <code>ref:</code> targets by one subsection; <a href="../limitations/#s18">§18-19</a> records it.</p>
+<h2 id="s5-8">5.8 Parser totality and defensive decoding <em>(normative)</em><a class="headerlink" href="#s5-8" title="Link to this section">#</a></h2>
+<p>Every conforming parser — hub <strong>and client</strong> — MUST map <strong>any</strong> byte string to accept-or-reject. Specifically:</p>
+<ol>
+<li><strong>Totality.</strong> No out-of-bounds read or write, no unbounded allocation, no unbounded recursion, no undefined behavior, for any input including adversarial input. The deterministic profile (<a href="#s5-3">§5.3</a>), the depth-4 cap, and definite lengths make this achievable; this clause makes it an obligation.</li>
+<li><strong>Length fields are never trusted past the enclosing buffer.</strong> A declared length MUST be validated as <code>declared ≤ remaining</code>, never as <code>start + declared ≤ size</code> — the latter can overflow and pass. Registry string caps (<code>client_ver_max_bytes</code>, <code>desc_max_bytes</code>, <code>option_label_max_bytes</code>, name and kind caps) are <strong>parse-time obligations</strong> in structural payloads: a receiver <strong>rejects</strong> an over-cap string, it does not truncate and continue.</li>
+<li><strong>Refusing a transfer refuses its numbers</strong> (<a href="#s5-6">§5.6</a>).</li>
+<li><strong>Diagnostic strings are the sender's problem, structural strings are the receiver's.</strong> A <strong>sender</strong> MUST truncate a diagnostic string (NACK <code>detail</code>) to <code>nack_detail_max_bytes</code> rather than dropping the message — an over-length detail MUST NOT cause the whole NACK to vanish. A <strong>receiver</strong> MUST reject an over-cap string in a <em>structural</em> payload.</li>
+<li><strong>Client obligations are symmetric.</strong> A hostile hub MUST NOT be able to crash a conforming client. A client that auto-connects to a discovered service is one malicious hub away from parsing hostile bytes, and the catalog — rich in variable-length strings — is the fattest client-side surface in the protocol. Every clause above binds clients exactly as it binds hubs.</li>
+<li><strong>Encode failure is never silence.</strong> A hub that cannot encode a mandatory response (WELCOME, ECHO) MUST close the session — GOODBYE if it can encode one, transport close otherwise. Silently dropping a mandatory response is non-conformant: the peer is left waiting on a message that will never come.</li>
+<li><strong>Constant-time comparison</strong> is REQUIRED for every token, proof, and signature comparison.</li>
+</ol>
+<p>Conformance evidence for this section is fuzzing, not vectors (<a href="../conformance/#s17-4">§17.4</a>).</p>
+<!-- GENERATED FILE. DO NOT EDIT. Source: docs-site/dictionary.yaml via docs-site/tools/gen_docs_tables.py -->
+<!-- Appended to every page by pymdownx.snippets.auto_append, so a
+     defined term shows its Dictionary definition on hover. -->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../foundations/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Foundations">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Foundations
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../session/" class="md-footer__link md-footer__link--next" aria-label="Next: Session layer">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Session layer
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      SlopSync is provided to the community as a tool. It favors no firmware, no vendor and no product.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tooltips"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/javascripts/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

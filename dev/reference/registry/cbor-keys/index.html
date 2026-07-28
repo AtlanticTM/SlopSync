@@ -1,0 +1,3559 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Generated table of the SlopSync control-plane CBOR integer key space and every scoped sub-map key space.">
+      
+      
+        <meta name="author" content="The SlopSync contributors">
+      
+      
+        <link rel="canonical" href="https://AtlanticTM.github.io/SlopSync/dev/reference/registry/cbor-keys/">
+      
+      
+        <link rel="prev" href="../channels/">
+      
+      
+        <link rel="next" href="../catalog-vocabulary/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>CBOR keys - SlopSync</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/datasheet.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="color-scheme" content="light dark">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cbor-keys" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="SlopSync" class="md-header__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SlopSync
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CBOR keys
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../understand/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Understand
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Build with it
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../spec/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Specification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../community/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="SlopSync" class="md-nav__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    SlopSync
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../understand/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Understand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/anatomy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anatomy of a frame
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/what-it-replaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it replaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem and compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security model and the audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/for-everyone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For everyone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../build/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build with it
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build with it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/javascript/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JavaScript
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub implementer guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/local-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../spec/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/wire-format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time and sequencing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/qos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS and congestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports and relays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/legacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conformance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worked session traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog schema (CDDL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/appendices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices A-G
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/rationale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale and history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/errata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frame types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-key-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global key space
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoped-sub-map-key-spaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoped sub-map key spaces
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scoped sub-map key spaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#limits-key-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        limits (key 22)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probe_result-key-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        probe_result (key 26)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identity-key-37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        identity (key 37)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blob-key-38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        blob (key 38)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trust-key-39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trust (key 39)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blob-namespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blob namespaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog-vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event kinds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pairing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairing modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NACK codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../limits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../channel-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel catalog
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../channel-grid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel grid
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../community/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../community/governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../community/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../community/rfc-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC process
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-key-space" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global key space
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoped-sub-map-key-spaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoped sub-map key spaces
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scoped sub-map key spaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#limits-key-22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        limits (key 22)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probe_result-key-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        probe_result (key 26)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identity-key-37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        identity (key 37)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blob-key-38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        blob (key 38)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trust-key-39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        trust (key 39)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blob-namespaces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blob namespaces
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+    
+      <p class="ss-pagemeta">
+        
+  
+    <span class="ss-badge ss-badge--ieee" title="Normative register: numbered clauses, RFC 2119 MUST/SHALL/MAY, exact cross-references.">IEEE register</span>
+  
+
+        
+          <span class="ss-badge ss-badge--generated" title="Generated from registry.yaml by docs-site/tools/gen_docs_tables.py. Hand edits are overwritten, and a stale copy fails CI.">generated</span>
+        
+        
+      </p>
+    
+  
+  
+                  
+
+
+
+<!-- ==========================================================
+     GENERATED FILE. DO NOT EDIT.
+     Source of truth: spec/registry/registry.yaml
+     Generator:       docs-site/tools/gen_docs_tables.py
+     Regenerate:      python docs-site/tools/gen_docs_tables.py
+     CI gate:         python docs-site/tools/gen_docs_tables.py --check
+     Hand edits are overwritten and fail the docs build.
+     ========================================================== -->
+
+<h1 id="cbor-keys"><abbr title="A compact binary encoding of maps, arrays and numbers, used here in a deterministic profile.">CBOR</abbr> keys<a class="headerlink" href="#cbor-keys" title="Link to this section">#</a></h1>
+<p>Control-plane payloads are <abbr title="A compact binary encoding of maps, arrays and numbers, used here in a deterministic profile.">CBOR</abbr> maps with integer keys. The key space is
+<strong>global</strong>: a key means the same thing in every message that uses it.</p>
+<p>Keys 1 to 63 are core. Keys 64 to 127 are reserved. Keys 128 and above are
+experimental and never appear in a tagged release.</p>
+<p>A receiver ignores an unknown key. It never NACKs one.</p>
+<h2 id="global-key-space">Global key space<a class="headerlink" href="#global-key-space" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Name</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>proto_ver</code></td>
+<td><code>uint</code></td>
+<td>HELLO/WELCOME: protocol major version</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>client_kind</code></td>
+<td><code>tstr</code></td>
+<td>e.g. webui, c5-remote, mobile, sim, tcode-bridge</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>client_name</code></td>
+<td><code>tstr</code></td>
+<td>human-readable, ≤32 UTF-8 bytes</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>instance_id</code></td>
+<td><code>bstr</code></td>
+<td>8-byte stable <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> identity (§6.1)</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td><code>token</code></td>
+<td><code>bstr</code></td>
+<td>16-byte <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> token (§12.2); absent = viewer</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td><code>session_id</code></td>
+<td><code>uint</code></td>
+<td>u32, <abbr title="The single authoritative endpoint of one machine.">hub</abbr>-assigned (§6.1)</td>
+</tr>
+<tr>
+<td><code>7</code></td>
+<td><code>boot_id</code></td>
+<td><code>uint</code></td>
+<td>u32 random per <abbr title="The single authoritative endpoint of one machine.">hub</abbr> boot (§7.2)</td>
+</tr>
+<tr>
+<td><code>8</code></td>
+<td><code>catalog_etag</code></td>
+<td><code>bstr</code></td>
+<td>8-byte truncated SHA-256 (§8.3)</td>
+</tr>
+<tr>
+<td><code>9</code></td>
+<td><code>cfg_gen</code></td>
+<td><code>uint</code></td>
+<td>u16 config generation (§4.2)</td>
+</tr>
+<tr>
+<td><code>10</code></td>
+<td><code>subscriptions</code></td>
+<td><code>array</code></td>
+<td 15:channel_12:rate_13:priority="15:channel,12:rate,13:priority">of</td>
+</tr>
+<tr>
+<td><code>11</code></td>
+<td><code>publishes</code></td>
+<td><code>array</code></td>
+<td>of {15:<abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>,12:rate,42:burst}: HELLO wishes and PUBLISH (0x18) renegotiation (RFC-013)</td>
+</tr>
+<tr>
+<td><code>12</code></td>
+<td><code>rate_hz</code></td>
+<td><code>float</code></td>
+<td>requested rate; 0 = on-change only</td>
+</tr>
+<tr>
+<td><code>13</code></td>
+<td><code>priority</code></td>
+<td><code>uint</code></td>
+<td><abbr title="The shedding rank of a subscription, from background up to critical.">priority class</abbr> 0-3</td>
+</tr>
+<tr>
+<td><code>14</code></td>
+<td><code>granted_rate_hz</code></td>
+<td><code>float</code></td>
+<td>GRANT: applied rate after <abbr title="Replacing a requested value with the nearest value the machine's limits allow.">clamp</abbr> (§10.2)</td>
+</tr>
+<tr>
+<td><code>15</code></td>
+<td><code>channel_id</code></td>
+<td><code>uint</code></td>
+<td>u16</td>
+</tr>
+<tr>
+<td><code>16</code></td>
+<td><code>code</code></td>
+<td><code>uint</code></td>
+<td>NACK/GOODBYE reason code (§16.1)</td>
+</tr>
+<tr>
+<td><code>17</code></td>
+<td><code>detail</code></td>
+<td><code>tstr</code></td>
+<td>optional human-readable diagnostic</td>
+</tr>
+<tr>
+<td><code>18</code></td>
+<td><code>intent_id</code></td>
+<td><code>uint</code></td>
+<td>u16 idempotency id, <abbr title="The stateful association between one client and the hub.">session</abbr>-scoped (§9.3)</td>
+</tr>
+<tr>
+<td><code>19</code></td>
+<td><code>applied</code></td>
+<td><code>map</code></td>
+<td><abbr title="The hub's mandatory, truthful reply to an intent, carrying the values actually in effect after clamping.">ECHO</abbr>: <abbr title="Replacing a requested value with the nearest value the machine's limits allow.">post-clamp</abbr> applied values</td>
+</tr>
+<tr>
+<td><code>20</code></td>
+<td><code>value</code></td>
+<td><code>any</code></td>
+<td><abbr title="A channel class, and the only way a client changes anything.">INTENT</abbr> payload value(s) per <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> schema</td>
+</tr>
+<tr>
+<td><code>21</code></td>
+<td><code>timestamp</code></td>
+<td><code>uint</code></td>
+<td><abbr title="The single authoritative endpoint of one machine.">hub</abbr>-ms (<abbr title="The frames that negotiate, command and confirm, carrying CBOR map payloads.">control plane</abbr> events)</td>
+</tr>
+<tr>
+<td><code>22</code></td>
+<td><code>limits</code></td>
+<td><code>map</code></td>
+<td>WELCOME: <abbr title="The single authoritative endpoint of one machine.">hub</abbr> limits (max_frame, max_subs, max_clients...)</td>
+</tr>
+<tr>
+<td><code>23</code></td>
+<td><code>roles</code></td>
+<td><code>uint</code></td>
+<td>granted access level (max of <abbr title="The stateful association between one client and the hub.">session</abbr>)</td>
+</tr>
+<tr>
+<td><code>24</code></td>
+<td><code>deadman_ms</code></td>
+<td><code>uint</code></td>
+<td>WELCOME: applied <abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr> timeout for this <abbr title="The stateful association between one client and the hub.">session</abbr></td>
+</tr>
+<tr>
+<td><code>25</code></td>
+<td><code>deadman_policy</code></td>
+<td><code>uint</code></td>
+<td>0=stop(decel) 1=hold 2=none: per active-source rules §11.3</td>
+</tr>
+<tr>
+<td><code>26</code></td>
+<td><code>probe_result</code></td>
+<td><code>map</code></td>
+<td>PROBE_REPORT: {bytes, span_ms, loss_pct, rtt_ms}: sub-keys in <code>probe_result_keys</code></td>
+</tr>
+<tr>
+<td><code>27</code></td>
+<td><code>chunks</code></td>
+<td><code>array</code></td>
+<td>BLOB_REQ repair: missing chunk indices. (Was 'CATALOG_REQ repair' pre-v1.0; the key is REUSED rather than replaced because <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> transfer is now <abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">blob</abbr> namespace 0: same meaning, generalized carrier.) Present WITH a full request = MALFORMED (RFC-022.6).</td>
+</tr>
+<tr>
+<td><code>28</code></td>
+<td><code>pin_proof</code></td>
+<td><code>bstr</code></td>
+<td>PAIR_REQ: HMAC-SHA256(PIN, hello-nonce) truncated 16B (§12.2)</td>
+</tr>
+<tr>
+<td><code>29</code></td>
+<td><code>nonce</code></td>
+<td><code>bstr</code></td>
+<td>WELCOME: 8-byte <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> nonce</td>
+</tr>
+<tr>
+<td><code>30</code></td>
+<td><code>precondition</code></td>
+<td><code>uint</code></td>
+<td><abbr title="A channel class, and the only way a client changes anything.">INTENT</abbr>: expected <abbr title="A 16-bit generation counter that increments whenever applied configuration content changes.">cfg_gen</abbr> (CAS guard, §9.3)</td>
+</tr>
+<tr>
+<td><code>31</code></td>
+<td><code>retry_after_ms</code></td>
+<td><code>uint</code></td>
+<td>NACK BUSY: earliest reconnect time</td>
+</tr>
+<tr>
+<td><code>32</code></td>
+<td><code>takeover</code></td>
+<td><code>bool</code></td>
+<td>safety-<abbr title="A channel class, and the only way a client changes anything.">intent</abbr>: forcible source <abbr title="Re-issuing an activating intent with the takeover flag set, to transfer source ownership.">takeover</abbr> flag (§11.4)</td>
+</tr>
+<tr>
+<td><code>33</code></td>
+<td><code>event_kind</code></td>
+<td><code>uint</code></td>
+<td><abbr title="A channel class carrying discrete occurrences, edges, not levels.">EVENT</abbr>: kind discriminator per <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> entry</td>
+</tr>
+<tr>
+<td><code>34</code></td>
+<td><code>seq_of_state</code></td>
+<td><code>uint</code></td>
+<td><abbr title="A channel class carrying discrete occurrences, edges, not levels.">EVENT</abbr>: seq of the <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> twin frame it corresponds to (§9.4)</td>
+</tr>
+<tr>
+<td><code>35</code></td>
+<td><code>grants</code></td>
+<td><code>array</code></td>
+<td>WELCOME: batch <abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grant</abbr> results: array of {13:priority, 14:granted_rate_hz, 15:channel_id} (§6.3, §10.2)</td>
+</tr>
+<tr>
+<td><code>36</code></td>
+<td><code>granted_publishes</code></td>
+<td><code>array</code></td>
+<td>WELCOME / PUBLISH result: granted <abbr title="A channel class carrying timestamped sample bundles, in either direction.">STREAM</abbr>-ingress <abbr title="The hub's applied answer to a client's wish to send on an inbound STREAM channel.">publishes</abbr>: array of {14:granted_rate_hz, 15:channel_id, 42:burst} (§6.3, §10.5). Omitted when empty.</td>
+</tr>
+<tr>
+<td><code>37</code></td>
+<td><code>identity</code></td>
+<td><code>map</code></td>
+<td>WELCOME: <abbr title="The single authoritative endpoint of one machine.">hub</abbr> identity (RFC-016): sub-keys in <code>identity_keys</code>. Capability discovery is CATALOG introspection, not a list here: a feature exists iff its <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr> exist.</td>
+</tr>
+<tr>
+<td><code>38</code></td>
+<td><code>blob</code></td>
+<td><code>map</code></td>
+<td>BLOB_REQ / BLOB_CHUNK / store CRUD <abbr title="A channel class, and the only way a client changes anything.">intents</abbr>: which <abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">blob</abbr>, and its item fields (RFC-021): sub-keys in <code>blob_keys</code>.</td>
+</tr>
+<tr>
+<td><code>39</code></td>
+<td><code>trust</code></td>
+<td><code>map</code></td>
+<td>HELLO + WELCOME + AUTH: identity proof, signature material, token presentation, <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> modes (RFC-029/027): sub-keys in <code>trust_keys</code>. Absent = the potato path: bearer token, no crypto, unchanged v1-draft handshake cost.</td>
+</tr>
+<tr>
+<td><code>40</code></td>
+<td><code>body</code></td>
+<td><code>map</code></td>
+<td><abbr title="A channel class carrying discrete occurrences, edges, not levels.">EVENT</abbr>: the kind-specific fields. Integer keys come from the CHANNEL'S CATALOG <code>schema</code>, exactly as <abbr title="A channel class, and the only way a client changes anything.">INTENT</abbr>'s <code>value</code> (20) does, NOT from this global space. Grammar fix from the feasibility pass: with kind-specific fields at the top level, every device-authored <abbr title="A channel class carrying discrete occurrences, edges, not levels.">EVENT</abbr> <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> (the motion-anomaly <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>!) would have needed a <abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr> PR to name its own fields: the precise coupling the self-describing <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> exists to prevent.</td>
+</tr>
+<tr>
+<td><code>41</code></td>
+<td><code>intent_seq</code></td>
+<td><code>uint</code></td>
+<td>NACK: seq of the frame being rejected (RFC-001). Hubs SHOULD populate it whenever a specific inbound frame provoked the NACK; <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr> MUST tolerate its absence. Without it a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> with two <abbr title="A channel class, and the only way a client changes anything.">intents</abbr> in flight on ONE <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> cannot tell which was refused.</td>
+</tr>
+<tr>
+<td><code>42</code></td>
+<td><code>burst</code></td>
+<td><code>float</code></td>
+<td><abbr title="The hub's applied answer to a client's wish to send on an inbound STREAM channel.">publishes</abbr> / granted_publishes ENTRY maps: token-bucket capacity in samples, decoupled from rate (RFC-013). Default = granted rate (today's behavior). Clamped to rate x max_burst_multiple and echoed like every wish. Exists because §10.5 made rate double as bucket depth, so a 2-4/s <abbr title="One STREAM data point that commands a time extent, carrying its own duration.">segment</abbr> sender with a 25/s peak had to declare 30 Hz: lying to admission control to buy burst.</td>
+</tr>
+<tr>
+<td><code>43</code></td>
+<td><code>reboot_in_ms</code></td>
+<td><code>uint</code></td>
+<td><abbr title="The hub's mandatory, truthful reply to an intent, carrying the values actually in effect after clamping.">ECHO</abbr> <code>applied</code> (19): this accepted <abbr title="A channel class, and the only way a client changes anything.">intent</abbr> commits by rebooting, in about this many ms (RFC-020). The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> then GOODBYEs every <abbr title="The stateful association between one client and the hub.">session</abbr> with REBOOTING; <code>boot_id</code> change handles the rest.</td>
+</tr>
+<tr>
+<td><code>44</code></td>
+<td><code>deadman_wish_ms</code></td>
+<td><code>uint</code></td>
+<td>HELLO: requested <abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr> window (RFC-038). The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> clamps into [deadman_min_ms, deadman_max_ms] (a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> MAY <abbr title="Replacing a requested value with the nearest value the machine's limits allow.">clamp</abbr> tighter) and echoes the APPLIED value via the existing key 24, <abbr title="Replacing a requested value with the nearest value the machine's limits allow.">post-clamp</abbr> echo, zero new response plumbing. Exists because a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that KNOWS its liveness cadence is coarse (a browser whose background-tab timers are throttled, a BLE <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> on a slow connection interval) could not ask for a window it can actually honor; §11.3's loss policy is untouched: this negotiates WHEN the <abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr> fires, never WHAT it does.</td>
+</tr>
+<tr>
+<td><code>45</code></td>
+<td><code>curve_family</code></td>
+<td><code>uint</code></td>
+<td><abbr title="The hub's applied answer to a client's wish to send on an inbound STREAM channel.">publishes</abbr> / granted_publishes ENTRY maps: which <code>curve_families</code> smoothness class the <abbr title="One STREAM data point that commands a time extent, carrying its own duration.">segment</abbr> stream describes (RFC-030). Wish rides HELLO or PUBLISH (0x18) like <code>burst</code>, so a sender switching interpolators mid-<abbr title="The stateful association between one client and the hub.">session</abbr> renegotiates without a reconnect; the GRANT echo carries the EFFECTIVE family, post <code>curve_policy</code> override, so a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> can tell 'honored' from 'downgraded'. Absent = unspecified = today's behavior. RFC-049b: <code>requested_curve_family</code> (48) rides the SAME entry map echoing the original wish verbatim, so the honored-vs-downgraded read is a direct comparison of two present keys, not an inference from what the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> remembers sending.</td>
+</tr>
+<tr>
+<td><code>46</code></td>
+<td><code>ws_port</code></td>
+<td><code>uint</code></td>
+<td>WELCOME: the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s own WebSocket listening port (RFC-046 §3). Present on every binding but load-bearing over BLE: it is the in-band endpoint disclosure a BLE-connected <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> needs to hop to WS (RFC-043's auto-upgrade). Also closes the sim's <abbr title="The single authoritative endpoint of one machine.">hub</abbr>-identity gap for WS-side <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr>: the same key tells a WS <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> what the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> believes its own endpoint is. 0 = none (no WS listener right now).</td>
+</tr>
+<tr>
+<td><code>47</code></td>
+<td><code>ipv4</code></td>
+<td><code>uint</code></td>
+<td>WELCOME: the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s own IPv4 address (RFC-046 §3), packed big-endian into one u32 (e.g. 192.168.1.229 = 0xC0A801E5): there is no bstr(4) here because a plain integer makes '0 = none' the same natural sentinel 0.0.0.0 already is. Read alongside <code>ws_port</code> for the BLE→WS upgrade hop. 0 = none.</td>
+</tr>
+<tr>
+<td><code>48</code></td>
+<td><code>requested_curve_family</code></td>
+<td><code>uint</code></td>
+<td><abbr title="The hub's applied answer to a client's wish to send on an inbound STREAM channel.">publishes</abbr> / granted_publishes ENTRY maps (RFC-049b): echoes the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>'s <code>curve_family</code> (45) WISH verbatim, unmodified by <code>curve_policy</code>. Exists alongside the existing effective value at key 45 so a downgrade is a visible FACT (both numbers present, compare them) rather than an inference a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> has to reconstruct from what it originally sent. Present only when a curve_family wish was made; a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> with no curve-family opinion omits both keys exactly as before this RFC. Implementation: Phase D (RFC-049).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="scoped-sub-map-key-spaces">Scoped sub-map key spaces<a class="headerlink" href="#scoped-sub-map-key-spaces" title="Link to this section">#</a></h2>
+<p>A feature that needs several keys takes <strong>one</strong> global key and numbers
+its interior in its own tiny space. Those spaces are listed below. A
+number here has no meaning in the global space above.</p>
+<h3 id="limits-key-22"><code>limits</code> (key 22)<a class="headerlink" href="#limits-key-22" title="Link to this section">#</a></h3>
+<p>Sizing caps the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> advertises in WELCOME.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-key</th>
+<th>Name</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>max_frame</code></td>
+<td>largest frame this <abbr title="The single authoritative endpoint of one machine.">hub</abbr> accepts, bytes</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>max_subscriptions</code></td>
+<td>per-<abbr title="The stateful association between one client and the hub.">session</abbr> subscription cap</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>retained_pending</code></td>
+<td>count of <abbr title="The latest value of a STATE channel, which the hub keeps and pushes immediately on grant.">retained</abbr> <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> pushes that will follow WELCOME</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>max_subscriptions_per_frame</code></td>
+<td>RFC-033.3: most subscription wishes one SUBSCRIBE (or HELLO) frame may carry. Before this was advertised, a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> could only find the reference <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s 16-wish decode cap by binary-searching against a live machine. Two <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr> did this, one night each.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="probe_result-key-26"><code>probe_result</code> (key 26)<a class="headerlink" href="#probe_result-key-26" title="Link to this section">#</a></h3>
+<p>The <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>'s measurement of the optional post-WELCOME network probe.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-key</th>
+<th>Name</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>bytes_received</code></td>
+<td>bytes received during the probe burst</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>span_ms</code></td>
+<td>wall time of the burst as observed by the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr></td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>loss_pct_x100</code></td>
+<td>loss percentage x100 (2 decimal fixed-point)</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>rtt_ms</code></td>
+<td>measured round-trip time, ms</td>
+</tr>
+</tbody>
+</table>
+<h3 id="identity-key-37"><code>identity</code> (key 37)<a class="headerlink" href="#identity-key-37" title="Link to this section">#</a></h3>
+<p>Who this <abbr title="The single authoritative endpoint of one machine.">hub</abbr> is. There is exactly one home for <abbr title="The single authoritative endpoint of one machine.">hub</abbr> identity.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-key</th>
+<th>Name</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>product</code></td>
+<td>tstr: product/model identifier, e.g. 'slopdrive-32' (&lt;=32 B)</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>fw_version</code></td>
+<td>tstr: <abbr title="The single authoritative endpoint of one machine.">hub</abbr> firmware version, e.g. '2.1.47' (&lt;=24 B). Retires the mDNS-TXT-only exposure that made the MFP plugin label devices 'boot 0x...'. A change here SHOULD be surfaced to the user (RFC-029.3).</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>hub_name</code></td>
+<td>tstr: operator-assigned machine name (&lt;=32 B). Writable as a str16/str32 setting (RFC-026) where the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> offers one.</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>info</code></td>
+<td>map: OPTIONAL device-defined extras (hardware rev, build date...). Keys are device-defined tstr; the protocol never interprets them. Depth: WELCOME map -&gt; identity map -&gt; info map = 3, one under the §5.3 cap.</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td><code>hub_instance_id</code></td>
+<td>uint (u64): RFC-048, operator veto of an RFC-046 decision. DURABLE <abbr title="The single authoritative endpoint of one machine.">hub</abbr> identity: generated once and NVS-persisted, survives every reboot and firmware update (only a factory reset regenerates it), as opposed to <code>boot_id</code> (cbor_keys 7, §6.1/§7.2), which is a FRESH random value EVERY boot and exists only to fence stale per-boot state. Distinguishes THIS PHYSICAL HUB from any other, across time. Present in WELCOME <code>identity</code> (37) for any <abbr title="The single authoritative endpoint of one machine.">hub</abbr> that persists one; absent = the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> has no durable identity yet (a fresh dev build, a non-persisting <abbr title="A desktop binary that behaves like a machine, embedding the real hub, motion engine and catalog behind a real transport.">simulator</abbr>) and a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> MUST tolerate its absence exactly as it tolerates the rest of <code>identity</code> (§6.3). Also the value DISCOVER_REPLY (0x1F, §13.8) now carries as <code>hub_instance_id</code>, replacing that frame's original <code>boot_id</code>-based disambiguator (see the <code>frame_types</code> 0x1F note): a boot-scoped id could not deduplicate 'two <abbr title="The single authoritative endpoint of one machine.">hubs</abbr> sharing a name' across a reboot, which was the field's whole job.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blob-key-38"><code>blob</code> (key 38)<a class="headerlink" href="#blob-key-38" title="Link to this section">#</a></h3>
+<p>Which <abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">blob</abbr>, and its item fields. Shared by BLOB_REQ, BLOB_CHUNK and store <abbr title="A channel class, and the only way a client changes anything.">intents</abbr>.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-key</th>
+<th>Name</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>ns</code></td>
+<td>uint: which <abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">blob</abbr> space: see <code>blob_namespaces</code>. (Named <code>ns</code>, not <code>namespace</code>: the generated C++ constant would otherwise be a keyword. Prose and CDDL may say 'namespace'.)</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>store_id</code></td>
+<td>uint u8: which store within blob_namespaces.store; absent/0 for the <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> namespace. Declared by the store's <abbr title="A channel class declaring a set of numbered slots holding opaque documents.">STORE</abbr>-class <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> entry.</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>slot</code></td>
+<td>uint u8: item index within the store, 0..capacity-1</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>generation</code></td>
+<td>uint u16: the roster generation this request/response is consistent with. Lets a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> notice its enumeration went stale mid-transfer.</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td><code>name</code></td>
+<td>tstr: item name, &lt;= the store's declared name_max</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td><code>kind</code></td>
+<td>tstr: namespaced payload kind, e.g. 'pattern.frayd'. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> validates kind + size on import and NACKs INVALID_VALUE; it never inspects the payload itself.</td>
+</tr>
+<tr>
+<td><code>7</code></td>
+<td><code>payload</code></td>
+<td>bstr: the opaque item document (&lt;= preset_item_max_bytes / the store's per_item_max). Present on save-with-payload (= import); absent on save means 'capture CURRENT live state'.</td>
+</tr>
+<tr>
+<td><code>8</code></td>
+<td><code>chunk_index</code></td>
+<td>uint: 0-based index of this chunk</td>
+</tr>
+<tr>
+<td><code>9</code></td>
+<td><code>chunk_count</code></td>
+<td>uint: total chunks in this transfer</td>
+</tr>
+<tr>
+<td><code>10</code></td>
+<td><code>total_bytes</code></td>
+<td>uint: total encoded byte length being transferred (lets a receiver size/reject before assembling: RFC-028 no-unbounded-allocation)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trust-key-39"><code>trust</code> (key 39)<a class="headerlink" href="#trust-key-39" title="Link to this section">#</a></h3>
+<p>Identity proof, signature material, token presentation, <abbr title="The ceremony that proves a client should be trusted, ending in a token and a role.">pairing</abbr> modes. Every key is optional.</p>
+<table>
+<thead>
+<tr>
+<th>Sub-key</th>
+<th>Name</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1</code></td>
+<td><code>client_ver</code></td>
+<td>tstr: HELLO, <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> software version (&lt;=24 B). The CHANGE TRIPWIRE: an observed version change drops a paired device to RECOGNIZED-PENDING (admitted at <code>watch</code>, granted role suspended, re-approval surfaced to configure <abbr title="The stateful association between one client and the hub.">sessions</abbr>). HONESTY CLAUSE, normative: self-reported, therefore a tripwire and NOT attestation: a deliberately malicious update lies and keeps its token. The real bounds are role scoping, instant revocation, roster visibility and the role-exempt safety ops.</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>client_nonce</code></td>
+<td>bstr: HELLO: 8 bytes of CLIENT entropy. The <abbr title="The single authoritative endpoint of one machine.">hub</abbr> signs client_nonce || <abbr title="A random non-zero 32-bit number the hub assigns to one association, unique within a hub boot.">session_id</abbr> || <abbr title="A random 32-bit number the hub generates at every boot, naming which incarnation of the hub you are talking to.">boot_id</abbr>. This was a feasibility-pass BLOCKER: without <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> entropy the WELCOME signature is replayable from one captured handshake and an evil twin passes verification.</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>sig_request</code></td>
+<td>bool: HELLO, 'please sign my nonce'. Signing is ON REQUEST because the S3 has no ECC accelerator (mbedtls software ECDSA: sign ~30-80 ms, one uninterruptible call, never inline in a WS handler), so potato handshakes must stay instant. Absent/false = no signature, no cost. A request is NOT a promise: a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> with no keypair answers with silence, and silence is a conformant answer. Only a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that PINNED a key (which it can only have received from that machine's own PAIR_GRANT) is entitled to read silence as failure, after hub_sig_timeout_ms.</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>hub_pubkey</code></td>
+<td>bstr: PAIR_GRANT, SEC1-compressed P-256 public key (33 B). Delivered AT THE PAIRING CEREMONY, i.e. TOFU anchored at the moment physical presence was proven. P-256 because WebCrypto can verify it: the browser participates.</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td><code>welcome_sig</code></td>
+<td>bstr: WELCOME or HUB_SIG (0x1D): deterministic ECDSA-P256 (RFC 6979) signature over the 16-byte string client_nonce(8) || <abbr title="A random non-zero 32-bit number the hub assigns to one association, unique within a hub boot.">session_id</abbr>(u32 LE) || <abbr title="A random 32-bit number the hub generates at every boot, naming which incarnation of the hub you are talking to.">boot_id</abbr>(u32 LE). A clone machine copies every identity string and fails this; the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> MUST surface 'not your machine' and withhold <abbr title="A channel class, and the only way a client changes anything.">intents</abbr>. Potato <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr> paired by physical ceremony MAY skip verification. TWO DELIVERY POINTS, ONE MEANING: inline in WELCOME where a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> can sign without stalling its own tick, otherwise deferred in HUB_SIG once the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s own low-priority worker has produced it. Signature material and <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> handling are identical either way; a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> accepts whichever arrives first and ignores a second.</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td><code>token_proof</code></td>
+<td>bstr: AUTH: HMAC-SHA256(token, WELCOME nonce) truncated to 16 B. Costs ONE extra round trip per connect; that is the honest price. The 'previous-<abbr title="The stateful association between one client and the hub.">session</abbr> nonce' shortcut was DROPPED by the feasibility pass as replay-unsafe (undefined rotation point, and §6.3 makes a successful replay EVICT the real <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>).</td>
+</tr>
+<tr>
+<td><code>7</code></td>
+<td><code>presentation_mode</code></td>
+<td>uint: how the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> presents its token: 0 = bearer (raw 16 B in HELLO; legal, the potato floor stays a memcpy), 1 = proof (AUTH, RECOMMENDED for anything with SHA-256, i.e. everyone but coin cells). v1 transports are cleartext, so bearer is sniffable by a passive LAN observer; the roster records which mode a device uses, making security posture visible.</td>
+</tr>
+<tr>
+<td><code>8</code></td>
+<td><code>pairing_modes</code></td>
+<td>uint: WELCOME: BITMASK of <code>pairing_modes</code> this <abbr title="The single authoritative endpoint of one machine.">hub</abbr> currently offers, RE-EVALUATED PER SESSION so a mode that is only transiently available (RFC-027(c)'s <abbr title="The pairing mode where physical presence, rather than a proof or an approval, opens a short single-grant window.">push-to-pair</abbr> window) is advertised only while it is actually open. RFC-027.3 said 'WELCOME limits/identity map'; it lands here instead because it is <abbr title="The stateful association between one client and the hub.">session</abbr>-security capability, and <code>limits</code> is sized caps while <code>identity</code> is who-you-are. Window state is thus observable in-band by any watch <abbr title="The stateful association between one client and the hub.">session</abbr>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="blob-namespaces"><abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">Blob</abbr> namespaces<a class="headerlink" href="#blob-namespaces" title="Link to this section">#</a></h2>
+<p>One transfer verb serves the whole protocol. The namespace names what a
+transfer carries. Values 0 to 127 are spec-governed. Values 128 to 255
+are device-defined.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Namespace</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td><code>catalog</code></td>
+<td>the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr> <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> (§8.4). store_id/slot absent. This is the ONLY namespace with a READY concept (<abbr title="The rule that a session's frames are refused until it confirms which catalog it has adopted.">CATALOG_READY</abbr> 0x19): you cannot decode <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> without the <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr>, but nothing gates on a preset.</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td><code>store</code></td>
+<td>items in a <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr>-declared <abbr title="A channel class declaring a set of numbered slots holding opaque documents.">STORE</abbr>-class <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>: store_id picks the store, slot picks the item. Presets, saved positions, limit profiles, recordings, the <abbr title="The hub's stored list of paired devices, their roles, and how each one presents its token.">trust ledger</abbr>: all the same machinery, for free. Unused is unproblem.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>DEMO-CANDIDATE: decode one captured HELLO or WELCOME frame live, key by key, against this table.</p>
+</blockquote>
+<!-- GENERATED FILE. DO NOT EDIT. Source: docs-site/dictionary.yaml via docs-site/tools/gen_docs_tables.py -->
+<!-- Appended to every page by pymdownx.snippets.auto_append, so a
+     defined term shows its Dictionary definition on hover. -->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../channels/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Channels">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Channels
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../catalog-vocabulary/" class="md-footer__link md-footer__link--next" aria-label="Next: Catalog vocabulary">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Catalog vocabulary
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      SlopSync is provided to the community as a tool. It favors no firmware, no vendor and no product.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tooltips"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../assets/javascripts/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>

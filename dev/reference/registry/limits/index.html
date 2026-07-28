@@ -1,0 +1,3394 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Generated table of SlopSync well-known limits, timeouts, caps and defaults.">
+      
+      
+        <meta name="author" content="The SlopSync contributors">
+      
+      
+        <link rel="canonical" href="https://AtlanticTM.github.io/SlopSync/dev/reference/registry/limits/">
+      
+      
+        <link rel="prev" href="../errors/">
+      
+      
+        <link rel="next" href="../discovery/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Limits and defaults - SlopSync</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/datasheet.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  <meta name="color-scheme" content="light dark">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#limits-and-defaults" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="SlopSync" class="md-header__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SlopSync
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Limits and defaults
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2m0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../understand/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Understand
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../build/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Build with it
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../spec/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Specification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../community/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="SlopSync" class="md-nav__button md-logo" aria-label="SlopSync" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 21c-3 0-4.19-4.24-5.45-8.72C10.14 9.04 9 5 7.5 5 4.11 5 4 11.93 4 12H2c0-.37.06-9 5.5-9 3 0 4.21 4.25 5.47 8.74C13.83 14.8 15 19 16.5 19c3.44 0 3.53-6.93 3.53-7h2c0 .37-.06 9-5.53 9"/></svg>
+
+    </a>
+    SlopSync
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../understand/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Understand
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Understand
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/anatomy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anatomy of a frame
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/capabilities/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities and custom hardware
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/what-it-replaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it replaces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem and compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security model and the audit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../understand/for-everyone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For everyone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../build/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build with it
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Build with it
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Client guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/javascript/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JavaScript
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/csharp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C#
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/clients/python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub implementer guide
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../build/local-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../spec/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/foundations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/wire-format/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wire format
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/session/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session layer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/time/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Time and sequencing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/qos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    QoS and congestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security and trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports and relays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/legacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legacy interop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors and diagnostics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/conformance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conformance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/limitations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Worked session traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog schema (CDDL)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/appendices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendices A-G
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/rationale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rationale and history
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spec/errata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frames/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frame types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cbor-keys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CBOR keys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalog-vocabulary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalog vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event kinds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../safety/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Safety codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pairing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairing modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NACK codes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limits and defaults
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-protocol-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core protocol constants
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-binding-max_frame-defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-binding max_frame defaults
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-lifecycle-rfc-015-rfc-024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session lifecycle (RFC-015, RFC-024)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#streaming-rfc-013-rfc-014-rfc-049c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Streaming (RFC-013, RFC-014, RFC-049c)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-caps-rfc-009-rfc-0225-rfc-0282" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String caps (RFC-009, RFC-022.5, RFC-028.2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stores-trust-rfc-021-rfc-027-rfc-029" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stores &amp; trust (RFC-021, RFC-027, RFC-029)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-rfc-017" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging (RFC-017)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Discovery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rendering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rendering vocabulary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../channel-catalog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel catalog
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../channel-grid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Channel grid
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../community/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Community
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../community/governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Governance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../community/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../community/rfc-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC process
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--stub"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-protocol-constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core protocol constants
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#per-binding-max_frame-defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-binding max_frame defaults
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-lifecycle-rfc-015-rfc-024" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session lifecycle (RFC-015, RFC-024)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#streaming-rfc-013-rfc-014-rfc-049c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Streaming (RFC-013, RFC-014, RFC-049c)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-caps-rfc-009-rfc-0225-rfc-0282" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        String caps (RFC-009, RFC-022.5, RFC-028.2)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stores-trust-rfc-021-rfc-027-rfc-029" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stores &amp; trust (RFC-021, RFC-027, RFC-029)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-rfc-017" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging (RFC-017)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+    
+      <p class="ss-pagemeta">
+        
+  
+    <span class="ss-badge ss-badge--ieee" title="Normative register: numbered clauses, RFC 2119 MUST/SHALL/MAY, exact cross-references.">IEEE register</span>
+  
+
+        
+          <span class="ss-badge ss-badge--generated" title="Generated from registry.yaml by docs-site/tools/gen_docs_tables.py. Hand edits are overwritten, and a stale copy fails CI.">generated</span>
+        
+        
+      </p>
+    
+  
+  
+                  
+
+
+
+<!-- ==========================================================
+     GENERATED FILE. DO NOT EDIT.
+     Source of truth: spec/registry/registry.yaml
+     Generator:       docs-site/tools/gen_docs_tables.py
+     Regenerate:      python docs-site/tools/gen_docs_tables.py
+     CI gate:         python docs-site/tools/gen_docs_tables.py --check
+     Hand edits are overwritten and fail the docs build.
+     ========================================================== -->
+
+<h1 id="limits-and-defaults">Limits and defaults<a class="headerlink" href="#limits-and-defaults" title="Link to this section">#</a></h1>
+<p>Some of these are hard protocol constants. Others are recommended
+defaults a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> may tune and then advertise. The Notes column carries the
+<abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr>'s own rationale where it records one.</p>
+<h2 id="core-protocol-constants">Core protocol constants<a class="headerlink" href="#core-protocol-constants" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>header_bytes</code></td>
+<td><code>8</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>min_transport_payload</code></td>
+<td><code>242</code></td>
+<td>ESP-NOW 250 − 8 header; <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> frames must fit this (§9.1)</td>
+</tr>
+<tr>
+<td><code>catalog_chunk_payload</code></td>
+<td><code>192</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>blob_chunks_in_flight</code></td>
+<td><code>4</code></td>
+<td>RFC-050: advertised SENDER pacing budget — the max unacknowledged-by-application-progress BLOB_CHUNKs a sender may have outstanding for one transfer before it MUST hold emission (§8.4's backpressure table). Concrete answer to the panel's "what IS the signal" finding: a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> MAY advertise a smaller value, MUST NOT advertise more.</td>
+</tr>
+<tr>
+<td><code>bundle_max_samples</code></td>
+<td><code>32</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>bundle_max_span_ms</code></td>
+<td><code>20</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>seq_width_bits</code></td>
+<td><code>16</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>seq_newer_window</code></td>
+<td><code>32768</code></td>
+<td>serial arithmetic half-window</td>
+</tr>
+<tr>
+<td><code>frag_reassembly_timeout_ms</code></td>
+<td><code>5000</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>frag_max_concurrent_per_session</code></td>
+<td><code>2</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>idempotency_ring_depth</code></td>
+<td><code>32</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>intent_ingress_default_per_s</code></td>
+<td><code>50</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>stream_ingress_overage_nack_per_s</code></td>
+<td><code>5</code></td>
+<td>§10.5: per-<abbr title="The stateful association between one client and the hub.">session</abbr> cap on RATE_LIMITED NACKs emitted for <abbr title="A channel class carrying timestamped sample bundles, in either direction.">STREAM</abbr>-ingress overage (throttle — the NACK is back-pressure feedback, not a per-sample echo; unthrottled it would mirror the very flood it reports)</td>
+</tr>
+<tr>
+<td><code>event_queue_depth_per_subscriber</code></td>
+<td><code>16</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>never_shed_stall_eviction_ms</code></td>
+<td><code>2000</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>catalog_chunk_gap_timeout_ms</code></td>
+<td><code>500</code></td>
+<td>recommended (SHOULD)</td>
+</tr>
+<tr>
+<td><code>busy_retry_after_default_ms</code></td>
+<td><code>2000</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ping_interval_holding_control_ms</code></td>
+<td><code>200</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>ping_interval_idle_ms</code></td>
+<td><code>1000</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>deadman_default_ms</code></td>
+<td><code>600</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>deadman_min_ms</code></td>
+<td><code>250</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>deadman_max_ms</code></td>
+<td><code>5000</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pairing_window_default_s</code></td>
+<td><code>120</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pairing_pin_digits</code></td>
+<td><code>4</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>pairing_gesture_boot_count</code></td>
+<td><code>3</code></td>
+<td>RFC-049g: N in §12.3(c)'s power-cycle gesture — this many CONSECUTIVE short boots arm the <abbr title="The pairing mode where physical presence, rather than a proof or an approval, opens a short single-grant window.">push-to-pair</abbr> window on the next boot. Was prose-only ("N (default 3)"); the panel's own complaint pattern (<abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr> doctrine says numbers are never left as hedges) applies to this one too.</td>
+</tr>
+<tr>
+<td><code>pairing_gesture_max_uptime_ms</code></td>
+<td><code>10000</code></td>
+<td>RFC-049g: the per-boot uptime ceiling that counts as "short" for the gesture above. Was prose-only ("~10 s") — the tilde was hedge language in a normative section; pinned here matching the value SPEC §12.3(c) already carried in prose. Reference-firmware conformance to this exact value is unverified by this pass — implementation is Phase D.</td>
+</tr>
+<tr>
+<td><code>token_bytes</code></td>
+<td><code>16</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>instance_id_bytes</code></td>
+<td><code>8</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>etag_bytes</code></td>
+<td><code>8</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>conformance_min_clients</code></td>
+<td><code>4</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>default_max_clients_ws</code></td>
+<td><code>8</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>default_max_clients_espnow</code></td>
+<td><code>4</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>default_max_clients_ble</code></td>
+<td><code>1</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>default_max_clients_serial</code></td>
+<td><code>1</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>estop_repeat_interval_ms</code></td>
+<td><code>50</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>estop_repeat_max</code></td>
+<td><code>20</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>clock_resync_interval_s</code></td>
+<td><code>10</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>probe_default_bytes</code></td>
+<td><code>8192</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>probe_max_duration_ms</code></td>
+<td><code>1500</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>catalog_max_entries</code></td>
+<td><code>256</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>catalog_max_entry_bytes</code></td>
+<td><code>4096</code></td>
+<td>feasibility pass: a 50-field FULLY annotated entry (defaults + options + groups + descs) encodes to ~8–10 KB, which violates RFC-028's no-unbounded-allocation rule for a per-entry decode buffer. Oversize is a <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr>-AUTHORING error caught by conformance tooling, not a runtime surprise: the entry splits across <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr> or trims its descs.</td>
+</tr>
+<tr>
+<td><code>max_subscriptions_per_session</code></td>
+<td><code>64</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>max_subscriptions_per_frame</code></td>
+<td><code>16</code></td>
+<td>RFC-033.3: wishes one SUBSCRIBE/HELLO frame may carry (= the reference decoder's kSubscribeMaxWishes, which was previously discoverable only by binary-searching a live <abbr title="The single authoritative endpoint of one machine.">hub</abbr>). Advertised in WELCOME limits key 4; a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> MAY advertise less, never more than it decodes. Overflow answers SUBSCRIBE_REJECTED, never silence.</td>
+</tr>
+<tr>
+<td><code>ws_subprotocol</code></td>
+<td><code>slopsync.v1</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>mdns_service</code></td>
+<td><code>_slopsync._tcp</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="per-binding-max_frame-defaults">Per-binding max_frame defaults<a class="headerlink" href="#per-binding-max_frame-defaults" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_frame_ws</code></td>
+<td><code>512</code></td>
+<td>= the reference <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s FrameBuffer capacity. Nothing NEEDS to be bigger: <abbr title="The frames that carry machine values at rate, carrying packed struct payloads.">data-plane</abbr> frames fit the 242 B floor by rule, <abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">blob</abbr> chunks are catalog_chunk_payload + header, and oversized control frames fragment (§5.6). A fixed capacity keeps every queue slot heap-free on an ESP32.</td>
+</tr>
+<tr>
+<td><code>max_frame_espnow</code></td>
+<td><code>250</code></td>
+<td>the hard ESP-NOW MTU. Payload 250−8 = 242 = min_transport_payload; that subtraction is where the 242 B <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> floor came from in the first place.</td>
+</tr>
+<tr>
+<td><code>max_frame_ble</code></td>
+<td><code>244</code></td>
+<td>ATT_MTU 247 − 3 B notification header. Payload 236. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> stuck at the legacy 23 B MTU cannot carry a full <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> frame at all, which is why §13 SHOULD-mandates MTU exchange + data length extension before <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> transfer.</td>
+</tr>
+<tr>
+<td><code>max_frame_serial</code></td>
+<td><code>512</code></td>
+<td>byte-stream binding: no MTU of its own, so it matches the WS/buffer figure rather than inventing a third number.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="session-lifecycle-rfc-015-rfc-024"><abbr title="The stateful association between one client and the hub.">Session</abbr> lifecycle (RFC-015, RFC-024)<a class="headerlink" href="#session-lifecycle-rfc-015-rfc-024" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>catalog_ready_timeout_ms</code></td>
+<td><code>15000</code></td>
+<td>RFC-015: a <abbr title="The stateful association between one client and the hub.">session</abbr> that PINGs happily but never sends <abbr title="The rule that a session's frames are refused until it confirms which catalog it has adopted.">CATALOG_READY</abbr> is GOODBYE'd READY_TIMEOUT. Liveness reaping alone NEVER fires on a pinging <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>, so without this a half-adopted <abbr title="The stateful association between one client and the hub.">session</abbr> holds a slot forever with both planes gated shut. (READY itself is re-sent by the <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> at catalog_chunk_gap_timeout_ms until <abbr title="The latest value of a STATE channel, which the hub keeps and pushes immediately on grant.">retained</abbr> <abbr title="A channel class carrying idempotent full snapshots of a coherent group of fields.">STATE</abbr> arrives — idempotent, no handshake state machine.)</td>
+</tr>
+<tr>
+<td><code>idle_reap_multiplier</code></td>
+<td><code>3</code></td>
+<td>RFC-024: reap a non-owning <abbr title="The stateful association between one client and the hub.">session</abbr> after this multiple of ping_interval_idle_ms of silence. §6.5 said "MAY"; it was never implemented, so a viewer that went dark held a slot forever. Two liveness regimes, deliberately different: source OWNERS get the <abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr> window + §11.3 loss policy; everyone else gets <abbr title="Closing a non-owning session that has gone silent, to reclaim its slot.">idle reaping</abbr> with no motion consequence.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="streaming-rfc-013-rfc-014-rfc-049c">Streaming (RFC-013, RFC-014, RFC-049c)<a class="headerlink" href="#streaming-rfc-013-rfc-014-rfc-049c" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_future_schedule_ms</code></td>
+<td><code>250</code></td>
+<td>RFC-014: for <abbr title="One STREAM data point that commands a time extent, carrying its own duration.">segment</abbr>-class <abbr title="A channel class carrying timestamped sample bundles, in either direction.">STREAM</abbr> <abbr title="A named, numbered, typed data flow declared in the catalog.">channels</abbr>, t_base + t_off[i] IS the intended execution start of sample i; the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> clamps scheduling this far ahead. It was already the shipped fw 2.1.45 behavior but registered NOWHERE — the MFP plugin carried a private SegLookaheadMs=120 against it. Interop by folklore, now by number. Recommended <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> lookahead &lt;= half of this.</td>
+</tr>
+<tr>
+<td><code>max_burst_multiple</code></td>
+<td><code>4</code></td>
+<td>RFC-013: cap on <code>burst</code> relative to granted rate. An unbounded <abbr title="Any endpoint that establishes a session with the hub.">client</abbr>-declared burst would reintroduce the exact flood the <abbr title="The ingress rate limiter, a bucket that refills at the granted sample rate and holds one burst's worth of tokens.">token bucket</abbr> exists to stop.</td>
+</tr>
+<tr>
+<td><code>segment_handoff_k</code></td>
+<td><code>1.5</code></td>
+<td>RFC-049c: the H11 machine-side handoff-sanity bound (§9.6) — a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> SHOULD reject/bound an accepted end-velocity exceeding k * min(|chord_in|, |chord_out|). Was reference-implementation-only (the MFP plugin's own Fritsch-Carlson limiter and the firmware's boundHandoffVelocity both hardcoded 1.5 independently) — the panel quoted this <abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr>'s OWN doctrine ("a competing implementation has no authoritative source for the <abbr title="Replacing a requested value with the nearest value the machine's limits allow.">clamping</abbr> constant") back at us. Pinned here so a second implementation matches shape without reverse-engineering the reference. <abbr title="The single authoritative endpoint of one machine.">Hub</abbr>-side per-source scheduling-depth backstop (widening H11's lookahead-bounded coverage) is Phase D implementation, not a <abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr> number.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="string-caps-rfc-009-rfc-0225-rfc-0282">String caps (RFC-009, RFC-022.5, RFC-028.2)<a class="headerlink" href="#string-caps-rfc-009-rfc-0225-rfc-0282" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>desc_max_bytes</code></td>
+<td><code>128</code></td>
+<td>RFC-009: per-field user-facing description. Flash-resident on the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>, travels once, <abbr title="The first eight bytes of a SHA-256 over the deterministically encoded catalog, naming exactly which catalog a hub exposes.">etag</abbr>-cached forever.</td>
+</tr>
+<tr>
+<td><code>nack_detail_max_bytes</code></td>
+<td><code>48</code></td>
+<td>RFC-022.5</td>
+</tr>
+<tr>
+<td><code>option_label_max_bytes</code></td>
+<td><code>24</code></td>
+<td>RFC-009.1: one label in a single-select <code>options</code> array. Matches the 24 B field-name cap so a label is never the thing that overflows an entry.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stores-trust-rfc-021-rfc-027-rfc-029">Stores &amp; trust (RFC-021, RFC-027, RFC-029)<a class="headerlink" href="#stores-trust-rfc-021-rfc-027-rfc-029" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>preset_capacity_min</code></td>
+<td><code>32</code></td>
+<td>RFC-021.6: conformance FLOOR for a store's declared capacity, not a cap. 32 fray-d presets ~ 1.5 KB NVS; the mechanism does not blink at 256. Small <abbr title="The single authoritative endpoint of one machine.">hubs</abbr> declare less, the <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> says so, <abbr title="Any endpoint that establishes a session with the hub.">clients</abbr> render accordingly.</td>
+</tr>
+<tr>
+<td><code>preset_item_max_bytes</code></td>
+<td><code>4096</code></td>
+<td>RFC-021.6 default per_item_max. The payload is opaque: the protocol never decodes it, so this is purely a transfer/storage budget.</td>
+</tr>
+<tr>
+<td><code>paired_devices_max</code></td>
+<td><code>8</code></td>
+<td>trust-ledger capacity. 8, matching the library's kMaxPaired TODAY (the RFC text said 16; the feasibility pass corrected it against the source). Also equals default_max_clients_ws, which is a coincidence worth not reading meaning into.</td>
+</tr>
+<tr>
+<td><code>trust_ledger_max_bytes</code></td>
+<td><code>1900</code></td>
+<td>feasibility pass: the whole encoded ledger is ONE <abbr title="An opaque byte document the protocol transfers in chunks and never decodes.">blob</abbr> in the existing <code>slopsync</code> NVS namespace and must stay inside a single ~2 KB NVS page. Written only on change, and gated on ota_active exactly like savePairing() — flash-cache writes during an OTA reset the chip.</td>
+</tr>
+<tr>
+<td><code>pairing_pending_max</code></td>
+<td><code>4</code></td>
+<td>RFC-027.2a: bounded knock list. Bounded because it is an unauthenticated queue — the one surface a stranger can fill.</td>
+</tr>
+<tr>
+<td><code>client_ver_max_bytes</code></td>
+<td><code>24</code></td>
+<td>HELLO <code>trust</code>.client_ver. Registered as a NUMBER (the trust_keys note only stated it in prose) because RFC-028.2 makes <abbr title="The single machine-readable file that decides every number SlopSync puts on the wire.">registry</abbr> string caps a PARSE-TIME obligation: a receiver rejects an over-cap string in a structural payload rather than truncating and continuing, and it cannot enforce a cap that exists only in English. Same value bounds the trust-ledger <code>version</code> field, so the tripwire never compares a truncated value against a full one.</td>
+</tr>
+<tr>
+<td><code>trust_ledger_name_max_bytes</code></td>
+<td><code>16</code></td>
+<td>trust-ledger <code>name</code>. 16 to match the 0x0002 roster's str16 rather than HELLO's 32: a roster label is a label, and the authoritative full name rides HELLO/0x0007 while the <abbr title="The stateful association between one client and the hub.">session</abbr> lives.</td>
+</tr>
+<tr>
+<td><code>trust_ledger_kind_max_bytes</code></td>
+<td><code>16</code></td>
+<td>trust-ledger <code>kind</code>. Equals the HELLO client_kind cap, so a kind is recorded whole and never appears to change between <abbr title="The stateful association between one client and the hub.">sessions</abbr>.</td>
+</tr>
+<tr>
+<td><code>hub_sig_timeout_ms</code></td>
+<td><code>3000</code></td>
+<td>RFC-029 item 1: how long a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> that REQUESTED a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> signature AND holds a pinned key waits before calling the absence a failure. Generous on purpose — one software ECDSA is ~30-80 ms, but it is queued behind whatever the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s low-priority worker is already doing, and a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> is allowed to be busy. A <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> with NO pinned key never applies this timeout: it has nothing to verify against, and silence from a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> that simply has no keypair is conformant, not suspicious.</td>
+</tr>
+<tr>
+<td><code>auth_attempts_max</code></td>
+<td><code>3</code></td>
+<td>RFC-029 item 6: failed AUTH (0x1C) proofs a <abbr title="The stateful association between one client and the hub.">session</abbr> may present before the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> stops answering and GOODBYEs it. Mirrors §12.2's "three failures close the PIN window" verbatim rather than inventing a second number. The proof is 16 bytes, so this is not what makes guessing infeasible — it is what stops an unauthenticated peer spending the <abbr title="The single authoritative endpoint of one machine.">hub</abbr>'s HMAC budget in a loop.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="logging-rfc-017">Logging (RFC-017)<a class="headerlink" href="#logging-rfc-017" title="Link to this section">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>log_replay_depth_default</code></td>
+<td><code>32</code></td>
+<td>entries the <abbr title="The single authoritative endpoint of one machine.">hub</abbr> MAY replay from its ring tail when a <abbr title="The stateful association between one client and the hub.">session</abbr> is granted the log <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>. THE named exception to §9.4's no-replay rule ("except where a <abbr title="A named, numbered, typed data flow declared in the catalog.">channel</abbr>'s <abbr title="The hub's machine-readable description of every channel it exposes.">catalog</abbr> entry declares a replay depth"); the actual depth is declared per-entry, this is the default. 32 lines is roughly "what went wrong just before I connected" without making every <abbr title="The hub's applied answer to a subscription request, which channel, at what rate, at what priority.">grant</abbr> a burst.</td>
+</tr>
+</tbody>
+</table>
+<!-- GENERATED FILE. DO NOT EDIT. Source: docs-site/dictionary.yaml via docs-site/tools/gen_docs_tables.py -->
+<!-- Appended to every page by pymdownx.snippets.auto_append, so a
+     defined term shows its Dictionary definition on hover. -->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../errors/" class="md-footer__link md-footer__link--prev" aria-label="Previous: NACK codes">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                NACK codes
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../discovery/" class="md-footer__link md-footer__link--next" aria-label="Next: Discovery">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Discovery
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      SlopSync is provided to the community as a tool. It favors no firmware, no vendor and no product.
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.footer", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.tooltips"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../assets/javascripts/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
