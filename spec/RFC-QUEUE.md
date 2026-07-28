@@ -1835,8 +1835,11 @@ B/C/D. Status column matches each entry's own line; cross-check against
   `command.position` (opening the `command.<quantity>` family) and
   `telemetry.target`; the device catalog tags `position` on 0x3100 and
   `tgt_10um` on 0x1100. Client side needs zero code (`model/settings.js`
-  already indexes roles) — live verification of the rail tape + commanded/lag
-  numerals is on the WebUI agent (WEBUI-HANDOFF-RFC-BATCH.md item 2).
+  already indexes roles). **Live-verified 2026-07-28** on the reference
+  webui against the reference device: tap → INTENT → post-clamp ECHO →
+  device target followed, commanded/lag numerals rendered, two taps, with
+  an independent wire session confirming `tgt_10um` off-UI (the machine
+  repo's `webui/test/tap-to-move-live.mjs`, ALL PASS).
 - **Origin:** WebUI rebuild, 2026-07-27. The rebuilt page renders entirely from
   the catalog and is forbidden from naming a channel id. When the rail widget
   went to wire up tap-to-move it found nothing it could bind to and — correctly —
@@ -1962,9 +1965,9 @@ B/C/D. Status column matches each entry's own line; cross-check against
   is now: for a select field carrying an `action.*` role, wire value 0 is
   NEVER an operation unless the governing op table defines op 0; clients MUST
   NOT render index 0 as actionable. Strict `option_access` on index 0 stays as
-  defense-in-depth (already shipped on every device op-select). Reference
-  client swaps its English-guessing regex for the index-0 rule
-  (WEBUI-HANDOFF-RFC-BATCH.md item 5).
+  defense-in-depth (already shipped on every device op-select). The reference
+  client's English-guessing regex is gone — replaced by the index-0 rule
+  (absorbed 2026-07-28).
 - **Origin:** WebUI rebuild, 2026-07-27, seen live in the safety bar.
 - **Problem:** Op-select INTENT fields are index-aligned with their wire value,
   and every registry op table starts numbering at 1. Index 0 therefore exists
@@ -1994,8 +1997,8 @@ B/C/D. Status column matches each entry's own line; cross-check against
 
 - **Status:** **LANDED (2026-07-27).** Registry `plan.*` family
   (start/end/current/velocity/elapsed/duration/style) + all seven 0x1101
-  fields tagged. The reference client's `/plan/i` heuristic demotes to a
-  fallback-for-roleless-hubs (WEBUI-HANDOFF-RFC-BATCH.md item 3).
+  fields tagged. The reference client's `/plan/i` heuristic is demoted to a
+  fallback-for-roleless-hubs (absorbed; PlanStrip binds by role first).
 - **Origin:** WebUI rebuild, 2026-07-27, building the plan-strip widget.
 - **Problem:** `0x1101 plan-strip` publishes genuinely useful data (the segment
   in flight: start/end/current normalized position, velocity, elapsed and total
