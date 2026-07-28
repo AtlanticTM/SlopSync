@@ -1,0 +1,11 @@
+# Build environment and output for the documentation site. Both are generated;
+# neither belongs in git.
+#
+# This file is deliberately scoped to docs-site/ so the directory stays
+# self-contained and survives `git subtree split` with its ignores intact.
+
+.venv/
+venv/
+site/
+__pycache__/
+*.pyc
