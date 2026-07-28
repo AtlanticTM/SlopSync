@@ -1,7 +1,7 @@
 ---
 title: Governance
 description: >-
-  SlopSync favours no firmware, no vendor and no product. It is provided to
+  SlopSync favors no firmware, no vendor and no product. It is provided to
   the community as a tool.
 register: STE
 ---
@@ -10,7 +10,7 @@ register: STE
 
 ## The stance
 
-**SlopSync favours no firmware, no vendor and no product. It is provided to
+**SlopSync favors no firmware, no vendor and no product. It is provided to
 the community as a tool.**
 
 That sentence is the whole stance. Everything below is what it means in

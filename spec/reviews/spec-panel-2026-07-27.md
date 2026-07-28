@@ -5,7 +5,7 @@ Method: 15 independent vacuum reads of [SPEC.md](../SPEC.md) (readers forbidden 
 **Resolution status (added after the fact — the panel text below is untouched):**
 every item in "Consistently hated" was closed by
 [RFC-049](../RFC-QUEUE.md#rfc-049--spec-fresh-eyes-panel-omnibus-small-normative-fixes)
-(the omnibus this panel fed) or [RFC-050](../RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgement),
+(the omnibus this panel fed) or [RFC-050](../RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgment),
 except the H11 scheduling-depth backstop (evaluated, reverted — see
 [SPEC.md](../SPEC.md)'s `commitWaveform()` note) and `source.background_run`,
 which shipped separately as Phase D. See each finding's heading below for its
@@ -85,7 +85,7 @@ Note on the input: the task framing says 16 readers, but the REPORTS array actua
 ### Blob transfer pacing and backpressure are advisory/vague, and there's no positive application-level acknowledgement that a transfer completed  
 **4/15 readers** — sections: §8.4, §5.6
 
-> **RESOLVED** by [RFC-050](../RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgement): §8.4 now carries a normative send/hold/resume/abort decision table keyed to the binding's own congestion signal, plus `BLOB_DONE` as the positive completion signal this finding says was missing — reapplying the shedding-table template the improvement lead names.
+> **RESOLVED** by [RFC-050](../RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgment): §8.4 now carries a normative send/hold/resume/abort decision table keyed to the binding's own congestion signal, plus `BLOB_DONE` as the positive completion signal this finding says was missing — reapplying the shedding-table template the improvement lead names.
 
 > The spec says relays 'MUST respect transport backpressure while pacing BLOB_CHUNK emission,' but there's no normative definition of what that signal is—is it a return code, an exception, a callback?
 

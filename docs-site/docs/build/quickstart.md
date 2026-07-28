@@ -158,7 +158,7 @@ s.on('nack', (n) => console.warn('NACK', n.name, n.detail));
 s.connect();
 ```
 
-Field names come from the catalog verbatim, already scaled to millimetres.
+Field names come from the catalog verbatim, already scaled to millimeters.
 Writing is the same shape, and it also resolves on the applied value:
 
 ```javascript

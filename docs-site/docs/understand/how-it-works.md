@@ -258,7 +258,7 @@ flowchart TD
     classDef plumb fill:none,stroke:#8a8f98,stroke-dasharray:3 3
 ```
 
-<p class="ss-point" markdown>**The point.** There is no acknowledgement frame for an emergency stop. The initiator repeats the frame until it observes the [latch](../reference/dictionary.md#latch) in state. An observable latch is the only acknowledgement worth anything, because it is the same latch every other client is reading.</p>
+<p class="ss-point" markdown>**The point.** There is no acknowledgment frame for an emergency stop. The initiator repeats the frame until it observes the [latch](../reference/dictionary.md#latch) in state. An observable latch is the only acknowledgment worth anything, because it is the same latch every other client is reading.</p>
 
 Safety outranks authorization by design. Anyone may stop the machine; not
 everyone may start it. Clearing the latch needs the `control` tier, needs the

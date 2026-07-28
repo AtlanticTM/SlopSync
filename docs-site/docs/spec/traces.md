@@ -57,7 +57,7 @@ Preconditions: hub LIVE with one pattern running; the client has no cached etag.
 | 4 | c | etag unknown ⇒ session is **NOT ready**: the hub sends no STATE, no STREAM, and would NACK `NOT_READY` on any intent | [§6.4](session.md#s6-4) |
 | 5 | c→h | BLOB_REQ{blob:{ns:0}} — full catalog, namespace 0 | [§8.4](catalog.md#s8-4) |
 | 6 | h→c | BLOB_CHUNK ×N (192-B chunk payloads; WS may batch legally). Nothing else competes for the pipe, because the data plane is gated | [§8.4](catalog.md#s8-4), [§6.4](session.md#s6-4) |
-| 7 | c | reassemble; verify SHA-256 over the exact deterministic bytes; cache. **The hash IS the acknowledgement** — no negotiation round trip | [§8.3](catalog.md#s8-3), [§6.4](session.md#s6-4) |
+| 7 | c | reassemble; verify SHA-256 over the exact deterministic bytes; cache. **The hash IS the acknowledgment** — no negotiation round trip | [§8.3](catalog.md#s8-3), [§6.4](session.md#s6-4) |
 | 8 | c→h | CATALOG_READY(payload = the 8-byte etag it now operates against); re-sent every 500 ms until the first STATE arrives | [§6.4](session.md#s6-4) |
 | 9 | h→c | retained STATE push: safety(0x0003), motion-status(0xEE05), machine-config(0xEE03), motion-diag(0xEE0C) — full snapshots, current seq | [§9.1](channels.md#s9-1), [§6.3](session.md#s6-3) |
 | 10 | c | all granted STATE received once ⇒ READY→LIVE; UI un-grays | [§2.2](foundations.md#s2-2) |

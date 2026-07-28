@@ -23,7 +23,7 @@ generated: true
 
 **Stacks evaluated and not adopted.**
 
-- **On-device MQTT broker:** available brokers ignore retained messages and wills and offer QoS 0 only — the device-shadow primitive would be rebuilt application-side anyway; transports are TCP-shaped; licensing was hostile. The glue equalled this document's hard parts with none of its fit.
+- **On-device MQTT broker:** available brokers ignore retained messages and wills and offer QoS 0 only — the device-shadow primitive would be rebuilt application-side anyway; transports are TCP-shaped; licensing was hostile. The glue equaled this document's hard parts with none of its fit.
 - **zenoh-pico:** runs on the target but peer-unicast nodes do not route (no hub role on-device); no datagram-radio or browser-server transport; custom-transport API unresolved upstream.
 - **MQTT-SN:** the gateway side has no MCU implementation, and reference gateways are host programs that themselves need an upstream broker.
 - **Micro XRCE-DDS:** the Agent (the hub role) is host-only. Its transport abstraction was adopted ([§13.1](transports.md#s13-1)); the stack was not.

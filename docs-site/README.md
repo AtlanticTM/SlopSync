@@ -90,7 +90,7 @@ Three reasons, all still true post-extraction:
 2. **The site must not own the registry.** The registry is also read directly
    by the C++ code generator (`tools/gen_registry_header.py`) and every
    language client, not just the docs build. If the site sat under `spec/`,
-   "inside the site" and "outside the site" would be a judgement call rather
+   "inside the site" and "outside the site" would be a judgment call rather
    than a directory boundary.
 3. **A top-level name says what it is.** Someone cloning this repository can
    tell in one `ls` that `spec/` is documents and `docs-site/` is a website.

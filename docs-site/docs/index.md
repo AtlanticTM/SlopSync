@@ -73,7 +73,7 @@ wherever a defense is weak. See [Security model](understand/security.md).
 
 ## Governance, briefly
 
-**SlopSync favours no firmware, no vendor and no product. It is provided to
+**SlopSync favors no firmware, no vendor and no product. It is provided to
 the community as a tool.** The full statement is on its own page:
 [Governance](community/governance.md).
 

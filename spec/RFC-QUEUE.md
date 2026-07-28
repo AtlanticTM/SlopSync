@@ -718,7 +718,7 @@ the copy a third-party implementer reads.
 - **Proposed change (operator-directed 2026-07-25: "ready tag" — reliable,
   non-blocking, no buffers, built into the LIBRARY, not client/firmware):**
   **CATALOG_READY.** The etag already makes the transfer self-verifying
-  (SHA-256 over the exact bytes) — so the hash IS the acknowledgement:
+  (SHA-256 over the exact bytes) — so the hash IS the acknowledgment:
   1. Per-session `ready` bit gates the ENTIRE data plane to that session
      (retained push + all STATE/STREAM emission). Not ready = nothing
      emitted. Nothing is queued or buffered anywhere — retained values
@@ -973,7 +973,7 @@ the copy a third-party implementer reads.
      `releaseSessionSources()` derives the cause from the §11.4 release
      reason (3 deadman-release -> `deadman`, everything else ->
      `session_loss`), and `wire/estop_frame.hpp`'s hand-rolled `EstopCause`
-     enum is DELETED in favour of the generated `safety_causes` — one
+     enum is DELETED in favor of the generated `safety_causes` — one
      spelling of one wire enum, regenerable from registry.yaml.
   4. `t_off` wording: "monotonic" → **strictly increasing, t_off[0]=0**.
      **LANDED (M4a) and the receiver claim was WRONG when written:**
@@ -1328,7 +1328,7 @@ the copy a third-party implementer reads.
   3. **Hub-change signal (symmetric):** hub fw_version change (visible
      via [RFC-016](#rfc-016--in-band-hub-identity-capabilities--catalog-introspection) WELCOME identity + etag/boot_id) SHOULD be surfaced by
      clients ("machine updated to X.Y.Z"); clients MAY gate configure-
-     tier actions on user acknowledgement after a change. Hub code
+     tier actions on user acknowledgment after a change. Hub code
      changes only via the OTA plane, which is outside SlopSync trust by
      standing ruling — a configure-tier compromise cannot flash firmware.
      A hostile hub's ceiling against conforming clients is well-formed
@@ -1677,7 +1677,7 @@ B/C/D. Status column matches each entry's own line; cross-check against
 | [047](#rfc-047--the-0xcdss-channel-allocation-grid-structure-over-arrival-order-history) | The 0xCDSS channel allocation grid | Landed |
 | [048](#rfc-048--the-rendering-constitution-catalog-vocabulary-capability-interfaces-renderer-law) | The rendering constitution | Landed |
 | [049](#rfc-049--spec-fresh-eyes-panel-omnibus-small-normative-fixes) | Fresh-eyes panel omnibus (7 fixes) | Landed spec/registry; hub behavior Phase D; (c)'s scheduling backstop evaluated and NOT landed |
-| [050](#rfc-050--blob-transfer-backpressure--completion-acknowledgement) | Blob transfer backpressure + BLOB_DONE | Landed spec/registry; implementation deferred |
+| [050](#rfc-050--blob-transfer-backpressure--completion-acknowledgment) | Blob transfer backpressure + BLOB_DONE | Landed spec/registry; implementation deferred |
 
 > DEMO-CANDIDATE: a live status board cross-checking every RFC's stated
 > disposition above against registry.yaml/SPEC.md's actual current state,
@@ -3165,7 +3165,7 @@ exactly Phase D and needed no new spec work — LEDGER.md's own note).
     guard, and in `Command::has_next_chord`'s doc comment, so the rejected
     approach is not silently retried.
 
-## RFC-050 — Blob transfer backpressure + completion acknowledgement
+## RFC-050 — Blob transfer backpressure + completion acknowledgment
 
 **Status:** **Landed (v1.0), spec/registry side, 2026-07-28** (operator stamp
 on the recommendation below, batched with Phase C4). Implementation is
@@ -3176,7 +3176,7 @@ contract; the reserved-range comment moves to `0x21–0x3F`.
 **Origin:** the same 15-reader spec fresh-eyes panel
 ([`reviews/spec-panel-2026-07-27.md`](reviews/spec-panel-2026-07-27.md)),
 "Blob transfer pacing and backpressure are advisory/vague, and there's no
-positive application-level acknowledgement that a transfer completed"
+positive application-level acknowledgment that a transfer completed"
 (4/15 readers, §8.4/§5.6).
 
 - **Problem, as the panel found it:** §8.4 said a hub "MUST respect

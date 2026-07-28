@@ -123,7 +123,7 @@ can get.
 
 ## The governance stance
 
-**SlopSync favours no firmware, no vendor and no product. It is provided to
+**SlopSync favors no firmware, no vendor and no product. It is provided to
 the community as a tool.**
 
 That stance is what makes the rest of this page mean anything, so it is stated

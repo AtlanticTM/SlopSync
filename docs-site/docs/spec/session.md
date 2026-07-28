@@ -77,7 +77,7 @@ Nothing is buffered anywhere. Retained values already live once in the hub's cha
 **Becoming ready.**
 
 - **Etag match is proof of possession.** A HELLO whose `catalog_etag` equals the hub's makes the session ready immediately, on the WELCOME. The common reconnect case keeps its zero-latency retained push.
-- **Otherwise:** WELCOME advertises the current etag; the client fetches the catalog over BLOB namespace 0 ([§8.4](catalog.md#s8-4)) — which gets the whole pipe, since no telemetry is competing — assembles it, and **verifies the SHA-256 locally**. The hash *is* the acknowledgement; there are no transfer round trips to negotiate. The client then sends **CATALOG_READY** (`0x19`, raw, c2h), payload = the 8-byte etag it now operates against. The hub sets `ready`, the retained push flows, the client reaches LIVE.
+- **Otherwise:** WELCOME advertises the current etag; the client fetches the catalog over BLOB namespace 0 ([§8.4](catalog.md#s8-4)) — which gets the whole pipe, since no telemetry is competing — assembles it, and **verifies the SHA-256 locally**. The hash *is* the acknowledgment; there are no transfer round trips to negotiate. The client then sends **CATALOG_READY** (`0x19`, raw, c2h), payload = the 8-byte etag it now operates against. The hub sets `ready`, the retained push flows, the client reaches LIVE.
 - **Loss-proofing:** CATALOG_READY is idempotent. A client re-sends it every `catalog_chunk_gap_timeout_ms` until the first retained STATE arrives. There is no handshake state machine and no hub timer for it.
 - **Degraded static clients** ([§8.5](catalog.md#s8-5)) send CATALOG_READY carrying their **stale** etag. Append-only layouts make their prefix-parse safe; the hub serves them and MAY record the session as degraded.
 

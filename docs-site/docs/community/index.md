@@ -9,7 +9,7 @@ register: STE
 
 | Page | Covers |
 |---|---|
-| [Governance](governance.md) | SlopSync favours no firmware, no vendor and no product |
+| [Governance](governance.md) | SlopSync favors no firmware, no vendor and no product |
 | [Contributing](contributing.md) | Building the site, the two writing registers, and why no wire number is typed by hand |
 | [RFC process](rfc-process.md) | How a protocol change is proposed, argued and decided |
 

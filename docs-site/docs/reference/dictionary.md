@@ -1063,7 +1063,7 @@ Safety outranks authorization. You may always stop the machine. You may not alwa
 Any endpoint may initiate an ESTOP, at any role, in any session
 state, including with no session at all.
 
-**The latch is the acknowledgement.** There is no ESTOP-ACK frame.
+**The latch is the acknowledgment.** There is no ESTOP-ACK frame.
 The initiator repeats the frame until it observes the safety state
 with the ESTOP bit latched, or it exhausts retries and surfaces a
 loud local failure.
@@ -1533,7 +1533,7 @@ It is not a mock. A bug found against the simulator is a bug in the
 same code the device runs.
 
 Its actuator is the honest exception: an ideal follower with no step
-quantisation, current limit, encoder lag or compliance. Trust it for
+quantization, current limit, encoder lag or compliance. Trust it for
 protocol, planning and shaping. Confirm tracking numbers on hardware.
 
 See also: [Probe](#probe), [SlopScope](#slopscope), [In-process binding](#in-process-binding) · Source: Roadmap

@@ -36,7 +36,7 @@ fallbacks and handoff bounding stop being feelings and become lines.
 
 ### Three lines
 
-Every graph carries the same three position series, all in millimetres.
+Every graph carries the same three position series, all in millimeters.
 
 | Series | What it is |
 |---|---|
@@ -298,7 +298,7 @@ executed".
 **The simulator's actuator is an ideal follower.** It runs the real motion
 engine, the real hub and the real catalog, so *asked* and *planned* are exactly
 what the device would produce. *Achieved* is optimistic: there is no step
-quantisation, no current limit, no encoder lag and no mechanical compliance.
+quantization, no current limit, no encoder lag and no mechanical compliance.
 Trust the simulator for protocol, planning and shaping questions. Confirm
 tracking numbers on hardware.
 
