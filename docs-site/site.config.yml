@@ -19,7 +19,7 @@
 #   3. the keys below                            this file
 #
 # EXTRACTED (see README.md "Extracting this directory"): this repo IS the
-# extracted location -- registry.yaml and SPEC.md travelled here already.
+# extracted location -- registry.yaml and SPEC.md moved here already.
 
 registry_path: ../spec/registry/registry.yaml
 spec_path: ../spec/SPEC.md
