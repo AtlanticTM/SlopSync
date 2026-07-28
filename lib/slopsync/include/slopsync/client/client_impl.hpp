@@ -390,7 +390,7 @@ inline void Client::handleState(uint16_t channel, uint16_t seq, std::span<const 
 
     // §11.2 repeat-until-latched: the safety channel's own estop_seq field
     // (payload offset 6, NOT this frame's transport-level `seq`) is the
-    // acknowledgement initiateEstop() is waiting for.
+    // acknowledgment initiateEstop() is waiting for.
     if (channel == channels::safety && _estopActive && payload.size() >= 8) {
         uint8_t word = uint8_t(payload[0]);
         bool estopBit = (word & 0x01u) != 0;
@@ -545,7 +545,7 @@ inline void Client::handleBlobChunk(std::span<const std::byte> payload, uint32_t
         if (match) _cachedEtag = _hubEtag;
         _catalogReady = true;
 
-        // §8.4/RFC-015: the hash IS the acknowledgement — declare which
+        // §8.4/RFC-015: the hash IS the acknowledgment — declare which
         // catalog this client now operates against so the hub opens its data
         // plane. On a verified transfer that is the hub's etag; on a transfer
         // that did NOT verify, declare what was actually assembled (the digest

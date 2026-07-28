@@ -141,7 +141,7 @@ connects a hub and a client inside one process, with injected loss, reorder,
 duplication, latency and jitter, plus a seeded mode where a run reproduces bit
 for bit.
 
-Behavioural checks run against it: reconnect and reconcile, newest-wins under
+Behavioral checks run against it: reconnect and reconcile, newest-wins under
 reordering, the ready gate, duplicate-intent re-echo, shedding order, deadman
 policy per source type, takeover, and emergency stop repeated under heavy
 loss.

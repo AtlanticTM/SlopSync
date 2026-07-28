@@ -396,7 +396,7 @@ export function createSession(opts = {}) {
   }
 
   /**
-   * §8.4/RFC-015: the hash IS the acknowledgement. Declare which catalog we now
+   * §8.4/RFC-015: the hash IS the acknowledgment. Declare which catalog we now
    * operate against so the hub opens our data plane. Mirrors
    * Client::sendCatalogReady, including the honest-degraded case: on a transfer
    * that did NOT verify we declare the digest of the bytes we ACTUALLY hold, so
@@ -916,7 +916,7 @@ export function createSession(opts = {}) {
     }
 
     // §11.2 repeat-until-latched: the safety channel's own estop_seq field is
-    // the acknowledgement assertEstopRaw() is waiting for.
+    // the acknowledgment assertEstopRaw() is waiting for.
     if (header.channel === CH_SAFETY && estopActive && decoded && decoded.word_bits) {
       if (decoded.word_bits.estop) { estopActive = false; }
     }

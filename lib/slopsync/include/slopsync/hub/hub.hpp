@@ -6,7 +6,7 @@
 // MotionArbiter (sole-caller doctrine, §3.1: normative).
 //
 // M4 scope note: liveness bookkeeping and the safety channel's ESTOP latch
-// are implemented here (E-04 needs the latch as the acknowledgement, §11.2).
+// are implemented here (E-04 needs the latch as the acknowledgment, §11.2).
 // M5 additions (this file): deadman policy dispatch (§11.3), source
 // ownership + takeover (§11.4), congestion-driven shedding + slow-consumer
 // eviction (§10.4), pairing (§12.2), and the network probe (§6.4).

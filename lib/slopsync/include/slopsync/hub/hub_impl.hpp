@@ -976,7 +976,7 @@ inline AccessLevel Hub::applyTrustObservation(Slot& slot, uint32_t nowMs) {
 // WHAT IT DOES NOT BUY: anything against an ACTIVE attacker. A MITM on a
 // cleartext binding does not need your token — it has your session. Proof mode
 // is a passive-theft plug, and calling it more than that would be the kind of
-// security theatre this project's honesty clauses exist to prevent.
+// security theater this project's honesty clauses exist to prevent.
 inline void Hub::handleAuth(Slot& slot, std::span<const std::byte> payload, uint32_t nowMs) {
     // Strikes are spent BEFORE any work: an exhausted session gets silence, so
     // a peer that keeps hammering after eviction cannot keep buying HMACs.
@@ -2468,7 +2468,7 @@ inline void Hub::handleEstopFrame(const EstopFrame& f, uint32_t nowMs) {
 }
 
 inline void Hub::latchEstop(uint8_t cause, uint8_t origin, uint16_t estop_seq) {
-    // Funnelled through handleEstopFrame rather than duplicating its body: the
+    // Funneled through handleEstopFrame rather than duplicating its body: the
     // two were byte-for-byte the same logic modulo where `nowMs` came from, and
     // a duplicated latch is exactly the kind of thing that acquires an EVENT
     // twin in one copy and not the other.
@@ -2655,7 +2655,7 @@ inline void Hub::handlePairReq(Slot& slot, std::span<const std::byte> payload, u
 //
 // ONE FUNCTION, called from every site that mutates `_safetyWord`, taking the
 // word as it was BEFORE. That shape is deliberate: it makes "did an edge
-// happen?" a single derivation from before/after rather than a judgement each
+// happen?" a single derivation from before/after rather than a judgment each
 // call site makes for itself, so a repeat can never accidentally announce an
 // initiation and a new latch can never be silently swallowed. Same reasoning
 // that made teardownSession() one function — the bug class is identical, six

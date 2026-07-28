@@ -2,7 +2,9 @@
 
 Method: 15 independent vacuum reads of [SPEC.md](../SPEC.md) (readers forbidden any other repo context), haiku-class reviewers, sonnet convergence with a >=4-reader bar for 'consistent.' Raw reader reports retained off-repo. Evidence document — feeds RFC drafting, is not itself normative.
 
-**Resolution status (added after the fact — the panel text below is untouched):**
+**Resolution status (added after the fact — the panel text below is untouched
+except for spelling normalized to American English per the operator's
+standard):**
 every item in "Consistently hated" was closed by
 [RFC-049](../RFC-QUEUE.md#rfc-049--spec-fresh-eyes-panel-omnibus-small-normative-fixes)
 (the omnibus this panel fed) or [RFC-050](../RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgment),
@@ -82,7 +84,7 @@ Note on the input: the task framing says 16 readers, but the REPORTS array actua
 
 **Improvement leads (mined from the liked list):** Readers explicitly praised 'every refusal is answered' (§4.5 NACK philosophy) and parser totality as a hard MUST rather than advisory guidance (liked by 9/13) — apply both here: reject illegal ns/chunk combinations at the grammar level and add an explicit NACK code (e.g. INVALID_NAMESPACE) instead of silent fallthrough.
 
-### Blob transfer pacing and backpressure are advisory/vague, and there's no positive application-level acknowledgement that a transfer completed  
+### Blob transfer pacing and backpressure are advisory/vague, and there's no positive application-level acknowledgment that a transfer completed  
 **4/15 readers** — sections: §8.4, §5.6
 
 > **RESOLVED** by [RFC-050](../RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgment): §8.4 now carries a normative send/hold/resume/abort decision table keyed to the binding's own congestion signal, plus `BLOB_DONE` as the positive completion signal this finding says was missing — reapplying the shedding-table template the improvement lead names.

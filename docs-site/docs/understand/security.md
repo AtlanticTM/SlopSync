@@ -17,7 +17,7 @@ inside that network with capture and injection tooling.
 That sentence is the whole scope. Everything below either supports it or says
 plainly where it stops.
 
-The reason to be exact about it: on this product category, **unauthorised
+The reason to be exact about it: on this product category, **unauthorized
 control is a physical-safety issue**, not a privacy inconvenience. A model
 that overstates itself is worse than a modest one, because people deploy
 against what the documentation claims.

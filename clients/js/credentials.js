@@ -28,7 +28,7 @@
  * malicious *web page* in the operator's browser from reading the response. It
  * stops nothing else: `curl http://<device>/uitoken` works from anywhere on the
  * LAN and yields control tier. So while /uitoken is enabled, "authentication is
- * on" means *LAN trust, formalised* — every client presents a credential and
+ * on" means *LAN trust, formalized* — every client presents a credential and
  * the hub has a real chokepoint — NOT "the machine is locked down". The lockdown
  * posture is /uitoken DISABLED plus paired tokens, and this ladder walks into
  * that posture without a code change: rung 2 simply stops answering and rung 1

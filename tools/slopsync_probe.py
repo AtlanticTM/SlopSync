@@ -2746,7 +2746,7 @@ def _pair_signature(args, pubkey, admin_ws=None):
 # any passive LAN observer, forever. Proof mode keeps the credential at home and
 # spends a one-time HMAC over THIS session's WELCOME nonce instead. It buys
 # nothing against an ACTIVE attacker -- a MITM on a cleartext binding already
-# has the session -- and saying otherwise would be theatre.
+# has the session -- and saying otherwise would be theater.
 # =============================================================================
 
 def _proof_hello(ws, args, inst, label):
@@ -2816,7 +2816,7 @@ def _pair_proof_mode(admin_ws, args):
             # deliberate deployment posture with a documented future flip). Proof
             # mode still did its one job -- the credential never went on the wire
             # -- but on a hub in this posture it buys nothing until pairing
-            # enforcement is turned on, and saying otherwise would be theatre.
+            # enforcement is turned on, and saying otherwise would be theater.
             skip("proof_welcome",
                  "hub grants `%s` to UNAUTHENTICATED sessions (LAN-trust posture, not a "
                  "protocol property); proof mode still put NO token on the wire"

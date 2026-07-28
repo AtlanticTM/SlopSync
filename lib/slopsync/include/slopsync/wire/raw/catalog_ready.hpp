@@ -5,7 +5,7 @@
 // catalog chunks, not that they arrived (true on TCP, false on ESP-NOW), so
 // "defer retained STATE until transfer completes" is not a property the hub
 // can observe. The etag already makes the transfer self-verifying (SHA-256
-// over the exact bytes), so the HASH IS THE ACKNOWLEDGEMENT: the client
+// over the exact bytes), so the HASH IS THE ACKNOWLEDGMENT: the client
 // verifies locally (zero round trips) and then sends its etag back. Until
 // that arrives — or the HELLO carried a matching etag, which is the same proof
 // one round trip earlier — the session's DATA PLANE is gated shut and its

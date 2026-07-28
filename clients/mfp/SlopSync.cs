@@ -419,7 +419,7 @@ public class SlopSync : PluginBase
     }
 
     // Property changes fired from the background task must be raised on the UI
-    // thread for WPF; ViewPlugin.cs does it bare, but marshalling keeps binding
+    // thread for WPF; ViewPlugin.cs does it bare, but marshaling keeps binding
     // exceptions off the socket loop. Execute.OnUIThread is a no-op if already
     // on the dispatcher, so it is cheap.
     private void Ui(Action a) => Execute.OnUIThread(a);
@@ -430,7 +430,7 @@ public class SlopSync : PluginBase
         // a native output target's "<Identifier>::Connection::{Toggle,Connect,
         // Disconnect}" convention. OnConnectClick() is itself a toggle; Connect/
         // Disconnect are idempotent guards on the task handle. PluginBase tracks
-        // these and auto-unregisters them on dispose. Marshalled to the UI thread
+        // these and auto-unregisters them on dispose. Marshaled to the UI thread
         // because they mutate the same _task/_cancellationSource the view does.
         RegisterAction("SlopSync::Connection::Toggle", () => Ui(OnConnectClick));
         RegisterAction("SlopSync::Connection::Connect", () => Ui(() => { if (_task == null) OnConnectClick(); }));
@@ -1840,7 +1840,7 @@ public class SlopSync : PluginBase
     //
     // WHY THE LIMITER (the flat-top bug). A raw spline tangent is the derivative
     // of a curve MFP draws with no kinematic ceiling anywhere; the device has to
-    // realise it as ONE quintic that covers the span's displacement in the span's
+    // realize it as ONE quintic that covers the span's displacement in the span's
     // duration while ARRIVING at that velocity. When the tangent dwarfs the
     // span's mean velocity, no monotone quintic exists — SlopMotion's legality
     // scan rejects it (WaveformFallback) and Ruckig re-shapes the segment into a
