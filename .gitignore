@@ -3,6 +3,8 @@
 build/
 *.o
 *.obj
+bin/
+obj/
 
 # Python
 __pycache__/
