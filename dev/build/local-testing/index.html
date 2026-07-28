@@ -3170,7 +3170,7 @@ therefore cannot prove it agrees with anybody.</p>
 connects a <abbr title="The single authoritative endpoint of one machine.">hub</abbr> and a <abbr title="Any endpoint that establishes a session with the hub.">client</abbr> inside one process, with injected loss, reorder,
 duplication, latency and jitter, plus a seeded mode where a run reproduces bit
 for bit.</p>
-<p>Behavioural checks run against it: reconnect and reconcile, newest-wins under
+<p>Behavioral checks run against it: reconnect and reconcile, newest-wins under
 reordering, the <abbr title="The rule that a session's frames are refused until it confirms which catalog it has adopted.">ready gate</abbr>, duplicate-<abbr title="A channel class, and the only way a client changes anything.">intent</abbr> re-echo, <abbr title="What the hub drops, and in what order, when a link cannot carry everything granted.">shedding</abbr> order, <abbr title="The silence window bound to an active source, after which the source's loss policy fires.">deadman</abbr>
 policy per source type, <abbr title="Re-issuing an activating intent with the takeover flag set, to transfer source ownership.">takeover</abbr>, and emergency stop repeated under heavy
 loss.</p>
