@@ -1,0 +1,6 @@
+# Force LF everywhere, regardless of core.autocrlf on the checkout machine.
+# The frozen conformance artifacts (CANON C-6: mini_catalog.hpp,
+# vectors/fixtures/mini-catalog.yaml) are hash-pinned byte-for-byte; a
+# platform-dependent line-ending rewrite on checkout would silently break
+# that pin.
+* text=auto eol=lf
