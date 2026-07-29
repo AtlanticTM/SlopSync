@@ -3353,12 +3353,14 @@ positive application-level acknowledgment that a transfer completed"
 
 ## RFC-053 — ESTOP over connectionless datagrams: UDP broadcast + ESP-NOW, opt-in
 
-- **Status:** **ACCEPTED (operator direction, 2026-07-29)** — the feature is
-  ruled in with one binding condition: **opt-in, default OFF** — an
-  operator-visible NVS-persisted setting, plus a build flag to compile the
-  path out entirely. Implementation queued (hub UDP path is small; the
-  ESP-NOW path lands with that binding, which remains unimplemented in the
-  reference firmware).
+- **Status:** **ACCEPTED (operator direction, 2026-07-29; amended same
+  day)** — the feature is ruled in with one binding condition, amended
+  from the initial opt-in ruling: **opt-out, default ON** — governed by an
+  NVS-persisted setting that is catalog-exposed and therefore **visible in
+  every client**, plus a build flag to compile the path out entirely.
+  Implementation queued (hub UDP path is small; the ESP-NOW path lands
+  with that binding, which remains unimplemented in the reference
+  firmware).
 - **Origin:** chat 2026-07-29, immediately after the first live BLE client
   (SPEC §18-22) surfaced the e-stop-fob idea. §13.8's "read-only identity,
   no control surface" doctrine is the identified blocker: a WiFi fob today
@@ -3387,12 +3389,15 @@ positive application-level acknowledgment that a transfer completed"
      accept a valid ESTOP frame from ANY peer — paired or not, broadcast
      included. This is the no-network fob path: no AP, no credentials,
      direct 802.11 datagrams.
-  3. **The opt-in condition (operator ruling):** both datagram paths are
-     governed by one setting (proposed home: the safety or network
-     settings channel, `configure` tier to change, NVS-persisted,
-     catalog-exposed so every client renders it), **default OFF**, plus a
-     build flag for hard removal. The existing session-ful paths (§11.2
-     paths 1–2) are untouched by the setting — they are never optional.
+  3. **The opt-out condition (operator ruling, amended 2026-07-29):**
+     both datagram paths are governed by one setting (proposed home: the
+     safety or network settings channel, `configure` tier to change,
+     NVS-persisted, catalog-exposed so every client renders it),
+     **default ON** — the datagram scream works out of the box; an
+     operator who wants the surface closed flips it off from any client.
+     A build flag additionally allows hard removal at compile time. The
+     existing session-ful paths (§11.2 paths 1–2) are untouched by the
+     setting — they are never optional.
   4. **Rate limiting:** per-source, mirroring `udp_discovery`'s
      reply-rate-limit posture. The latch is idempotent, so repeats are
      cheap; the limiter bounds CRC work under a spray, nothing else.
@@ -3413,11 +3418,13 @@ positive application-level acknowledgment that a transfer completed"
      minimal acknowledgment to the datagram's source address. H1/H2
      (§1.5) apply verbatim either way: this is a convenience layer above
      the hardware e-stop, and preemption is per-hop.
-- **Compatibility:** additive. The ESTOP frame itself is byte-unchanged;
-  no existing frame, channel, or session behavior moves. Default-OFF
-  means zero observable change on every deployed hub until an operator
-  flips the setting. §13.8's doctrine sentence gains a dated exception
-  clause at landing (C-3 style), not a silent contradiction.
+- **Compatibility:** additive on the wire — the ESTOP frame is
+  byte-unchanged and no existing frame, channel, or session behavior
+  moves. Default-ON is a deliberate behavioral addition on upgrade: a hub
+  that ships this begins honoring datagram ESTOP immediately, and the
+  catalog-exposed setting is the advertised, every-client-visible off
+  switch. §13.8's doctrine sentence gains a dated exception clause at
+  landing (C-3 style), not a silent contradiction.
 
 ## RFC-054 — WiFi and ESP-NOW provisioning over BLE: the credentials handoff
 
