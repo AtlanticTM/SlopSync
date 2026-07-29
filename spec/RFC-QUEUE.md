@@ -3280,7 +3280,11 @@ positive application-level acknowledgment that a transfer completed"
 - **Status:** **PROPOSED** (queued for operator ruling — authoring-legibility
   campaign Phase 0, 2026-07-29). Four parts, deliberately separable: (a)–(c)
   are lib/tooling additions with zero wire change; (d) is one additive
-  entry-level catalog key.
+  entry-level catalog key. **(d) RULED IN (operator, 2026-07-29):** card
+  descriptions are "an absolute necessity" — the container desc factors the
+  shared context OUT of its fields' 128-byte desc budgets, so each field's
+  bytes spend on the delta, not on repeating where it lives. (a)–(c) still
+  awaiting stamp.
 - **Origin:** the campaign's traced chain (SlopDrive-32 ledger, 2026-07-29).
   The reference catalog is ~1,980 lines of imperative builder calls in which
   the facts an operator actually edits (`min`/`max`/`step`/`desc`/`group`)
@@ -3334,7 +3338,11 @@ positive application-level acknowledgment that a transfer completed"
     exactly the "containers ride the entry level" rule. Renderers surface
     it as the card's own help affordance (§8.9 rule 6, extended to the
     container); clients that predate it ignore the unknown key per §8.9
-    rule 8.
+    rule 8. **Duplicate rule** (added at the (d) ruling): a group string
+    spans channels when two entries in one category declare it, so two
+    entries could both carry a desc for one merged card — a client binds
+    the FIRST in catalog order, the same deterministic tiebreak as §8.8's
+    role cardinality; conformance tooling SHOULD flag the duplication.
 - **Compatibility:** (a)–(c) touch no wire byte — the catalog-feed
   byte-equivalence tests plus the reference hub's pinned catalog etag prove
   it mechanically. (d) is additive: a clean allocation of the next free
