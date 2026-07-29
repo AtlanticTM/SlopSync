@@ -3385,10 +3385,34 @@ positive application-level acknowledgment that a transfer completed"
      ("you may always stop the machine; you may not always start it").
      The magic dispatch is disjoint by construction (`SLOP` vs
      `E5 E5 E5 E5`), so the listener change is a prefix match plus CRC.
-  2. **ESP-NOW acceptance:** when the §13.3 binding lands, a hub MUST
-     accept a valid ESTOP frame from ANY peer — paired or not, broadcast
-     included. This is the no-network fob path: no AP, no credentials,
-     direct 802.11 datagrams.
+  2. **ESP-NOW acceptance:** on a hub that operates the §13.3 binding, a
+     valid ESTOP frame MUST be accepted from ANY peer — paired or not,
+     broadcast included. This is the no-network fob path: no AP, no
+     credentials, direct 802.11 datagrams.
+  2a. **Conformance shape (flexibility amendment, operator direction
+     2026-07-29):** every obligation in this RFC is conditional on the
+     surface existing — RFC-053 never obligates a hub to *operate* a
+     datagram listener; it obligates any datagram listener the hub does
+     operate to honor ESTOP (subject to item 3's setting). A hub with no
+     UDP listener and no ESP-NOW binding is fully conformant and owes
+     nothing here. The unconditional floor is unchanged and lives in
+     §11.2: both initiation paths on every binding a hub runs — which,
+     composed with RFC-043's hardware-hub profile (BLE GATT is MUST),
+     already guarantees every hardware hub a sessionless raw-frame stop
+     path over BLE at zero marginal implementation cost. WS-only hubs
+     are in practice virtual (desktop) hubs with no physical machine for
+     H1's hardware-stop responsibility to bind to. The protocol's
+     datagram paths are conveniences layered above that floor, exactly
+     as the floor is itself a convenience layered above the hardware
+     e-stop (H1, unchanged: always the user's responsibility).
+  2b. **Discoverability (main-loop proposal at the same amendment,
+     pending operator stamp):** DISCOVER_REPLY `flags` bit1 =
+     `datagram_estop` (this hub honors ESTOP on this UDP port right
+     now — the setting's live value), and the ESP-NOW BEACON's flag
+     byte reserves the mirror bit when that binding lands — so a fob
+     learns at setup time whether screaming will be heard, rather than
+     discovering it by silence. BLE needs no bit: the raw-frame path is
+     unconditional on every binding a hub runs.
   3. **The opt-out condition (operator ruling, amended 2026-07-29):**
      both datagram paths are governed by one setting (proposed home: the
      safety or network settings channel, `configure` tier to change,
