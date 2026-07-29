@@ -1274,17 +1274,20 @@ public class SlopSync : PluginBase
     // output-divergence probe.
     // =========================================================================
     private const double SegmentPingIntervalMs = 400.0;   // < 600 ms deadman, with margin
-    // 0x2101 publish wish (Hz) — the HONEST sustained rate (RFC-013). The mean
-    // segment stream is 2–4/s; 5 gives slight headroom without over-declaring.
-    // Burst budget no longer rides the rate: it is the explicit `burst` (42)
-    // wish below. (Pre-RFC-013 this was 30.0 — a lie to admission control to
-    // buy bucket depth, because §10.5 made rate double as depth.)
-    private const double SegmentWishHz = 5.0;
-    // 0x2101 `burst` wish (samples): the measured worst-case dense-section peak
-    // (~25 segments/s — rapid strokes / vibration sections emitted the instant
-    // they come due). The hub clamps to granted_rate × max_burst_multiple and
-    // echoes the applied depth; the client shapes to the ECHO, not to this.
-    private const double SegmentWishBurst = 25.0;
+    // 0x2101 publish wish (Hz) — the HONEST sustained rate (RFC-013). Sustained
+    // dense funscript passages (vibration sections) run well above 5 Hz MEAN for
+    // many seconds; a bucket sized to the old "measured ~25/s worst case burst"
+    // starves them, defers segments (see the token-starve branch in SegTickAsync),
+    // erodes the 120 ms lookahead, and triggers the hub's settle brake mid-script
+    // (slopmotion maybeSettle, 2026-07-29 field report: "settling mid motion").
+    // The wish stays an HONEST declaration per RFC-013 — the hub still grants
+    // what it grants; this is not a lie to buy depth like the pre-RFC-013 30.0.
+    private const double SegmentWishHz = 20.0;
+    // 0x2101 `burst` wish (samples): raised alongside the rate so bucket depth
+    // stays proportional to the new sustained ask instead of re-capping it below
+    // the rate. The hub clamps to granted_rate × max_burst_multiple and echoes
+    // the applied depth; the client shapes to the ECHO, not to this.
+    private const double SegmentWishBurst = 50.0;
 
     // Emitter tick. 10 ms is two orders of magnitude under the shortest span a
     // 50 Hz-capped channel can carry, so no span can slip past unseen; the
@@ -1679,6 +1682,12 @@ public class SlopSync : PluginBase
                 {
                     // Out of budget: leave the cursor BEFORE this span so the
                     // next tick retries it rather than silently dropping motion.
+                    // KNOWN LIMITATION (deferred, diagnosis 2026-07-29): no
+                    // staleness check here — a span retried this many ticks past
+                    // its own scheduled start (already stale by more than one
+                    // segment duration) is retried exactly like a fresh one,
+                    // rather than being dropped. Do not add staleness handling
+                    // without a design pass; this comment only marks the gap.
                     _segThrottled++;
                     if (_segThrottleLogAgeMs >= 2000)
                     {
