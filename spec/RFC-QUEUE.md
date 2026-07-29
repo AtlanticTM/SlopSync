@@ -3275,6 +3275,74 @@ positive application-level acknowledgment that a transfer completed"
   congestion bookkeeping cleared, then a fresh HELLO with the same
   `instance_id` reattaches through the existing §6.3 migration path).
 
+## RFC-052 — The authoring layer: tables, released markers, generated vocabularies, group descriptions
+
+- **Status:** **PROPOSED** (queued for operator ruling — authoring-legibility
+  campaign Phase 0, 2026-07-29). Four parts, deliberately separable: (a)–(c)
+  are lib/tooling additions with zero wire change; (d) is one additive
+  entry-level catalog key.
+- **Origin:** the campaign's traced chain (SlopDrive-32 ledger, 2026-07-29).
+  The reference catalog is ~1,980 lines of imperative builder calls in which
+  the facts an operator actually edits (`min`/`max`/`step`/`desc`/`group`)
+  are buried in wire machinery; the JS client hand-copies registry
+  vocabularies, which is exactly how `frames.js`'s category-name table went
+  stale (the RENDERING.md §3 correction in this same commit); and the
+  preset-meta fields render as an unnamed, unexplained card because a group
+  cannot carry a description.
+- **Problem:** four related gaps.
+  1. **No authoring surface.** SPEC §8.8's annotation model is complete on
+     the wire, but the reference way to *author* it is `addEntry`/
+     `addLayoutField` builder calls — a settings row does not read as a
+     settings row, and fact-editing requires reading code. (The legibility
+     goal is a machine-repo doctrine; the reusable layer belongs here.)
+  2. **`released` is enforced by human memory.** §5.4's append-only rule
+     binds released layouts, but nothing machine-readable marks which
+     layouts ARE released — §8.5's static-client promise rests on nobody
+     forgetting. Post-tag, every layout edit risks a silent wire break the
+     etag catches only after the fact.
+  3. **Registry vocabularies reach JS by hand transcription.**
+     `gen_registry_header.py` emits C++ only; every JS-side table is a copy,
+     and copies drift (the §3 ruling's other stale half).
+  4. **A `group` names a card but cannot describe it.** Fields carry
+     `desc`; their container cannot. The depth-4 budget blocks a field-level
+     fix by design — §8.1 says containers ride the entry level, so this
+     needs an entry-level key.
+- **Proposed change:**
+  - **(a) `slopsync::author` — a constexpr table layer** in the lib:
+    `field_spec.hpp` (optional-membered row struct, flat designated
+    initializers — presence inferred from `std::optional`, no
+    `.hasMin = true` boilerplate), `channel_table.hpp` (constexpr table with
+    `wire_size` and `offset_of<"name">`), `catalog_feed.hpp` (table → the
+    existing builder calls, byte-equivalent, proven by lib-side native
+    tests), `packer.hpp` (typed constexpr-offset writes), `layout_guard.hpp`
+    (static_assert pins for the hand encoders hot channels keep). Authoring
+    surface only — the wire never sees a table.
+  - **(b) A `released` marker on authored tables**: a released table turns
+    §5.4 violations (reorder, resize, remove, insert-before-tail) into
+    compile errors / lint findings; an unreleased table evolves freely.
+    This mechanizes the §5.4/§8.5 distinction; the marker never rides the
+    wire.
+  - **(c) `gen_registry_header.py` grows a JS emitter**: registry.yaml → a
+    generated vocabulary module (categories, ranks, aspects, scopes,
+    provenance, units, action tags, NACK codes) consumed by `clients/js`.
+    Hand-copied vocabulary tables are deleted; `--check` covers both
+    emitted artifacts.
+  - **(d) New optional entry-level catalog key `17 group_descs`**:
+    `{ * tstr => tstr }` mapping a `group` string (SPEC §8.8) to a
+    user-facing description, bounded per value by `desc_max_bytes` (128)
+    like field `desc`. Depth from the entry map is 3, inside the §5.3 cap —
+    exactly the "containers ride the entry level" rule. Renderers surface
+    it as the card's own help affordance (§8.9 rule 6, extended to the
+    container); clients that predate it ignore the unknown key per §8.9
+    rule 8.
+- **Compatibility:** (a)–(c) touch no wire byte — the catalog-feed
+  byte-equivalence tests plus the reference hub's pinned catalog etag prove
+  it mechanically. (d) is additive: a clean allocation of the next free
+  entry-level key (17), with `catalog.cddl`, registry.yaml, and
+  `gen_registry_header.py` updated in the landing commit; absent = today's
+  behavior exactly, and the mandatory-fallback rule means no shipped client
+  changes behavior by its existence. Nothing renumbered, nothing removed.
+
 *Add new entries below. Keep the shape: Status / Origin / Problem / Proposed
 change / Compatibility — and if it was found by a probe or a live failure,
 say exactly which, future-us will want the receipts.*

@@ -650,7 +650,7 @@ packed_field_types:
   10: { name: str64, note: "64 bytes, zero-padded UTF-8 (RFC-026). 26% of a 242 B snapshot: use deliberately." }
 
 # ---------------------------------------------------------------------------
-# TOMBSTONE (Phase C2 catalog evolution): `setting_categories` (the four-value
+# TOMBSTONE (Phase C2 catalog evolution): `setting_categories` (the five-value
 # device/user/limits/tuning/diagnostics vocabulary) is RETIRED. Every catalog
 # entry's `category` (channel-entry key 10) now carries a `ui_categories` id
 # instead — see that section below, and RENDERING.md §3. This is a pre-tag

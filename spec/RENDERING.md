@@ -102,13 +102,13 @@ A hub SHOULD expose the well-known channel for any capability it has, carrying a
 | 13 | `system` | Power, thermals, memory, firmware, logs |
 | 14 | `other` | The defined overflow |
 
-**Vendor range:** `0x40`–`0x7E` is reserved for vendor/device-defined categories, mirroring `setting_categories`' device-defined tail (SPEC §8.8) — a hub declaring one MUST supply a label.
+**Vendor range:** `0x40`–`0x7E` is reserved for vendor/device-defined categories, mirroring the retired `setting_categories`' device-defined tail — a hub declaring one MUST supply a label.
 
 **Graceful-extension rule (MUST):** a client MUST render any category id it does not recognize — including a gap between `14` and the vendor range, and any vendor id it has not been taught — under `other`, using the catalog-provided label. **Never dropped.** This structural valve is what makes freezing the fourteen safe: every future category, foreseen or not, is navigable on every client ever shipped.
 
 A category MAY carry a free-text `subgroup` beneath it (today's `.group` strings become subgroups, SPEC §8.8). The category tree, in registry order, IS the navigation skeleton every renderer shares.
 
-**Relationship to `setting_categories` (informative):** the existing five-value `setting_categories` (SPEC §8.8, registry `setting_categories`) remains the wire vocabulary for the settings-metamodel `category` annotation until a later catalog-evolution RFC actually wires `ui_categories` onto catalog entries (this landing is spec/registry text only — see SPEC §19.1). The two are not in conflict: `setting_categories` is a four-tab settings-surface classification; `ui_categories` is the whole-catalog navigation skeleton this document defines. Wiring the latter onto real entries, and reconciling the former into it, is next-phase work, named here so it is never mistaken for silent scope creep.
+**Relationship to `setting_categories` (informative; corrected 2026-07-29):** retired. Phase C2 wired `ui_categories` onto catalog entries: entry key 10 now carries a `ui_categories` id — same wire key, new value vocabulary, a pre-tag restructuring the registry header permits. The five-value `setting_categories` is tombstoned in the registry (see the tombstone in [`registry/registry.yaml`](registry/registry.yaml)) and no consumer reads it; the shipped reference catalog emits `ui_categories` uniformly, and SPEC §19.1 item 23 records the wiring. An earlier revision of this paragraph deferred that wiring to "a later catalog-evolution RFC" — stale from the moment Phase C2 landed. [C-3 correction per operator ruling, 2026-07-29: ledger + shipped catalog win]
 
 ---
 

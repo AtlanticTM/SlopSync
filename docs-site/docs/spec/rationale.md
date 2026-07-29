@@ -70,7 +70,7 @@ Findings from the pre-specification adversarial design review and from implement
 | Q2 probe delays connect | [§6.5](session.md#s6-5) optional, post-READY |
 | Q3 congestion signal per binding | [§10.3](qos.md#s10-3) + [§13.1](transports.md#s13-1) matrix |
 | Q4 broadcast vs per-subscriber rates | [§10.6](qos.md#s10-6) highest-grant rule |
-| Q5 never-shed overflow | [§10.4](qos.md#s10-4) bounded queues + slow-consumer eviction |
+| Q5 never-shed overflow | [§10.4](qos.md#s10-4) bounded queues + slow-consumer park |
 | Q6 shed semantics per class | [§10.4](qos.md#s10-4) normative table |
 | S1 ESTOP clear authorization | [§11.2](safety.md#s11-2) clearing rules + `CLEAR_REFUSED` + the catalog-error clause |
 | S2 ESTOP over lossy links | [§11.2](safety.md#s11-2) repeat-until-latch; [§14.2](transports.md#s14-2) fast path |

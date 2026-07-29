@@ -285,6 +285,7 @@ SOURCE_LINKS: dict[str, tuple[str, str]] = {
     "RFC-QUEUE.md#rfc-048--the-rendering-constitution-catalog-vocabulary-capability-interfaces-renderer-law": ("strip", ""),
     "RFC-QUEUE.md#rfc-049--spec-fresh-eyes-panel-omnibus-small-normative-fixes": ("strip", ""),
     "RFC-QUEUE.md#rfc-050--blob-transfer-backpressure--completion-acknowledgment": ("strip", ""),
+    "RFC-QUEUE.md#rfc-051--critical-stall-parks-the-session-instead-of-evicting-it": ("strip", ""),
     "RFC-QUEUE.md#rfc-004--appendix-d-sketch-collides-with-real-device-allocations": ("strip", ""),
     "V1-READINESS.md": ("strip", ""),
     # session-traces.md cites SPEC.md clauses directly by GitHub anchor slug,

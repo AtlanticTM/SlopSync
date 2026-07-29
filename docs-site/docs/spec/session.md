@@ -113,6 +113,8 @@ There are **two liveness regimes, deliberately different**:
 
 An out-of-band transport-loss report (the transport layer telling the hub a connection is confirmed gone, e.g. a socket close callback) is a **third** staleness trigger, immediate rather than timed — the case that matters most for a genuine network blip. Unlike the two silence triggers, the transport is confirmed absent here, so the per-slot state RFC-042 otherwise keeps "while the transport is still attached" (a pending pairing knock, an in-flight AUTH proof, a resumable blob-transfer cursor) is reset rather than retained — it was mid-flight against a socket that no longer exists.
 
+**RFC-051 adds a fourth staleness trigger, converging with the third.** [§10.4](qos.md#s10-4) step 4's never-shed queue stall (`never_shed_stall_eviction_ms`, 2 s) closes and detaches the transport and runs the identical park: same reset of transport-scoped state, same slot retention. Rationale: a vanished client's link looks *congested* before it looks *gone*, so this clock used to race the transport-loss report above and always lose, tearing the session down via [§6.9](#s6-9) before the transport layer had a chance to report the loss itself. Both triggers now produce one outcome.
+
 **Slot pressure is the only thing that ever reclaims a `STALE` session.** A HELLO that would otherwise be refused with NACK `BUSY` ([§6.3](#s6-3), `kHubMaxSessions` sessions already occupied — a `STALE` session still occupies its slot, at full cost) instead evicts the lowest-access-tier `STALE` session first (tie-break: longest continuously stale), sending it a best-effort GOODBYE `SLOT_RECLAIMED` before freeing its slot for real. A `LIVE` session is **never** evicted for pressure — only a genuine duplicate-`instance_id` claim ever displaces one. Staleness itself has **no independent time limit**: a hub MAY run indefinitely with slots parked `STALE`, by design (any fixed cap is just a slower deadman with the identical browser-throttling failure mode this exists to remove).
 
 A hub SHOULD implement idle reaping (into `STALE`, per the above). Without it a watch-tier session that goes dark holds a slot until reboot, and there is no other pressure to release it.
@@ -122,7 +124,7 @@ Note the sparse-sender case this design serves on purpose: a client that emits a
 ```mermaid
 stateDiagram-v2
     [*] --> LIVE: HELLO / WELCOME
-    LIVE --> STALE: silence past deadman_ms (source-owning)\nor idle_reap window (§6.6),\nor an out-of-band transport-loss report
+    LIVE --> STALE: silence past deadman_ms (source-owning)\nor idle_reap window (§6.6),\nor an out-of-band transport-loss report,\nor a never-shed critical-stall past\nnever_shed_stall_eviction_ms (§10.4, RFC-051)
     note right of STALE
       slot, session_id, every grant RETAINED.
       source ownership released unconditionally,
@@ -131,7 +133,7 @@ stateDiagram-v2
     STALE --> LIVE: path A -- any frame on the SAME transport
     STALE --> LIVE: path B -- fresh HELLO, same instance_id,\non a NEW transport (REATTACH, §6.3)
     STALE --> [*]: slot-pressure reclaim ONLY\n(best-effort GOODBYE SLOT_RECLAIMED)
-    LIVE --> [*]: the other five teardown doors (§6.9)
+    LIVE --> [*]: the other four teardown doors (§6.9)
 
     classDef start fill:#2b6cb0,stroke:#1a365d,color:#fff,stroke-width:2px
     class LIVE start
@@ -160,13 +162,13 @@ On transport restoration a client sends a fresh HELLO (same `instance_id`, same 
 - **Grant reacquisition is not control reacquisition.** Subscriptions and publications re-grant freely. But if the disconnect triggered the deadman, the source's ownership was released ([§11.3](safety.md#s11-3)) — the returning session does NOT silently resume as active source, whether or not anything latched in the meantime; it must issue a fresh control-taking intent ([§11.4](safety.md#s11-4)). **Motion never restarts because a socket reopened.**
 - **Trust is re-evaluated.** A token presented after a `client_ver` change may be admitted at `watch` with its granted tier suspended ([§12.6](security.md#s12-6)).
 
-## 6.9 Teardown: one path, six doors {#s6-9}
+## 6.9 Teardown: one path, five doors {#s6-9}
 
 GOODBYE (`0x11`, either direction; CBOR `code` from `nack_codes`, optional `detail`) is a courtesy, not a requirement — transports die rudely and every rule above already tolerates it.
 
-**RFC-042 narrowed which endings this section covers.** Silence (deadman on a source-owning session, idle reaping otherwise, [§6.6](#s6-6)/[§11.3](safety.md#s11-3)) and an out-of-band transport loss are, since RFC-042, **not** teardown at all — they mark the session `STALE` (library-internal state; [§6.3](#s6-3)'s reattach path) and RETAIN its slot, `session_id`, and every grant. A stale session is not gone: it is resumed by any frame on its still-attached transport, or by a fresh HELLO on a new one ([§6.3](#s6-3)). Genuine teardown remains exactly six doors: voluntary GOODBYE, slow-consumer eviction ([§10.4](qos.md#s10-4)), administrative eviction ([§12.7](security.md#s12-7)), reuse of a session slot by a duplicate `instance_id` **belonging to a LIVE session** ([§6.3](#s6-3) — excluding both a transport **migration** and an RFC-042 reattach, neither of which is an ending), readiness timeout ([§6.4](#s6-4)), and RFC-042 item 5's **slot-pressure reclaim of a `STALE` session** (best-effort GOODBYE `SLOT_RECLAIMED`, evicted only under admission pressure, lowest access tier first).
+**RFC-042 narrowed which endings this section covers, and RFC-051 narrowed it again.** Silence (deadman on a source-owning session, idle reaping otherwise, [§6.6](#s6-6)/[§11.3](safety.md#s11-3)), an out-of-band transport loss, and — since RFC-051 — a never-shed critical-stall past `never_shed_stall_eviction_ms` ([§10.4](qos.md#s10-4) step 4) are **not** teardown at all: all four mark the session `STALE` (library-internal state; [§6.3](#s6-3)'s reattach path) and RETAIN its slot, `session_id`, and every grant. A stale session is not gone: it is resumed by any frame on its still-attached transport, or by a fresh HELLO on a new one ([§6.3](#s6-3)). Genuine teardown remains exactly five doors: voluntary GOODBYE, administrative eviction ([§12.7](security.md#s12-7)), reuse of a session slot by a duplicate `instance_id` **belonging to a LIVE session** ([§6.3](#s6-3) — excluding both a transport **migration** and an RFC-042 reattach, neither of which is an ending), readiness timeout ([§6.4](#s6-4)), and RFC-042 item 5's **slot-pressure reclaim of a `STALE` session** (best-effort GOODBYE `SLOT_RECLAIMED`, evicted only under admission pressure, lowest access tier first).
 
-**Normative equivalence rule, restated for the current model.** Every one of the six teardown doors above, AND every RFC-042 staleness transition, MUST be **behaviorally identical with respect to source ownership and safety latching**: the hub releases every source the departing (or newly-stale) session owned, **unconditionally**, and (RFC-045) latches nothing by virtue of that release alone — a command-driven source simply has no owner and settles per [§11.3](safety.md#s11-3); a hub-autonomous source's continuation is governed entirely by its own `source.background_run` setting, never by an inference from the ending or staleness. An explicit `stop`/`estop` is a command, never an inference from a departed or stale session ([§11.2](safety.md#s11-2)).
+**Normative equivalence rule, restated for the current model.** Every one of the five teardown doors above, AND every RFC-042 staleness transition, MUST be **behaviorally identical with respect to source ownership and safety latching**: the hub releases every source the departing (or newly-stale) session owned, **unconditionally**, and (RFC-045) latches nothing by virtue of that release alone — a command-driven source simply has no owner and settles per [§11.3](safety.md#s11-3); a hub-autonomous source's continuation is governed entirely by its own `source.background_run` setting, never by an inference from the ending or staleness. An explicit `stop`/`estop` is a command, never an inference from a departed or stale session ([§11.2](safety.md#s11-2)).
 
 **RFC-045 retired the `cause` distinction this paragraph used to describe.** Neither staleness nor teardown latches anything any more, so there is no `deadman`/`session_loss` safety-word edge left to tell apart on a source-loss path; `safety_causes::deadman` (1) and `session_loss` (4) remain registered (a hub whose application-level `sourcePolicy()` genuinely needs a stop-on-silence edge may still produce them) but the reference hub emits neither for source loss. A hub MUST NOT report a closed browser tab, or any other departure, as a safety edge it did not actually have.
 

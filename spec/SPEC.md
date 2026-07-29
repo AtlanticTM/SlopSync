@@ -581,8 +581,8 @@ Plus these optional entry-level keys:
 
 | Key | Meaning |
 |---|---|
-| `category` | `setting_categories` value; 0–127 registered, 128–255 device-defined |
-| `category_label` | REQUIRED iff `category ≥ 128` |
+| `category` | `ui_categories` value (RFC-047/048, Phase C2); 1–14 registered, `0x40`–`0x7E` vendor/device-defined. Was `setting_categories` pre-Phase-C2 — same wire key, new vocabulary (pre-tag restructuring; see the registry tombstone). |
+| `category_label` | REQUIRED iff `category` is in the vendor range (`0x40`–`0x7E`) |
 | `replay_depth` | entries the hub MAY replay on grant — presence is **the** exception to §9.4's no-replay rule |
 | `setting_channel` | the u16 INTENT channel that writes this entry's setting-annotated fields; REQUIRED iff any field carries `setting_key` |
 | `stream_kind` | `stream_kinds` value; STREAM class only; **absent means `samples` (0)** |
@@ -708,7 +708,7 @@ Three role families were registered by the first generic clients, which found th
 
 **Role cardinality.** A registered role SHOULD appear on at most one field per catalog. A client that meets duplicates binds the **first in catalog order** — a deterministic, conformant tiebreak rather than a client-local guess.
 
-**Categories** organize the surface. Entry-level `category` values 0–127 are spec-registered with a canonical order (`device`, `user`, `limits`, `tuning`, `diagnostics`) so placement, iconography and translation are consistent across every hub a client ever meets; 128–255 are device-defined and MUST carry `category_label`, rendered as additional tabs after the spec set. **A category spans channels** — two channels in the same category merge into one tab, which is the answer to a category outgrowing one 242-byte snapshot (about 58 f32 or 115 u16 fields, inclusive of mask bytes).
+**Categories** organize the surface. Entry-level `category` carries a `ui_categories` id (RFC-047/048, Phase C2; the fourteen-value navigation vocabulary of RENDERING.md §3, replacing the retired `setting_categories`): ids 1–14 are spec-registered with a canonical registry order so placement, iconography and translation are consistent across every hub a client ever meets; `0x40`–`0x7E` are device-defined, MUST carry `category_label`, and render as additional tabs after the spec set. **A category spans channels** — two channels in the same category merge into one tab, which is the answer to a category outgrowing one 242-byte snapshot (about 58 f32 or 115 u16 fields, inclusive of mask bytes).
 
 **Dynamic enablement.** "Grayed out right now" depends on live machine state and therefore cannot live in static metadata at all. A settings STATE channel carries one or more `bitfield8` fields tagged `meta.enabled_mask`; bit *i* gates the *i*-th setting-annotated field of that layout. On-change, retained, conflated — every client grays from the same ground truth.
 
