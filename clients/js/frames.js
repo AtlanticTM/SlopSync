@@ -104,11 +104,13 @@ export const K = {
   burst: 42, // publishes entry: token-bucket capacity (RFC-013)
   reboot_in_ms: 43, // ECHO applied: this intent commits by rebooting (RFC-020)
   deadman_wish_ms: 44, // HELLO: requested per-session deadman window (RFC-038); hub clamps into [deadman_min_ms,deadman_max_ms] and echoes the APPLIED value via the EXISTING key 24 — never a new response key
+  ws_port: 46, // WELCOME: hub's WS endpoint port (RFC-046) — how a session that arrived over BLE learns where the WS upgrade lives; absent = none advertised
+  ipv4: 47, // WELCOME: hub's IPv4 as u32 big-endian (RFC-046); 0/absent = no WS endpoint to advertise
 };
 
 // WELCOME's `identity` (key 37) sub-map (registry identity_keys) — RFC-016 put
 // product/fw_version in band so a client stops labeling devices "boot 0x…".
-export const IDENTITY_K = { product: 1, fw_version: 2, hub_name: 3, info: 4 };
+export const IDENTITY_K = { product: 1, fw_version: 2, hub_name: 3, info: 4, hub_instance_id: 5 };
 
 // `blob` (key 38) sub-map (registry blob_keys). The SAME vocabulary names the
 // fields of BLOB_CHUNK's fixed binary header — one table, never two.

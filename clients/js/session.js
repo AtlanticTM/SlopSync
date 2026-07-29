@@ -807,8 +807,19 @@ export function createSession(opts = {}) {
         fw_version: idm.get(IDENTITY_K.fw_version) || null,
         hub_name: idm.get(IDENTITY_K.hub_name) || null,
         info: idm.get(IDENTITY_K.info) || null,
+        // RFC-048: durable hub identity (u64, survives reboots) — the value a
+        // client keys "have I met this hub before" on, never boot_id.
+        hub_instance_id: idm.get(IDENTITY_K.hub_instance_id) ?? null,
       };
     }
+
+    // RFC-046: the WS endpoint advertised in band. A session that arrived over
+    // BLE (or any non-WS binding) reads these to find the WS upgrade path;
+    // absent/0 means the hub has none to offer right now.
+    state.endpoint = {
+      wsPort: w.get(K.ws_port) ?? null,
+      ipv4: w.get(K.ipv4) ?? null,
+    };
 
     // §6.7: snapshot adoption is mandatory — discard everything and rebuild it
     // only from what follows this WELCOME.
@@ -831,6 +842,7 @@ export function createSession(opts = {}) {
       deadmanPolicy: state.deadmanPolicy,
       limits: state.limits,
       pairingModes: state.pairingModes,
+      endpoint: state.endpoint,
     };
     setPhase(SESSION_STATE.SYNCING);
     emit('welcome', info);
