@@ -28,7 +28,10 @@ import { cbMap, cbArray, cbUint, cbDecode } from './cbor.js';
 import {
   PACKED, PACKED_NAME, PACKED_SIZE, CBOR_FIELD_NAME,
   CHANNEL_CLASS_NAME, DIRECTION_NAME, ACCESS_NAME,
-  SETTING_CATEGORY_NAME, SETTING_FLAG,
+  UI_CATEGORY, UI_CATEGORY_NAME, UI_RANK, UI_RANK_NAME,
+  VALUE_ASPECT, VALUE_ASPECT_NAME, VALUE_SCOPE, VALUE_SCOPE_NAME,
+  VALUE_PROVENANCE, VALUE_PROVENANCE_NAME, UNIT_ID_NAME,
+  SETTING_FLAG,
   K, BLOB_K, BLOB_NS, LIMITS,
 } from './frames.js';
 
@@ -233,13 +236,16 @@ export class BlobReassembler {
  * channel-entry = {1:id, 2:name, 3:class, 4:dir, 5:access, 6:maxRateHz f32,
  *                  7:priority, ?8:[layout-field], ?9:{key=>schema-field},
  *                  ?10:category, ?11:category_label, ?12:store-descriptor,
- *                  ?13:replay_depth, ?14:setting_channel, ?15:stream_kind}
+ *                  ?13:replay_depth, ?14:setting_channel, ?15:stream_kind,
+ *                  ?16:rank}
  * layout-field = {1:name, 2:packedType, 3:unit, 4:scale f32, ?5:min, ?6:max,
  *                 ?7:{bits}, ?8:setting_key, ?9:default, ?10:[options],
- *                 ?11:group, ?12:desc, ?13:role, ?14:step, ?15:flags, ?18:size}
+ *                 ?11:group, ?12:desc, ?13:role, ?14:step, ?15:flags, ?18:size,
+ *                 ?19:rank, ?20:aspect, ?21:scope, ?22:provenance, ?23:unit_id}
  * schema-field = {1:name, 2:cborType, 3:unit, ?5:min, ?6:max, ?9:default,
  *                 ?10:[options], ?11:group, ?12:desc, ?13:role, ?14:step,
- *                 ?15:flags, ?16:access, ?17:[option_access]}
+ *                 ?15:flags, ?16:access, ?17:[option_access],
+ *                 ?19:rank, ?20:aspect, ?21:scope, ?22:provenance, ?23:unit_id}
  *
  * Unknown keys are ignored per §4.3 — forward compatibility is mandatory.
  * @param {Uint8Array} bytes
@@ -254,6 +260,21 @@ export function decodeCatalog(bytes) {
 /** @param {Map} m @param {number} k @param {*} d @returns {*} */
 function mget(m, k, d) {
   return m instanceof Map && m.has(k) ? m.get(k) : d;
+}
+
+/**
+ * Resolve an annotation code against its registry vocabulary, applying the
+ * ABSENT default and the UNRECOGNIZED rule in one place.
+ *
+ * §8.9 rule 8 / §4.3: an unknown code is never a decode failure and never a
+ * reason to drop the field — it falls back to the vocabulary's defined default.
+ * The raw wire value is kept alongside so a renderer can still show what the
+ * device actually said.
+ */
+function annot(m, key, names, dflt) {
+  const raw = m instanceof Map && m.has(key) ? m.get(key) : null;
+  const code = (typeof raw === 'number' && raw in names) ? raw : dflt;
+  return { code, name: names[code], raw };
 }
 
 function decodeEntry(m) {
@@ -280,6 +301,11 @@ function decodeEntry(m) {
     replayDepth: null,
     settingChannel: null,
     streamKind: 0,
+    // Entry rank (key 16): how much THIS CHANNEL matters. A SEPARATE AXIS from
+    // any per-field key-19 rank — emphatically not inheritance, so a hero
+    // channel may still hold a diagnostic field and vice versa.
+    rank: UI_RANK.detail,
+    rankName: UI_RANK_NAME[UI_RANK.detail],
   };
   if (m.has(8)) entry.layout = m.get(8).map(decodeLayoutField);
   if (m.has(9)) {
@@ -289,14 +315,26 @@ function decodeEntry(m) {
     entry.schema.sort((a, b) => a.key - b.key);
   }
   if (m.has(10)) {
+    // The RAW id is preserved: a device-defined category outside the registry
+    // vocabulary still identifies its own tab, and merging every unknown id into
+    // one `other` bucket would fuse unrelated tabs together. `categoryName` is
+    // the RESOLVED registry name, which for an unrecognized id is `other` —
+    // ui_categories 14 is the DEFINED overflow, so the settings still render
+    // (§8.8 item 8) instead of landing on the floor.
     entry.category = m.get(10);
-    entry.categoryName = SETTING_CATEGORY_NAME[entry.category] || null;
+    entry.categoryName = UI_CATEGORY_NAME[entry.category] || UI_CATEGORY_NAME[UI_CATEGORY.other];
+    entry.categoryKnown = entry.category in UI_CATEGORY_NAME;
   }
   if (m.has(11)) entry.categoryLabel = m.get(11);
   if (m.has(12)) entry.store = decodeStoreDescriptor(m.get(12));
   if (m.has(13)) entry.replayDepth = m.get(13);
   if (m.has(14)) entry.settingChannel = m.get(14);
   if (m.has(15)) entry.streamKind = m.get(15);
+  if (m.has(16)) {
+    const r = annot(m, 16, UI_RANK_NAME, UI_RANK.detail);
+    entry.rank = r.code;
+    entry.rankName = r.name;
+  }
   return entry;
 }
 
@@ -316,6 +354,32 @@ function decodeSharedAnnotations(fm, f) {
       secret: (f.flags & SETTING_FLAG.secret) !== 0,
     };
   }
+  // ---- RFC-048 rendering metamodel, keys 19..23 ----------------------------
+  //
+  // Decoded UNCONDITIONALLY, with each vocabulary's absent-default, because a
+  // renderer must be able to ask "what rank is this?" without first asking "did
+  // the device say?" — that second question is where per-caller guesses breed.
+  // Same keys, same meanings on layout- and schema-fields, so one function owns
+  // them (catalog.cddl points its schema-field block at the layout-field block
+  // for exactly this reason).
+  const rank = annot(fm, 19, UI_RANK_NAME, UI_RANK.detail);
+  f.rank = rank.code;
+  f.rankName = rank.name;
+  const aspect = annot(fm, 20, VALUE_ASPECT_NAME, VALUE_ASPECT.live);
+  f.aspect = aspect.code;
+  f.aspectName = aspect.name;
+  const scope = annot(fm, 21, VALUE_SCOPE_NAME, VALUE_SCOPE.session);
+  f.scope = scope.code;
+  f.scopeName = scope.name;
+  const prov = annot(fm, 22, VALUE_PROVENANCE_NAME, VALUE_PROVENANCE.actual);
+  f.provenance = prov.code;
+  f.provenanceName = prov.name;
+  // unit_id has NO fallback vocabulary value: absent or unrecognized means
+  // "render the tstr `unit` (key 3) verbatim", so this stays null rather than
+  // resolving to a wrong unit name. catalog.cddl key 23, RENDERING.md §6.
+  const unitId = fm.has(23) ? fm.get(23) : null;
+  f.unitId = (typeof unitId === 'number' && unitId in UNIT_ID_NAME) ? unitId : null;
+  f.unitIdName = f.unitId != null ? UNIT_ID_NAME[f.unitId] : null;
 }
 
 function decodeLayoutField(fm) {

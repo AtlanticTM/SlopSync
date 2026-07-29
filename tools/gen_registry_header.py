@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
-"""Generate lib/slopsync/include/slopsync/generated/registry_constants.hpp
-from spec/registry/registry.yaml — the single source of truth.
+"""Generate the committed C++ and JS vocabulary artifacts from
+spec/registry/registry.yaml — the single source of truth.
+
+    lib/slopsync/include/slopsync/generated/registry_constants.hpp
+    clients/js/generated/registry_vocab.js
 
 Usage:
-    python tools/gen_registry_header.py           # (re)write the header
-    python tools/gen_registry_header.py --check   # exit 1 if committed header is stale
+    python tools/gen_registry_header.py           # (re)write both artifacts
+    python tools/gen_registry_header.py --check   # exit 1 if either is stale
 
 Run with PlatformIO's bundled python (has PyYAML):
     %USERPROFILE%\\.platformio\\penv\\Scripts\\python.exe tools/gen_registry_header.py
 
-The generated header is COMMITTED (ESP32/Arduino builds must never need python).
+Both artifacts are COMMITTED: ESP32/Arduino builds must never need python, and
+neither must a browser loading clients/js — the module is imported directly, so
+a build step is not available to generate it on the fly (RFC-052(c)).
 SPEC.md rule: on any conflict, registry.yaml wins — this script is how it wins.
 """
 import sys
@@ -21,6 +26,7 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 REGISTRY = ROOT / "spec" / "registry" / "registry.yaml"
 OUT = ROOT / "lib" / "slopsync" / "include" / "slopsync" / "generated" / "registry_constants.hpp"
+OUT_JS = ROOT / "clients" / "js" / "generated" / "registry_vocab.js"
 
 
 # Registry names become C++ identifiers, so they may not collide with a
@@ -199,20 +205,195 @@ def gen(reg: dict) -> str:
     return w.getvalue()
 
 
+# ============================================================================
+# JS vocabulary emitter (RFC-052(c))
+# ============================================================================
+#
+# Export names are chosen to MATCH what clients/js/frames.js already published,
+# so adopting this module is a deletion on the consumer side and no downstream
+# import changes. The one deliberate rename is SETTING_CATEGORY* -> UI_CATEGORY*:
+# `setting_categories` is tombstoned in registry.yaml and its hand-copy was the
+# stale table that motivated this RFC (a 5-entry 0-based array standing in for a
+# 14-entry 1-based vocabulary — every category name it produced was wrong).
+
+# (JS export, registry section, reverse-map?, hex nibbles or 0 for decimal)
+JS_CODE_TABLES = (
+    ("FRAME",              "frame_types",         True,  2),
+    ("CHANNEL_CLASS",      "channel_classes",     True,  0),
+    ("ACCESS",             "access_levels",       True,  0),
+    ("PRIORITY",           "priority_classes",    True,  0),
+    ("PACKED",             "packed_field_types",  True,  0),
+    ("CORE_CHANNEL",       "core_channels",       True,  4),
+    ("K",                  "cbor_keys",           True,  0),
+    ("WELCOME_LIMITS_K",   "welcome_limits_keys", False, 0),
+    ("PROBE_RESULT_K",     "probe_result_keys",   False, 0),
+    ("IDENTITY_K",         "identity_keys",       False, 0),
+    ("BLOB_K",             "blob_keys",           False, 0),
+    ("TRUST_K",            "trust_keys",          False, 0),
+    ("TRUST_LEDGER_K",     "trust_ledger_keys",   False, 0),
+    ("TRUST_STATE",        "trust_states",        True,  0),
+    ("PRESENTATION_MODE",  "presentation_modes",  True,  0),
+    ("BLOB_NS",            "blob_namespaces",     True,  0),
+    ("SESSION_EVENT_KIND", "session_event_kinds", True,  0),
+    ("LOG_EVENT_KIND",     "log_event_kinds",     True,  0),
+    ("PAIRING_EVENT_KIND", "pairing_event_kinds", True,  0),
+    ("SAFETY_EVENT_KIND",  "safety_event_kinds",  True,  0),
+    ("LOG_LEVEL",          "log_levels",          True,  0),
+    ("SAFETY_OP",          "safety_intent_ops",   True,  0),
+    ("SESSION_ADMIN_OP",   "session_admin_ops",   True,  0),
+    ("SAFETY_CAUSE",       "safety_causes",       True,  0),
+    ("STREAM_KIND",        "stream_kinds",        True,  0),
+    ("PROCEDURE_PHASE",    "procedure_phases",    True,  0),
+    ("CURVE_FAMILY",       "curve_families",      True,  0),
+    ("NACK",               "nack_codes",          True,  4),
+    # ---- RFC-047/048 rendering metamodel: the vocabularies a renderer needs --
+    ("UI_CATEGORY",        "ui_categories",       True,  0),
+    ("UI_RANK",            "ui_ranks",            True,  0),
+    ("VALUE_ASPECT",       "value_aspects",       True,  0),
+    ("VALUE_SCOPE",        "value_scopes",        True,  0),
+    ("VALUE_PROVENANCE",   "value_provenance",    True,  0),
+    ("UNIT_ID",            "unit_ids",            True,  0),
+    ("UI_ARCHETYPE",       "ui_archetypes",       True,  0),
+    ("UI_REGION",          "ui_regions",          True,  0),
+    ("RENDERER_CLASS",     "renderer_classes",    True,  0),
+    ("WIDGET_PATTERN",     "widget_patterns",     True,  0),
+)
+
+# (JS export, registry section) — `bitN: {name, note|ref}` bit-flag spaces.
+JS_BIT_TABLES = (
+    ("SETTING_FLAG", "setting_flags"),
+    ("PAIRING_MODE", "pairing_modes"),
+    ("BLE_ADV_FLAG", "ble_adv_flags"),
+)
+
+# (JS export, registry section) — tstr-keyed spaces: the KEY is the wire value.
+JS_TSTR_TABLES = (
+    ("FIELD_ROLE", "field_roles"),
+    ("ACTION_TAG", "action_tags"),
+)
+
+
+def js_ident(name: str) -> str:
+    """Sanitize a registry name into a JS object-key identifier.
+
+    Same dash/dot flattening as ident(); JS has no keyword collision problem
+    here because reserved words are legal property names, so no keyword set.
+    """
+    return name.replace("-", "_").replace(".", "_")
+
+
+def js_str(text: str) -> str:
+    """A registry string as a single-quoted JS literal."""
+    body = str(text).replace("\\", "\\\\").replace("'", "\\'")
+    return f"'{body}'"
+
+
+def js_num(code: int, hex_nibbles: int) -> str:
+    return f"0x{code:0{hex_nibbles}x}" if hex_nibbles else str(code)
+
+
+def js_note(entry: dict) -> str:
+    note = entry.get("ref") or entry.get("note") or ""
+    # Generated one-liners: a note that wraps stops being scannable, and the
+    # authoritative prose lives in registry.yaml regardless.
+    note = " ".join(str(note).split())
+    return f"  // {note[:96]}" if note else ""
+
+
+def gen_js(reg: dict) -> str:
+    w = io.StringIO()
+    p = w.write
+    meta = reg["meta"]
+    limits = reg["limits"]
+
+    p("// ============================================================================\n")
+    p("// GENERATED FILE — DO NOT EDIT.\n")
+    p("// Source of truth: spec/registry/registry.yaml\n")
+    p("// Regenerate:      python tools/gen_registry_header.py   (--check in CI)\n")
+    p("//\n")
+    p("// The JS twin of generated/registry_constants.hpp (RFC-052(c)). Committed\n")
+    p("// because clients/js is imported directly by browsers — there is no build\n")
+    p("// step available to generate it on demand.\n")
+    p("// ============================================================================\n\n")
+
+    p(f"export const PROTO_VER = {meta['protocol_version']};\n")
+    p(f"export const HEADER_BYTES = {meta['header_bytes']};\n")
+    p(f"export const WS_SUBPROTOCOL = {js_str(limits['ws_subprotocol'])};\n")
+    p(f"export const MDNS_SERVICE = {js_str(limits['mdns_service'])};\n\n")
+
+    for export, section, reverse, hexn in JS_CODE_TABLES:
+        entries = reg[section]
+        p(f"// ---- {section} " + "-" * max(1, 62 - len(section)) + "\n")
+        p(f"export const {export} = {{\n")
+        for code in sorted(entries):
+            e = entries[code]
+            p(f"  {js_ident(e['name'])}: {js_num(code, hexn)},{js_note(e)}\n")
+        p("};\n")
+        if reverse:
+            p(f"export const {export}_NAME = {{\n")
+            for code in sorted(entries):
+                p(f"  {js_num(code, hexn)}: {js_str(entries[code]['name'])},\n")
+            p("};\n")
+        p("\n")
+
+    for export, section in JS_BIT_TABLES:
+        entries = reg[section]
+        p(f"// ---- {section} (bit flags) " + "-" * max(1, 50 - len(section)) + "\n")
+        bits = sorted(entries, key=lambda b: int(b.removeprefix("bit")))
+        p(f"export const {export} = {{\n")
+        for bit in bits:
+            e = entries[bit]
+            shift = int(bit.removeprefix("bit"))
+            p(f"  {js_ident(e['name'])}: 1 << {shift},{js_note(e)}\n")
+        p("};\n")
+        # Keyed by the flag VALUE, not the bit index: callers hold a mask and
+        # want the name of a bit they already isolated.
+        p(f"export const {export}_NAME = {{\n")
+        for bit in bits:
+            shift = int(bit.removeprefix("bit"))
+            p(f"  {1 << shift}: {js_str(entries[bit]['name'])},\n")
+        p("};\n\n")
+
+    for export, section in JS_TSTR_TABLES:
+        entries = reg[section]
+        p(f"// ---- {section} (tstr wire values) " + "-" * max(1, 42 - len(section)) + "\n")
+        p(f"export const {export} = {{\n")
+        for key in entries:  # registry order
+            e = entries[key] or {}
+            p(f"  {js_ident(key)}: {js_str(key)},{js_note(e)}\n")
+        p("};\n\n")
+
+    p("// ---- limits " + "-" * 62 + "\n")
+    p("export const LIMITS = {\n")
+    for key in limits:  # registry order — it groups related limits
+        v = limits[key]
+        val = f"'{esc(v)}'" if isinstance(v, str) else repr(v)
+        p(f"  {js_ident(key)}: {val},\n")
+    p("};\n")
+    return w.getvalue()
+
+
+def check_or_write(path: Path, text: str, label: str) -> int:
+    if "--check" in sys.argv:
+        current = path.read_text(encoding="utf-8") if path.exists() else ""
+        if current != text:
+            print(f"STALE: {path} does not match {REGISTRY} — regenerate.", file=sys.stderr)
+            return 1
+        print(f"{label} up to date")
+        return 0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8", newline="\n")
+    print(f"wrote {path}")
+    return 0
+
+
 def main() -> int:
     reg = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
-    text = gen(reg)
-    if "--check" in sys.argv:
-        current = OUT.read_text(encoding="utf-8") if OUT.exists() else ""
-        if current != text:
-            print(f"STALE: {OUT} does not match {REGISTRY} — regenerate.", file=sys.stderr)
-            return 1
-        print("registry header up to date")
-        return 0
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(text, encoding="utf-8", newline="\n")
-    print(f"wrote {OUT}")
-    return 0
+    # Both artifacts are evaluated even if the first is stale, so one run reports
+    # every regeneration owed instead of one per invocation.
+    rc = check_or_write(OUT, gen(reg), "registry header")
+    rc |= check_or_write(OUT_JS, gen_js(reg), "registry JS vocabulary")
+    return rc
 
 
 if __name__ == "__main__":

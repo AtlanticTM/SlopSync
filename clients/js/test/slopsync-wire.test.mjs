@@ -24,6 +24,7 @@ import {
 import {
   K, PRIORITY, FRAME, ACCESS, PACKED, PACKED_SIZE, GOODBYE_CODE, NACK,
   SAFETY_OP, BLOB_NS, CH_SAFETY, LIMITS,
+  UI_CATEGORY, UI_RANK, VALUE_ASPECT, VALUE_SCOPE, VALUE_PROVENANCE, UNIT_ID,
   encodeFrame, encodeEstopFrame, crc32, ESTOP_FRAME_BYTES,
 } from '../frames.js';
 import {
@@ -341,8 +342,19 @@ const miniCatalog = cbArray([
         cbTstr('hold'), cbTstr('pause'), cbTstr('resume'), cbTstr('estop')])],
       [12, cbTstr('What to do about safety.')],
       [17, cbArray([cbUint(1), cbUint(1), cbUint(0), cbUint(1), cbUint(1), cbUint(1), cbUint(0)])],
+      // RFC-048 keys 19..23 on a SCHEMA field — rare but legal, and the reason
+      // decodeSharedAnnotations owns them rather than decodeLayoutField.
+      [19, cbUint(UI_RANK.hero)],
+      [20, cbUint(VALUE_ASPECT.peak)],
+      [21, cbUint(VALUE_SCOPE.lifetime)],
+      [22, cbUint(VALUE_PROVENANCE.demand)],
+      [23, cbUint(UNIT_ID.mm_s)],
     ])]])],
-    [10, cbUint(2)],            // category: limits
+    // ui_categories, NOT the tombstoned setting_categories: `limits` is 4 here.
+    // This fixture said 2 with a `// category: limits` comment beside it, which
+    // was true only under the retired vocabulary — 2 is `motion` now.
+    [10, cbUint(UI_CATEGORY.limits)],
+    [16, cbUint(UI_RANK.control)],   // entry rank (key 16)
   ]),
 ]);
 const miniEntries = decodeCatalog(miniCatalog);
@@ -350,10 +362,61 @@ const miniMap = catalogChannelMap(miniEntries);
 const si = miniMap.get(0x0005);
 assert('catalog decode: entry basics', si && si.name === 'safety-intents' && si.clsName === 'INTENT');
 assert('catalog decode: access floor is watch', si.access === ACCESS.watch && si.accessName === 'watch');
-assert('catalog decode: category resolves to a registry name', si.categoryName === 'limits');
+assert('catalog decode: category resolves to a registry name',
+  si.category === UI_CATEGORY.limits && si.categoryName === 'limits' && si.categoryKnown === true);
+assert('catalog decode: entry rank (key 16)',
+  si.rank === UI_RANK.control && si.rankName === 'control');
 const opField = schemaByKey(si).get(1);
+assert('catalog decode: field keys 19..23 on a schema field',
+  opField.rankName === 'hero' && opField.aspectName === 'peak' &&
+  opField.scopeName === 'lifetime' && opField.provenanceName === 'demand' &&
+  opField.unitIdName === 'mm_s');
 assert('catalog decode: schema field options[6] === estop', opField.options[6] === 'estop');
 assert('catalog decode: desc annotation', opField.desc === 'What to do about safety.');
+
+// ---- RFC-048 absent-defaults and the unknown-code rule ---------------------
+// The paths that decide whether an UNTAUGHT machine renders. A field that says
+// nothing must still answer "what rank are you?", and a category id this client
+// has never heard of must land in the DEFINED overflow rather than on the floor
+// (§8.8 item 8 / §8.9 rule 8) — while keeping its raw id, so two unknown
+// categories stay two tabs instead of fusing into one.
+const bareCatalog = cbArray([
+  cbMap([
+    [1, cbUint(0x0081)], [2, cbTstr('bare')], [3, cbUint(0)], [4, cbUint(0)],
+    [5, cbUint(ACCESS.watch)], [6, cbF32(1.0)], [7, cbUint(PRIORITY.normal)],
+    [8, cbArray([cbMap([[1, cbTstr('plain')], [2, cbUint(PACKED.u8)], [3, cbTstr('mm')], [4, cbF32(1.0)]])])],
+    [10, cbUint(200)],   // a device-defined category id, outside the vocabulary
+  ]),
+]);
+const bare = decodeCatalog(bareCatalog)[0];
+assert('absent rank defaults to detail, entry and field alike',
+  bare.rank === UI_RANK.detail && bare.rankName === 'detail' &&
+  bare.layout[0].rank === UI_RANK.detail && bare.layout[0].rankName === 'detail');
+assert('absent aspect/scope/provenance take their vocabulary defaults',
+  bare.layout[0].aspectName === 'live' && bare.layout[0].scopeName === 'session' &&
+  bare.layout[0].provenanceName === 'actual');
+assert('absent unit_id stays null so the tstr unit renders verbatim',
+  bare.layout[0].unitId === null && bare.layout[0].unitIdName === null &&
+  bare.layout[0].unit === 'mm');
+assert('unknown category id -> `other` name, raw id PRESERVED (never dropped)',
+  bare.category === 200 && bare.categoryName === 'other' && bare.categoryKnown === false);
+
+const wildCatalog = cbArray([
+  cbMap([
+    [1, cbUint(0x0082)], [2, cbTstr('wild')], [3, cbUint(0)], [4, cbUint(0)],
+    [5, cbUint(ACCESS.watch)], [6, cbF32(1.0)], [7, cbUint(PRIORITY.normal)],
+    [8, cbArray([cbMap([
+      [1, cbTstr('futuristic')], [2, cbUint(PACKED.u8)], [3, cbTstr('mm')], [4, cbF32(1.0)],
+      [19, cbUint(99)], [20, cbUint(99)], [21, cbUint(99)], [22, cbUint(99)], [23, cbUint(99)],
+    ])])],
+    [16, cbUint(99)],
+  ]),
+]);
+const wild = decodeCatalog(wildCatalog)[0];
+assert('unrecognized annotation codes fall back to the vocabulary default, never throw',
+  wild.rankName === 'detail' && wild.layout[0].rankName === 'detail' &&
+  wild.layout[0].aspectName === 'live' && wild.layout[0].scopeName === 'session' &&
+  wild.layout[0].provenanceName === 'actual' && wild.layout[0].unitIdName === null);
 assert('catalog decode: option_access decoded (key 17)', Array.isArray(opField.optionAccess));
 assert('option_access: stop(2) and estop(6) are ROLE-EXEMPT (watch)',
   optionAccessFor(si, 1, SAFETY_OP.stop) === ACCESS.watch &&

@@ -1,212 +1,94 @@
 /**
- * frames.js — SlopSync 8-byte frame header + all wire-number constants.
+ * frames.js — SlopSync 8-byte frame header + the wire numbers the registry does
+ * not own.
  *
- * EVERY number here is transcribed from
- * lib/slopsync/include/slopsync/generated/registry_constants.hpp
- * (source of truth: spec/registry/registry.yaml). The generated
- * constant's name is in a comment beside each value. NEVER invent a wire
- * number — if you need one the registry lacks, fix the registry first
+ * Every registry-defined vocabulary is RE-EXPORTED from generated/registry_vocab.js
+ * (source of truth: spec/registry/registry.yaml, emitted by
+ * tools/gen_registry_header.py, RFC-052(c)). Do not transcribe a registry number
+ * into this file: the hand-copied tables that used to live here had drifted in
+ * seven places, one of them silently mislabeling every settings tab in every
+ * client. If you need a wire number the registry lacks, fix the registry first
  * (the spec-gap ritual, spec/RFC-QUEUE.md's own header).
+ *
+ * What legitimately stays hand-written here: facts whose home is catalog.cddl or
+ * a device's own catalog rather than the registry, and the header codec itself.
  *
  * Frame header (SPEC §5.1), 8 bytes little-endian:
  *   [type:u8][flags:u8][channel:u16][seq:u16][len:u16]
  */
 
-export const PROTO_VER = 1; // kProtocolVersion
-export const HEADER_BYTES = 8; // kHeaderBytes / limits.header_bytes
-export const WS_SUBPROTOCOL = 'slopsync.v1'; // limits.ws_subprotocol
-export const MDNS_SERVICE = '_slopsync._tcp'; // limits.mdns_service
+// Locally bound because the code below reads them; `export ... from` re-exports
+// without creating a local binding.
+import {
+  CORE_CHANNEL, NACK, NACK_NAME, SAFETY_OP, HEADER_BYTES,
+} from './generated/registry_vocab.js';
 
-// ---- Frame types (registry FrameType) --------------------------------------
-// v1.0 RETIRED 0x09 CATALOG_REQ / 0x0A CATALOG_CHUNK: catalog transfer is now
-// the generalized BLOB_REQ (0x1A) / BLOB_CHUNK (0x1B) pair with the catalog as
-// blob namespace 0 (RFC-021). Those two numbers are RETIRED, never reused.
-export const FRAME = {
-  HELLO: 0x00,
-  WELCOME: 0x01,
-  PING: 0x03,
-  PONG: 0x04,
-  CLOCK: 0x05,
-  SUBSCRIBE: 0x06,
-  UNSUBSCRIBE: 0x07,
-  GRANT: 0x08,
-  STATE: 0x0b,
-  STREAM: 0x0c,
-  INTENT: 0x0d,
-  ECHO: 0x0e,
-  EVENT: 0x0f,
-  NACK: 0x10,
-  GOODBYE: 0x11,
-  PROBE: 0x12,
-  PROBE_REPORT: 0x13,
-  PAIR_REQ: 0x14,
-  PAIR_GRANT: 0x15,
-  ACKMASK: 0x16,
-  BEACON: 0x17,
-  PUBLISH: 0x18, // c2h control: mid-session publish renegotiation (RFC-013)
-  CATALOG_READY: 0x19, // c2h raw: the 8-byte etag this client operates against (RFC-015)
-  BLOB_REQ: 0x1a, // c2h control: namespaced transfer request (RFC-021)
-  BLOB_CHUNK: 0x1b, // h2c raw: 14-byte identity header + <=192 payload bytes
-  AUTH: 0x1c, // c2h control: token proof presentation (RFC-029)
-  HUB_SIG: 0x1d, // h2c control: deferred hub signature (RFC-029)
-  ESTOP: 0xe5,
-};
-/** reverse lookup: type byte -> name */
-export const FRAME_NAME = Object.fromEntries(Object.entries(FRAME).map(([k, v]) => [v, k]));
+export {
+  PROTO_VER, HEADER_BYTES, WS_SUBPROTOCOL, MDNS_SERVICE,
+  FRAME, FRAME_NAME,
+  K,
+  IDENTITY_K, BLOB_K, BLOB_NS, TRUST_K, PRESENTATION_MODE, WELCOME_LIMITS_K,
+  PROBE_RESULT_K, TRUST_LEDGER_K, TRUST_STATE,
+  ACCESS, ACCESS_NAME, PRIORITY, CHANNEL_CLASS, CHANNEL_CLASS_NAME,
+  PACKED, PACKED_NAME,
+  SETTING_FLAG, STREAM_KIND,
+  SAFETY_OP, SAFETY_CAUSE, SAFETY_CAUSE_NAME, SESSION_ADMIN_OP,
+  SESSION_EVENT_KIND, SAFETY_EVENT_KIND, LOG_EVENT_KIND, PAIRING_EVENT_KIND,
+  LOG_LEVEL, LOG_LEVEL_NAME,
+  PAIRING_MODE, PAIRING_MODE_NAME, BLE_ADV_FLAG,
+  NACK, NACK_NAME,
+  PROCEDURE_PHASE, CURVE_FAMILY,
+  // RFC-047/048 rendering metamodel — what a generic renderer binds to.
+  UI_CATEGORY, UI_CATEGORY_NAME, UI_RANK, UI_RANK_NAME,
+  VALUE_ASPECT, VALUE_ASPECT_NAME, VALUE_SCOPE, VALUE_SCOPE_NAME,
+  VALUE_PROVENANCE, VALUE_PROVENANCE_NAME, UNIT_ID, UNIT_ID_NAME,
+  UI_ARCHETYPE, UI_ARCHETYPE_NAME, UI_REGION, RENDERER_CLASS, WIDGET_PATTERN,
+  FIELD_ROLE, ACTION_TAG,
+  LIMITS,
+} from './generated/registry_vocab.js';
 
-// ---- Frame flags (registry flags::) ----------------------------------------
-export const FLAG_FRAG_START = 1 << 0; // flags::FRAG_START
-export const FLAG_FRAG_MORE = 1 << 1; // flags::FRAG_MORE
+// ---- Frame flags (registry header_flags) -----------------------------------
+// Named individually rather than as a table because the codec below ORs them
+// into a byte; a two-entry object would read worse at every call site.
+export const FLAG_FRAG_START = 1 << 0; // header_flags FRAG_START
+export const FLAG_FRAG_MORE = 1 << 1; // header_flags FRAG_MORE
 
-// ---- CBOR map integer keys (registry CborKey — the global key space) --------
-export const K = {
-  proto_ver: 1,
-  client_kind: 2,
-  client_name: 3,
-  instance_id: 4,
-  token: 5,
-  session_id: 6,
-  boot_id: 7,
-  catalog_etag: 8,
-  cfg_gen: 9,
-  subscriptions: 10,
-  publishes: 11,
-  rate_hz: 12,
-  priority: 13,
-  granted_rate_hz: 14,
-  channel_id: 15,
-  code: 16,
-  detail: 17,
-  intent_id: 18,
-  applied: 19,
-  value: 20,
-  timestamp: 21,
-  limits: 22,
-  roles: 23,
-  deadman_ms: 24,
-  deadman_policy: 25,
-  probe_result: 26,
-  chunks: 27,
-  pin_proof: 28,
-  nonce: 29,
-  precondition: 30,
-  retry_after_ms: 31,
-  takeover: 32,
-  event_kind: 33,
-  seq_of_state: 34,
-  grants: 35,
-  granted_publishes: 36,
-  identity: 37, // WELCOME: hub identity sub-map (RFC-016), keys in IDENTITY_K
-  blob: 38, // BLOB_REQ/CHUNK/store CRUD: which blob (RFC-021), keys in BLOB_K
-  trust: 39, // HELLO/WELCOME/AUTH: trust sub-map (RFC-027/029), keys in TRUST_K
-  body: 40, // EVENT: kind-specific fields, keyed by the CHANNEL'S catalog schema
-  intent_seq: 41, // NACK: header seq of the frame being refused (RFC-001)
-  burst: 42, // publishes entry: token-bucket capacity (RFC-013)
-  reboot_in_ms: 43, // ECHO applied: this intent commits by rebooting (RFC-020)
-  deadman_wish_ms: 44, // HELLO: requested per-session deadman window (RFC-038); hub clamps into [deadman_min_ms,deadman_max_ms] and echoes the APPLIED value via the EXISTING key 24 — never a new response key
-  ws_port: 46, // WELCOME: hub's WS endpoint port (RFC-046) — how a session that arrived over BLE learns where the WS upgrade lives; absent = none advertised
-  ipv4: 47, // WELCOME: hub's IPv4 as u32 big-endian (RFC-046); 0/absent = no WS endpoint to advertise
-};
-
-// WELCOME's `identity` (key 37) sub-map (registry identity_keys) — RFC-016 put
-// product/fw_version in band so a client stops labeling devices "boot 0x…".
-export const IDENTITY_K = { product: 1, fw_version: 2, hub_name: 3, info: 4, hub_instance_id: 5 };
-
-// `blob` (key 38) sub-map (registry blob_keys). The SAME vocabulary names the
-// fields of BLOB_CHUNK's fixed binary header — one table, never two.
-export const BLOB_K = {
-  ns: 1, store_id: 2, slot: 3, generation: 4, name: 5, kind: 6, payload: 7,
-  chunk_index: 8, chunk_count: 9, total_bytes: 10,
-};
-
-// Blob namespaces (registry blob_namespaces). The catalog is namespace 0 — the
-// only namespace with a READY concept, because nothing else gates STATE decode.
-export const BLOB_NS = { catalog: 0, store: 1 };
-
-// `trust` (key 39) sub-map (registry trust_keys). Declared for completeness;
-// this client is bearer-token + unverified for now (see session.js).
-export const TRUST_K = {
-  client_ver: 1, client_nonce: 2, sig_request: 3, hub_pubkey: 4,
-  welcome_sig: 5, token_proof: 6, presentation_mode: 7, pairing_modes: 8,
-};
-export const PRESENTATION_MODE = { bearer: 0, proof: 1 };
-
-// WELCOME's `limits` (key 22) sub-map has its OWN tiny key space (registry
-// welcome_limits::) — NOT the global CborKey space above.
-export const WELCOME_LIMITS_K = {
-  max_frame: 1, // welcome_limits::max_frame
-  max_subscriptions: 2, // welcome_limits::max_subscriptions
-  retained_pending: 3, // welcome_limits::retained_pending
-  // RFC-033.3: most wishes ONE SUBSCRIBE/HELLO frame may carry (16 on the
-  // reference hub). Before this was advertised the cap was discoverable only by
-  // binary-searching a live machine, and overflowing it dropped the frame in
-  // silence — a healthy-looking LIVE session with zero STATE. Missing this
-  // mapping is not harmless: the client falls back to a conservative guess and
-  // never uses the real value.
-  max_subscriptions_per_frame: 4, // welcome_limits::max_subscriptions_per_frame
-};
-
-// ---- Access levels (registry AccessLevel) ----------------------------------
-// RFC-027 renamed the tiers (wire values UNCHANGED): watch(0) / control(1) /
-// configure(2). `control` includes STREAM publishing — a motion producer is a
-// controller.
-export const ACCESS = { watch: 0, control: 1, configure: 2 };
-export const ACCESS_NAME = ['watch', 'control', 'configure'];
-
-// ---- Priorities (registry Priority) ----------------------------------------
-export const PRIORITY = { background: 0, normal: 1, elevated: 2, critical: 3 };
-
-// ---- Channel classes (registry ChannelClass) -------------------------------
-export const CHANNEL_CLASS = { STATE: 0, STREAM: 1, INTENT: 2, EVENT: 3, STORE: 4 };
-export const CHANNEL_CLASS_NAME = ['STATE', 'STREAM', 'INTENT', 'EVENT', 'STORE'];
-
-// ---- Direction (registry Direction: h2c=0, c2h=1) --------------------------
+// ---- Direction (spec §5.1: h2c=0, c2h=1) -----------------------------------
+// Not a registry section — frame_types carry `dir` as prose, and the numbering
+// is stated by the spec, so there is nothing to generate.
 export const DIRECTION_NAME = ['h2c', 'c2h'];
 
-// ---- Packed field types (registry PackedFieldType) -------------------------
-// RFC-026 added the fixed-width string types (8/9/10): zero-padded UTF-8,
-// register-map style, so packed offsets stay static and append-only evolution
-// is preserved.
-export const PACKED = {
-  u8: 0, i8: 1, u16: 2, i16: 3, u32: 4, i32: 5, f32: 6, bitfield8: 7,
-  str16: 8, str32: 9, str64: 10,
-};
-export const PACKED_NAME = [
-  'u8', 'i8', 'u16', 'i16', 'u32', 'i32', 'f32', 'bitfield8', 'str16', 'str32', 'str64',
-];
-/** wire size in bytes for each PackedFieldType */
+/**
+ * Wire size in bytes for each PackedFieldType.
+ *
+ * Hand-written on purpose: the widths are normative in spec/schema/catalog.cddl's
+ * `packed-type` block, and registry.yaml's packed_field_types carries names only.
+ * Index-aligned with PACKED — a new packed type needs a width added HERE too.
+ */
 export const PACKED_SIZE = [1, 1, 2, 2, 4, 4, 4, 1, 16, 32, 64];
 
-// ---- Setting categories (registry setting_categories, RFC-009) -------------
-export const SETTING_CATEGORY = { device: 0, user: 1, limits: 2, tuning: 3, diagnostics: 4 };
-export const SETTING_CATEGORY_NAME = ['device', 'user', 'limits', 'tuning', 'diagnostics'];
-
-// ---- Setting flags (registry setting_flags, RFC-009) -----------------------
-export const SETTING_FLAG = { advanced: 1 << 0, restart_required: 1 << 1, secret: 1 << 2 };
-
-// ---- STREAM kinds (registry stream_kinds, RFC-014/023) ---------------------
-export const STREAM_KIND = { samples: 0, segments: 1 };
-
-// ---- CBOR schema field types (registry CborFieldType) ----------------------
-// uint_t=0, int_t=1, f32_t=2, bool_t=3, tstr_t=4, bstr_t=5 (per catalog.hpp)
+// ---- CBOR schema field types (spec/schema/catalog.cddl `cbor-type`) --------
+// Home is the CDDL, not registry.yaml — nothing to generate.
 export const CBOR_FIELD = { uint_t: 0, int_t: 1, f32_t: 2, bool_t: 3, tstr_t: 4, bstr_t: 5 };
 export const CBOR_FIELD_NAME = ['uint_t', 'int_t', 'f32_t', 'bool_t', 'tstr_t', 'bstr_t'];
 
-// ---- Reserved registry channel ids (registry channels::) -------------------
-export const CH_CATALOG = 0x0001; // channels::catalog
-export const CH_SESSION_ROSTER = 0x0002; // channels::session_roster
-export const CH_SAFETY = 0x0003; // channels::safety
-export const CH_CONTROL_OWNER = 0x0004; // channels::control_owner
-export const CH_SAFETY_INTENTS = 0x0005; // channels::safety_intents
-export const CH_HUB_STATUS = 0x0006; // channels::hub_status
-export const CH_SESSION_EVENTS = 0x0007; // channels::session_events
-export const CH_LOG = 0x0008; // channels::log (EVENT, RFC-017)
-export const CH_SESSION_ADMIN = 0x0009; // channels::session_admin (INTENT, RFC-018)
-export const CH_PENDING_PAIRING = 0x000a; // channels::pending_pairing (STATE, RFC-027)
-export const CH_PAIRING_EVENTS = 0x000b; // channels::pairing_events (EVENT, RFC-027)
-export const CH_PAIRED_DEVICES = 0x000c; // channels::paired_devices (STORE, RFC-029)
-export const CH_PAIRED_DEVICES_ROSTER = 0x000d; // channels::paired_devices_roster (STATE)
-export const CH_SAFETY_EVENTS = 0x000e; // channels::safety_events (EVENT twin of 0x0003)
+// ---- Reserved registry channel ids -----------------------------------------
+// Aliases onto the generated CORE_CHANNEL table, kept because call sites read
+// better as CH_SAFETY than CORE_CHANNEL.safety. Derived, so they cannot drift.
+export const CH_CATALOG = CORE_CHANNEL.catalog;
+export const CH_SESSION_ROSTER = CORE_CHANNEL.session_roster;
+export const CH_SAFETY = CORE_CHANNEL.safety;
+export const CH_CONTROL_OWNER = CORE_CHANNEL.control_owner;
+export const CH_SAFETY_INTENTS = CORE_CHANNEL.safety_intents;
+export const CH_HUB_STATUS = CORE_CHANNEL.hub_status;
+export const CH_SESSION_EVENTS = CORE_CHANNEL.session_events;
+export const CH_LOG = CORE_CHANNEL.log;
+export const CH_SESSION_ADMIN = CORE_CHANNEL.session_admin;
+export const CH_PENDING_PAIRING = CORE_CHANNEL.pending_pairing;
+export const CH_PAIRING_EVENTS = CORE_CHANNEL.pairing_events;
+export const CH_PAIRED_DEVICES = CORE_CHANNEL.paired_devices;
+export const CH_PAIRED_DEVICES_ROSTER = CORE_CHANNEL.paired_devices_roster;
+export const CH_SAFETY_EVENTS = CORE_CHANNEL.safety_events;
 
 // ---- Device channel ids (include/comms/SlopSyncCatalog.h ch::) -------------
 // RFC-047 "Phase C2" renumbered these onto the new grid (Jul 2026). Values
@@ -231,93 +113,19 @@ export const CH_PATTERN_CMD = 0x3200; // ch::pattern_cmd (INTENT)
 export const CH_HOME = 0x3101; // ch::home (INTENT)
 export const CH_MODES_SET = 0x3030; // ch::modes_set (INTENT)
 
-// ---- Safety intent ops (registry safety_ops::) -----------------------------
-// estop(6) is RFC-010's client-assertable e-stop: the hub treats it exactly as
-// a valid 0xE5 frame (latch, cause=user, publish 0x0003, EVENT twin). It and
-// `stop` are ROLE-EXEMPT — anyone connected may stop this machine (RFC-025b).
-// override/bypass (7..10) write the 0x0003 snapshot's appended `modes` byte.
-export const SAFETY_OP = {
-  estop_clear: 1, stop: 2, hold: 3, pause: 4, resume: 5, estop: 6,
-  override_on: 7, override_off: 8, bypass_on: 9, bypass_off: 10,
-};
-/** ops any session may send regardless of role (RFC-025b) — safety outranks authorization. */
+/**
+ * Ops any session may send regardless of role (RFC-025b) — safety outranks
+ * authorization. estop(6) is RFC-010's client-assertable e-stop: the hub treats
+ * it exactly as a valid 0xE5 frame (latch, cause=user, publish 0x0003, EVENT
+ * twin). Derived from the generated table; the EXEMPTION is the fact this line
+ * owns, and it lives here because it is a rule, not a vocabulary.
+ */
 export const SAFETY_OP_ROLE_EXEMPT = new Set([SAFETY_OP.stop, SAFETY_OP.estop]);
 
-// ---- Home intent ops (registry home ops; see SlopSyncCatalog.h 0x3101) -----
+// ---- Home intent ops (SlopSyncCatalog.h 0x3101) ----------------------------
+// A DEVICE channel's op numbering, not a registry vocabulary — a different hub
+// may number its homing ops differently and still conform.
 export const HOME_OP = { home: 1, force_home: 2, clear_override: 3 };
-
-// ---- Safety causes (registry safety_causes::) ------------------------------
-export const SAFETY_CAUSE = { user: 0, deadman: 1, fault: 2, relay: 3, session_loss: 4 };
-export const SAFETY_CAUSE_NAME = ['user', 'deadman', 'fault', 'relay', 'session_loss'];
-
-// ---- EVENT kind discriminators (key 33) ------------------------------------
-export const SESSION_EVENT_KIND = { takeover: 1, session_joined: 2, session_left: 3 };
-export const SAFETY_EVENT_KIND = {
-  estop_latched: 1, estop_cleared: 2, stop_latched: 3, stop_cleared: 4,
-};
-export const LOG_EVENT_KIND = { entry: 1 };
-export const LOG_LEVEL_NAME = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
-
-// ---- Pairing modes (registry `pairing_modes` bitmask, RFC-027) -------------
-// The SAME three bits everywhere they appear: WELCOME `trust.pairing_modes`
-// (TRUST_K.pairing_modes, key 8 — "which ceremonies this hub offers RIGHT
-// NOW, re-evaluated per session"), the pending-pairing (0x000A) slot's `kind`
-// field, and the paired-devices roster's `pairing_mode` — "the single bit a
-// device paired through". ROLE IS AN ATTRIBUTE OF THE GRANT, NEVER OF THE
-// CEREMONY: all three modes end in PAIR_GRANT {token, role}.
-export const PAIRING_MODE = { knock_approve: 1, pin_proof: 2, push_to_pair: 4 };
-/** bit value -> short registry name, for generic rendering. */
-export const PAIRING_MODE_NAME = {
-  [PAIRING_MODE.knock_approve]: 'knock_approve',
-  [PAIRING_MODE.pin_proof]: 'pin_proof',
-  [PAIRING_MODE.push_to_pair]: 'push_to_pair',
-};
-
-// ---- pairing-events (0x000B) kind discriminators (registry pairing_event_kinds) --
-export const PAIRING_EVENT_KIND = {
-  knocked: 1, granted: 2, denied: 3, expired: 4,
-  window_opened: 5, window_closed: 6, revoked: 7, recognized_pending: 8,
-};
-
-// ---- NACK codes (registry NackCode) ----------------------------------------
-export const NACK = {
-  MALFORMED: 0x0000,
-  UNSUPPORTED_VERSION: 0x0001,
-  FRAME_TOO_LARGE: 0x0002,
-  PROFILE_VIOLATION: 0x0003,
-  BUSY: 0x0100,
-  UNAUTHORIZED: 0x0101,
-  NOT_CONTROLLER: 0x0102,
-  PAIRING_REQUIRED: 0x0103,
-  PAIRING_DENIED: 0x0104,
-  SESSION_EVICTED: 0x0105,
-  DUPLICATE_INSTANCE: 0x0106,
-  NORMAL_CLOSURE: 0x0107,
-  DEADMAN_TIMEOUT: 0x0108,
-  REBOOTING: 0x0109, // hub closing every session to commit a change (RFC-020)
-  READY_TIMEOUT: 0x010a, // never sent CATALOG_READY in catalog_ready_timeout_ms
-  NOT_READY: 0x010b, // refused: this session has not sent CATALOG_READY (RFC-015)
-  IDLE_REAPED: 0x010c, // RFC-039.4: hub reaped a non-owning session that fell silent past the idle threshold — GOODBYE code, deliberately distinct from DEADMAN_TIMEOUT (housekeeping, not a motion-safety event)
-  UNKNOWN_CHANNEL: 0x0200,
-  ACCESS_DENIED: 0x0201,
-  CLASS_MISMATCH: 0x0202,
-  SUB_LIMIT: 0x0203,
-  CONFLICT: 0x0300,
-  RATE_LIMITED: 0x0301,
-  INVALID_VALUE: 0x0302,
-  UNSUPPORTED_OP: 0x0303,
-  ESTOP_ACTIVE: 0x0400,
-  NOT_HOMED: 0x0401,
-  INTERLOCK: 0x0402,
-  SOURCE_CONFLICT: 0x0403,
-  TAKEOVER_REQUIRED: 0x0404,
-  CLEAR_REFUSED: 0x0405,
-  CHUNK_UNAVAILABLE: 0x0500,
-  REASSEMBLY_TIMEOUT: 0x0501,
-  ETAG_MISMATCH: 0x0502,
-  BLOB_REFUSED: 0x0503, // RFC-039.2: a RECEIVER (this client) refusing a declared blob whose total_bytes exceeds its reassembly cap — sent as a GOODBYE code instead of idling in a half-session (the "LIVE WITH NO CATALOG" outage BlobReassembler's own comment used to describe)
-};
-export const NACK_NAME = Object.fromEntries(Object.entries(NACK).map(([k, v]) => [v, k]));
 
 /**
  * GOODBYE reason codes. RFC-022.2: GOODBYE has NO separate code space — its
@@ -347,26 +155,6 @@ export function nackName(code) {
   const range = (code >> 8) & 0xff;
   return 'UNKNOWN(0x' + code.toString(16).padStart(4, '0') + ', range 0x' + range.toString(16).padStart(2, '0') + '__)';
 }
-
-// ---- Registry numeric limits (registry limits::) ---------------------------
-export const LIMITS = {
-  min_transport_payload: 242, // limits::min_transport_payload
-  catalog_chunk_payload: 192, // limits::catalog_chunk_payload
-  deadman_default_ms: 600, // limits::deadman_default_ms
-  deadman_min_ms: 250, // limits::deadman_min_ms
-  deadman_max_ms: 5000, // limits::deadman_max_ms
-  ping_interval_holding_control_ms: 200, // limits::ping_interval_holding_control_ms
-  ping_interval_idle_ms: 1000, // limits::ping_interval_idle_ms
-  clock_resync_interval_s: 10, // limits::clock_resync_interval_s
-  instance_id_bytes: 8, // limits::instance_id_bytes
-  etag_bytes: 8, // limits::etag_bytes
-  catalog_chunk_gap_timeout_ms: 500, // limits::catalog_chunk_gap_timeout_ms
-  frag_reassembly_timeout_ms: 5000, // limits::frag_reassembly_timeout_ms
-  catalog_ready_timeout_ms: 15000, // limits::catalog_ready_timeout_ms
-  nack_detail_max_bytes: 48, // limits::nack_detail_max_bytes
-  max_frame_ws: 512, // limits::max_frame_ws
-  token_bytes: 16, // limits::token_bytes
-};
 
 // ============================================================================
 // Frame header build / parse — 8-byte little-endian

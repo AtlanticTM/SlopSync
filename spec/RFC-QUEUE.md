@@ -3277,14 +3277,36 @@ positive application-level acknowledgment that a transfer completed"
 
 ## RFC-052 — The authoring layer: tables, released markers, generated vocabularies, group descriptions
 
-- **Status:** **PROPOSED** (queued for operator ruling — authoring-legibility
-  campaign Phase 0, 2026-07-29). Four parts, deliberately separable: (a)–(c)
-  are lib/tooling additions with zero wire change; (d) is one additive
-  entry-level catalog key. **(d) RULED IN (operator, 2026-07-29):** card
-  descriptions are "an absolute necessity" — the container desc factors the
-  shared context OUT of its fields' 128-byte desc budgets, so each field's
-  bytes spend on the delta, not on repeating where it lives. (a)–(c) still
-  awaiting stamp.
+- **Status:** **ACCEPTED (operator, 2026-07-29) — all four parts ruled, two
+  with scope amendments.** Four deliberately separable parts: (a)–(c) are
+  lib/tooling additions with zero wire change; (d) is one additive
+  entry-level catalog key.
+  - **(a) RULED IN, STAGED.** The layer's home is the SlopSync lib (rejected
+    alternative: build it in SlopDrive-32 and promote later — Phase 6's
+    `examples/author_minimal_hub/` is a second consumer already inside the
+    approved plan, and relocating headers afterward means rewriting includes
+    across the whole ported catalog). Split by phase: `field_spec.hpp` +
+    `channel_table.hpp` + `catalog_feed.hpp` land in Phase 2 (all Phase 3's
+    catalog port needs); `packer.hpp` + `layout_guard.hpp` land in Phase 4,
+    designed against the real encoder call sites instead of guessed at.
+  - **(b) RULED IN, REDUCED TO THE COMPILE-TIME HALF.** A `released` marker
+    on the table plus MANDATORY `static_assert` pins on `wire_size`/offsets
+    for released tables — a layout shift becomes a compile error. The lint
+    half (detecting §5.4 *reorder* and *insert-before-tail*, which no
+    `static_assert` can see because it requires a recorded golden shape of
+    the previous release as a tracked artifact) is DEFERRED to the v1 tag:
+    pre-tag, zero layouts are released, so it would enforce a rule binding
+    nothing, and the reference hub's pinned catalog etag already catches
+    unintended layout movement today.
+  - **(c) RULED IN as written.** No open choice remained: the committed-
+    artifact-plus-`--check` posture is already settled precedent from
+    `gen_registry_header.py`'s own banner ("the generated header is
+    COMMITTED — ESP32/Arduino builds must never need python"); the JS
+    emitter inherits it so browsers never need a build step either.
+  - **(d) RULED IN (2026-07-29):** card descriptions are "an absolute
+    necessity" — the container desc factors the shared context OUT of its
+    fields' 128-byte desc budgets, so each field's bytes spend on the delta,
+    not on repeating where it lives.
 - **Origin:** the campaign's traced chain (SlopDrive-32 ledger, 2026-07-29).
   The reference catalog is ~1,980 lines of imperative builder calls in which
   the facts an operator actually edits (`min`/`max`/`step`/`desc`/`group`)
@@ -3320,12 +3342,14 @@ positive application-level acknowledgment that a transfer completed"
     existing builder calls, byte-equivalent, proven by lib-side native
     tests), `packer.hpp` (typed constexpr-offset writes), `layout_guard.hpp`
     (static_assert pins for the hand encoders hot channels keep). Authoring
-    surface only — the wire never sees a table.
+    surface only — the wire never sees a table. Phase split at the ruling
+    above.
   - **(b) A `released` marker on authored tables**: a released table turns
     §5.4 violations (reorder, resize, remove, insert-before-tail) into
     compile errors / lint findings; an unreleased table evolves freely.
     This mechanizes the §5.4/§8.5 distinction; the marker never rides the
-    wire.
+    wire. Scope reduced at the ruling above — the lint half waits for the
+    v1 tag.
   - **(c) `gen_registry_header.py` grows a JS emitter**: registry.yaml → a
     generated vocabulary module (categories, ranks, aspects, scopes,
     provenance, units, action tags, NACK codes) consumed by `clients/js`.
