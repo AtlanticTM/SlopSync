@@ -3351,6 +3351,117 @@ positive application-level acknowledgment that a transfer completed"
   behavior exactly, and the mandatory-fallback rule means no shipped client
   changes behavior by its existence. Nothing renumbered, nothing removed.
 
+## RFC-053 — ESTOP over connectionless datagrams: UDP broadcast + ESP-NOW, opt-in
+
+- **Status:** **ACCEPTED (operator direction, 2026-07-29)** — the feature is
+  ruled in with one binding condition: **opt-in, default OFF** — an
+  operator-visible NVS-persisted setting, plus a build flag to compile the
+  path out entirely. Implementation queued (hub UDP path is small; the
+  ESP-NOW path lands with that binding, which remains unimplemented in the
+  reference firmware).
+- **Origin:** chat 2026-07-29, immediately after the first live BLE client
+  (SPEC §18-22) surfaced the e-stop-fob idea. §13.8's "read-only identity,
+  no control surface" doctrine is the identified blocker: a WiFi fob today
+  must discover → TCP connect → WS upgrade → scream, and a device on **no
+  network at all** cannot scream over IP, period.
+- **Problem:** the ESTOP frame (§5.5) was *designed* for dumb, hostile,
+  stateless paths — magic-scannable without deframing, CRC-32
+  self-validating, sessionless by law (§11.2: any endpoint, any tier, any
+  session state), loss-tolerant by repeat-until-latched — yet the only
+  WiFi path to deliver it requires a TCP connection, and the UDP listener
+  is forbidden from acting on anything. The cheapest safety device
+  imaginable (a ~$10 ESP32 fob with a latching button) cannot exist as a
+  connectionless WiFi device, and cannot exist AT ALL off-network until
+  ESP-NOW, the binding specced precisely for infrastructure-free peers,
+  accepts it.
+- **Proposed change:**
+  1. **Scoped doctrine exception in §13.8:** a valid ESTOP frame
+     (12 bytes, `E5` magic, CRC-checked) received on UDP port 21328 —
+     broadcast or unicast — dispatches into the **same single e-stop
+     function** as §11.2's two existing paths. This is not a "command" in
+     §13.8's sense: §11.2 already removed stopping from authorization
+     ("you may always stop the machine; you may not always start it").
+     The magic dispatch is disjoint by construction (`SLOP` vs
+     `E5 E5 E5 E5`), so the listener change is a prefix match plus CRC.
+  2. **ESP-NOW acceptance:** when the §13.3 binding lands, a hub MUST
+     accept a valid ESTOP frame from ANY peer — paired or not, broadcast
+     included. This is the no-network fob path: no AP, no credentials,
+     direct 802.11 datagrams.
+  3. **The opt-in condition (operator ruling):** both datagram paths are
+     governed by one setting (proposed home: the safety or network
+     settings channel, `configure` tier to change, NVS-persisted,
+     catalog-exposed so every client renders it), **default OFF**, plus a
+     build flag for hard removal. The existing session-ful paths (§11.2
+     paths 1–2) are untouched by the setting — they are never optional.
+  4. **Rate limiting:** per-source, mirroring `udp_discovery`'s
+     reply-rate-limit posture. The latch is idempotent, so repeats are
+     cheap; the limiter bounds CRC work under a spray, nothing else.
+  5. **The latching-fob pattern (informative, the intended semantics):**
+     a fob with a physically latching button emits a **new initiation**
+     (fresh `seq`) every repeat interval for as long as the button is
+     down. Consequence: an authorized `estop_clear` at any client
+     succeeds — and the machine re-latches within one interval. The
+     machine is therefore effectively stopped until the physical button
+     releases, while clearing authority never moves to the fob: §11.2's
+     clearing rules are untouched. Release = the fob simply stops
+     screaming; the latch then clears through the normal authorized path.
+  6. **Open question (decide at landing):** the confirmation gap. A
+     sessionless screamer cannot observe the `safety` STATE latch.
+     Options: (i) fob repeats its full budget and surfaces an
+     UNCONFIRMED state locally (lean — keeps the wire untouched, honest
+     per §11.2's loud-local-failure rule); (ii) the hub unicasts a
+     minimal acknowledgment to the datagram's source address. H1/H2
+     (§1.5) apply verbatim either way: this is a convenience layer above
+     the hardware e-stop, and preemption is per-hop.
+- **Compatibility:** additive. The ESTOP frame itself is byte-unchanged;
+  no existing frame, channel, or session behavior moves. Default-OFF
+  means zero observable change on every deployed hub until an operator
+  flips the setting. §13.8's doctrine sentence gains a dated exception
+  clause at landing (C-3 style), not a silent contradiction.
+
+## RFC-054 — WiFi and ESP-NOW provisioning over BLE: the credentials handoff
+
+- **Status:** **PROPOSED** (queued for operator ruling, 2026-07-29 —
+  problem statement + option space; the design gets pinned at the ruling).
+- **Origin:** §13.2 already names BLE GATT the hardware-hub conformance
+  floor partly because *"the future WiFi-provisioning admin channel"*
+  wants it — this RFC is that named future arriving. Made immediate by
+  2026-07-28's live verification (SPEC §18-22): a Tauri Android client
+  held a BLE session and performed the §6.3 BLE→WS upgrade handoff —
+  which only works if the client is already on the LAN. A client that
+  isn't has no in-band way to get there.
+- **Problem:** two provisioning gaps, one ceremony wanted.
+  1. A BLE-connected client reads `ws_port`/`ipv4` from WELCOME (RFC-046)
+     but cannot *join the network* they point into: the hub knows its
+     WiFi credentials and has no conformant surface to disclose them —
+     RFC-009.5's secrets doctrine rightly bans STATE, and broadcast ECHO
+     is just as wrong; no unicast disclosure surface exists at all.
+  2. An ESP32-class peer (RFC-053's fob, a hardware remote) wants
+     ESP-NOW, which needs segment/channel/key material. §13.5's pairing
+     ceremony distributes keys ESP-NOW-side — but a factory-fresh peer
+     could bootstrap over BLE instead, letting ONE pairing UX cover both
+     radios.
+- **Proposed change (options, decide at ruling):**
+  - **(a)** dedicated admin INTENT ops whose response rides a
+    **unicast-only** surface (to be established — the credential must
+    never appear in STATE or any broadcast ECHO; this constraint is
+    non-negotiable under RFC-009.5's own logic, whatever shape wins);
+  - **(b)** a blob-namespace read (§8.4 machinery reused) gated to
+    `configure` tier + an open §12.3 pairing window;
+  - **(c)** prior art, named for the record and disfavored: an
+    Improv-WiFi-style dedicated GATT characteristic outside SlopSync
+    framing — rejected-by-default because it forks the protocol surface
+    per transport, the exact thing the one-frame-format design exists to
+    prevent.
+  - **Security floor regardless of option:** disclosure requires
+    (i) `configure` tier or better, (ii) SHOULD require an open physical
+    pairing window, (iii) SHOULD require BLE link encryption/bonding,
+    (iv) never STATE, never broadcast, never logged; credential rotation
+    is handled by re-provisioning — no revocation pretense.
+- **Compatibility:** additive ops/namespace; nothing existing changes. The
+  ESP-NOW half is spec-ready but dormant until that binding is
+  implemented.
+
 *Add new entries below. Keep the shape: Status / Origin / Problem / Proposed
 change / Compatibility — and if it was found by a probe or a live failure,
 say exactly which, future-us will want the receipts.*
