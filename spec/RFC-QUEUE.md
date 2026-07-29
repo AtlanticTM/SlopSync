@@ -3405,8 +3405,10 @@ positive application-level acknowledgment that a transfer completed"
      datagram paths are conveniences layered above that floor, exactly
      as the floor is itself a convenience layered above the hardware
      e-stop (H1, unchanged: always the user's responsibility).
-  2b. **Discoverability (main-loop proposal at the same amendment,
-     pending operator stamp):** DISCOVER_REPLY `flags` bit1 =
+  2b. **Discoverability (APPROVED, operator 2026-07-29 — effort assessed
+     trivial: one flags-byte OR of existing NVS state in the existing
+     reply builder, no client obligation, no new failure mode; pre-tag,
+     layout free to grow):** DISCOVER_REPLY `flags` bit1 =
      `datagram_estop` (this hub honors ESTOP on this UDP port right
      now — the setting's live value), and the ESP-NOW BEACON's flag
      byte reserves the mirror bit when that binding lands — so a fob
