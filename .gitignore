@@ -24,3 +24,8 @@ site/
 # Editor/OS cruft
 .vscode/
 .DS_Store
+
+# clangd index + host-specific LSP config (absolute paths)
+.clangd
+.cache/
+compile_commands.json
