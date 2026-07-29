@@ -111,7 +111,89 @@ common rows, first match wins:
   §14). You cannot invent a category or rank — you *can* use the vendor
   category range and unregistered `role`/`action.<name>` suffixes freely.
 
-## 7. Verify your work
+## 7. The containment model — what goes in what, and what runs out where
+
+The vocabulary, smallest to largest: a **field** is one named value
+(`window_min`, its type, min/max, annotations). A **channel** is a coherent
+group of fields with an id and a class. An **entry** is one channel's whole
+record in the catalog — ALL of its fields plus its identity and annotations.
+The **catalog** is the list of entries. There is no per-field wire object:
+fields exist only inside their entry's `layout`/`schema`.
+
+The thing that trips everyone: **the same field list is summed against two
+completely different budgets**, on two different planes.
+
+```mermaid
+flowchart TD
+    subgraph CAT["DESCRIBE PLANE — the catalog. Cold: travels once per etag, blob-chunked. NO total size limit."]
+        Catalog["catalog = list of entries<br/>≤256 entries — conformance floor, SPEC §8.1"]
+        Entry["ENTRY = one CHANNEL's whole record<br/>🔺 ≤4096 B encoded — names, descs, annotations<br/>SPEC §8.1 catalog_max_entry_bytes"]
+        Ident["identity: id, name, class,<br/>dir, access, max_rate_hz"]
+        Anno["entry annotations: category, rank,<br/>group_descs — RFC-052d"]
+        Layout["layout — STATE/STREAM:<br/>the ordered field list"]
+        Schema["schema — INTENT/EVENT:<br/>key → field map"]
+        Store["store descriptor — STORE"]
+        Field["FIELD: name, type, scale, unit, min/max,<br/>group, role, flags, 🔺 desc ≤128 B"]
+        Opts["options / bits<br/>🔺 nesting depth 4 — the cap, SPEC §5.3.<br/>Nothing ever nests deeper; new containers<br/>ride the entry level"]
+        Catalog --> Entry
+        Entry --> Ident
+        Entry --> Anno
+        Entry -- "exactly ONE of" --> Layout
+        Entry -- "exactly ONE of" --> Schema
+        Entry -- "exactly ONE of" --> Store
+        Layout --> Field
+        Schema --> Field
+        Field --> Opts
+    end
+    subgraph VAL["VALUE PLANE — runtime. Hot: every push, values only, no names or descs."]
+        Snap["STATE snapshot = the packed VALUES of the layout<br/>🔺 ≤242 B — min_transport_payload — in ONE frame.<br/>Full snapshot, never a delta, never split. SPEC §9.1"]
+        Bundle["STREAM bundle: ≤32 samples,<br/>≤20 ms span, one frame. SPEC §5.4"]
+        IntentF["INTENT/EVENT frame: CBOR,<br/>≤ the binding's max_frame"]
+    end
+    Layout -- "sum of packed widths:<br/>u8=1, u16=2, f32=4, str16=16..." --> Snap
+    Layout -- "per-sample struct, STREAM" --> Bundle
+    Schema -- "one write / one event" --> IntentF
+
+    classDef budget stroke-width:3px
+    class Entry,Snap budget
+```
+
+**One field, two prices.** Everything you author about a field is billed to
+one budget or the other, never both:
+
+| Piece of a field | Describe plane (4096 B entry, once per etag) | Value plane (242 B snapshot, every push) |
+|---|---|---|
+| `name`, `min`/`max`, `options`, `group`, `role`, `flags` | billed | free |
+| `desc` (≤128 B) | billed | **free — annotate generously** |
+| the live value, by type width | free | billed — a `str64` value is 26% of every snapshot |
+
+So a heavily-annotated channel and a heavyweight channel are different
+failure modes: rich descriptions can only ever overflow the *entry* (caught
+by lint at your desk); many/wide *fields* overflow the *snapshot* (also
+statically known — conformance tooling flags it, SPEC §9.1).
+
+**Where the numbers come from, and why they refuse to bend:**
+
+- **242** is `min_transport_payload` (registry `limits`): ESP-NOW's 250-byte
+  frame minus the 8-byte header — the smallest transport the protocol
+  reserves the right to ride. A STATE snapshot MUST fit it *unfragmented*
+  because of §9.1's full-snapshot rule: every STATE frame is the complete
+  value (a delta would make frame loss corrupting) and conflation replaces
+  whole queued snapshots (half a snapshot cannot be conflated). There is
+  **no field-count limit** — the budget is bytes: ~58 f32 or ~115 u16
+  values fit. A group of fields that outgrows it is split into two
+  channels at design time, given the same `category`, and the tab merges
+  them back into one surface (SPEC §8.8).
+- **4096** is the per-entry decode atom (§6 above; SPEC §8.1): every
+  client, down to a microcontroller remote, preallocates one 4 KB scratch
+  buffer and can decode any conformant hub without touching the heap.
+- **Depth 4** bounds decoder state: fixed nesting means a recursion-free,
+  fixed-memory parser (SPEC §5.3, §5.8).
+- **The catalog total has no limit on purpose** — it costs the hub's own
+  flash and one blob-chunked transfer (SPEC §8.4), and nothing anywhere
+  allocates proportional to it.
+
+## 8. Verify your work
 
 - [`tools/slopsync_lint.py`](../tools/slopsync_lint.py) — spec/registry
   consistency (this repo).
